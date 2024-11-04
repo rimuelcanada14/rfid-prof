@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\UserAuthApp.csproj": {}
+    "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\UserAuthApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\UserAuthApp.csproj": {
+    "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\UserAuthApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\UserAuthApp.csproj",
+        "projectUniqueName": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\UserAuthApp.csproj",
         "projectName": "UserAuthApp",
-        "projectPath": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\UserAuthApp.csproj",
+        "projectPath": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\UserAuthApp.csproj",
         "packagesPath": "C:\\Users\\rimue\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\obj\\",
+        "outputPath": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\rimue\\AppData\\Roaming\\NuGet\\NuGet.Config"
