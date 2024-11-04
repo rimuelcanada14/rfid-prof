@@ -1,0 +1,201 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<style>
+    .body {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .container {
+        display: flex;
+        width: 100vw;
+        height: 80vh;
+        transform: scale(1.089);
+        margin-top: 1.3em;
+        margin-left: 2.75em;
+        z-index: 0;
+    }
+
+    .left-side {
+        flex: 2;
+        justify-content: flex-start;
+        align-items: center;
+        background-image: url('/images/PLM-RIGHT-INDEX.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .left-side img {
+        display: flex;
+        margin-top: -7.5em;
+        width: 80%;
+        max-width: 600px;
+        height: auto;
+        border-radius: 10px;
+        margin-left: 50px;
+    }
+
+    .image-container {
+        display: flex;
+        flex-direction: column;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
+        width: 90%;
+        max-width: 500px;
+        margin-left: 0;
+        height: 15em;
+        margin-top: 12em;
+    }
+
+    .right-side {
+        flex: 1;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background-color: rgba(244, 244, 244, 0.9);
+        background-image: url('/images/RIZAL-INDEX.png');
+        text-align: center;
+        background-size: cover;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #loginForm {
+        width: 100%;
+    }
+
+    .right-side img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .account-selection {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        background-color: rgba(251, 246, 248, 0.95);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: 1px solid #a9a7a7;
+        width: 80%;
+        height: 25em;
+        justify-content: center;
+    }
+
+    .account-selection h2 {
+        font-family: 'PoppinsMedium', sans-serif;
+        color: #4f68d9;
+        font-size: 1.8em;
+        font-weight: 600;
+        margin-top: 1em;
+    }
+
+    .login-button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        font-size: 1.2em;
+        font-family: 'TTForsRegular', sans-serif;
+        color: #4f68d9;
+        background-color: #ffffff;
+        border: 1px solid #a9a7a7;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background 0.3s, color 0.3s, transform 0.2s;
+        font-weight: 600;
+    }
+
+    .student-button:hover,
+    .librarian-button:hover {
+        background-color: #4f68d9;
+        color: #ffffff;
+    }
+
+    .separator-text {
+        color: #a09f9f;
+        font-weight: bold;
+        font-size: 0.9em;
+        font-family: 'TTForsRegular', sans-serif;
+    }
+
+    .choice-inquiry {
+        font-size: 0.9em;
+        color: #555;
+        text-align: center;
+        font-family: 'TTNormsBold', sans-serif;
+    }
+
+    .choice-reg {
+        font-weight: 400;
+        margin-top: 30px;
+        font-size: 0.9em;
+        color: #555;
+        text-align: center;
+        font-family: 'TTNormsRegular', sans-serif;
+    }
+
+    .right-side a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .right-side a:hover {
+        text-decoration: underline;
+    }
+
+    .left-border {
+        border-left: 8px solid white;
+        height: 10.5em;
+        position: absolute;
+        margin-left: 1.5em;
+        margin-top: 2.1em;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div class="left-side">
+            <div class="image-container">
+                <div class="left-border"></div>
+                <img src="~/images/PLM-INDEX.png" alt="PLM Library Front Page Text">
+            </div>
+        </div>
+
+        <div class="right-side">
+            <div class="account-selection">
+                <h2>Welcome to the PLM Library</h2>
+
+                <button class="login-button librarian-button" onclick="navigateToInput()">Login</button>
+
+                <div class="separator">
+                    <span class="separator-text">OR</span>
+                </div>
+
+                <button class="login-button librarian-button" onclick="navigateToSignup()">Register</button>
+                <p class="choice-inquiry">For more inquiries or concerns, please email <a href="mailto:ul@plm.edu.ph">ul@plm.edu.ph</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to navigate to manual login page
+        function navigateToInput() {
+            window.location.href = "/Account/Input";
+        }
+        
+        function navigateToSignup() {
+            window.location.href = "/Account/Signup";
+        }
+    </script>
+</body>

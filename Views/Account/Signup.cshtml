@@ -1,0 +1,271 @@
+@model User;
+
+<style>
+    .body {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+   
+    .container {
+        display: flex;
+        width: 100vw;
+        height: 80vh; 
+        transform: scale(1.089);
+        margin-top: 1.3em;
+        margin-left: 2.75em;
+        z-index: 0;
+    }
+   
+    .left-side {
+        flex: 2;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        background-image: url('/images/PLM-RIGHT-INDEX.jpg'); 
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+   
+    .left-side img {
+        margin-top: -7.5em;
+        width: 80%;
+        max-width: 600px;
+        height: auto;
+        border-radius: 10px;
+        margin-left: 50px;
+    }
+   
+    .right-side {
+        display: flex;
+        flex-direction: column;
+        align-items: flex;
+        background-color: #f9f9f9;
+        padding: 30px;
+        width: 100%;
+        max-width: 472px;
+        overflow-y: scroll;
+    }
+   
+    .register-title {
+        font-size: 28px;
+        color: #4f68d9;
+        margin-bottom: 20px;
+        font-family: 'PoppinsMedium', sans-serif; 
+        font-weight: 700;
+    }
+   
+    .register-form {
+        width: 100%;
+    }
+   
+    .form-label {
+        font-size: 14px;
+        color: #a09f9f;
+        margin-bottom: 5px;
+        display: block;
+        font-family: 'TTForsRegular', sans-serif;
+    }
+   
+    .input-container {
+        position: relative;
+        margin-bottom: 20px;
+    }
+   
+    .input-container input {
+        width: 100%;
+        padding: 10px 15px;
+        padding-right: 40px;
+        font-size: 14px;
+        border: 1px solid #d5d7d6;
+        border-radius: 20px;
+    }
+   
+    .input-container input::placeholder {
+        color: #a09f9f;
+        opacity: 1;
+    }
+   
+    .icon .input-icon {
+        width: 16px;
+        height: 22px;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+   
+    .linkcard-button {
+        font-family: 'TTForsRegular', sans-serif;
+        color: #4f68d9;
+        background-color:#ffffff;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #d5d7d6;
+        border-radius: 20px;
+        cursor: pointer;
+        width: 100%;
+        margin-bottom: 13px;
+    }
+   
+    .register-button {
+        background-color: #4f68d9;
+        color: #ffffff;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #d5d7d6;
+        border-radius: 20px;
+        cursor: pointer;
+        width: 100%;
+        margin-bottom: 3em;
+        font-family: 'TTForsRegular', sans-serif;
+    }
+
+    .horizontal-line {
+        height: 1px; 
+        background-color: #a9a7a7;
+        border: none;
+        margin: 25px 0;
+    }
+
+    .done-text {
+        color: #13ab25;
+    }
+
+    .none-text {
+        color: #b50a0a;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .popup {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #b50a0a;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 1000;
+        transition: opacity 0.5s ease;
+        opacity: 0; 
+    }
+</style>
+       
+<body>
+    <div class="container">
+        <div class="left-side">
+            <div class="image-container">
+                <!-- Add image or leave blank for background image -->
+            </div>
+        </div>
+
+        <div class="right-side">
+            <div class="Register-Input">
+                <h2 class="register-title">Register an Account</h2>
+
+                <form class="register-form" asp-action="Signup" method="post" onsubmit="return validateForm()">
+                    <label for="name" class="form-label">Name</label>
+                    <div class="input-container">
+                        <input type="text" id="name" placeholder="Name" asp-for="Name" required />
+                    </div>
+
+                    <label for="studentNumber" class="form-label">Student Number</label>
+                    <div class="input-container">
+                        <input type="number" id="studentNumber" placeholder="Student Number" asp-for="StudentNumber" required />
+                    </div>
+
+                    <label for="course" class="form-label">Course</label>
+                    <div class="input-container">
+                        <input type="text" id="course" placeholder="Course" asp-for="Course" required />
+                    </div>
+
+                    <label for="email" class="form-label">Email Address</label>
+                    <div class="input-container">
+                        <input type="email" id="email" placeholder="Email Address" asp-for="Email" required />
+                        <span class="icon">
+                            <img src="~/images/Email Icon.png" alt="Email Icon" class="input-icon">
+                        </span>
+                    </div>
+
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-container">
+                        <input type="password" id="password" placeholder="Password" asp-for="Password" required />
+                        <span class="icon" onclick="togglePassword()">
+                            <img src="~/images/Password Icon.png" alt="Password Icon" class="input-icon" id="password-toggle-icon">
+                        </span>
+                    </div>
+
+                    <div class="horizontal-line"></div>
+
+                    <input asp-for="rfid" id="rfidInput" style="display:none;" />
+                    <button type="button" class="linkcard-button" id="scanButton">Link RFID Card</button>
+
+                    <button type="submit" class="register-button">Register Now</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup" id="rfidPopup" style="display: none;"></div>
+
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById("password");
+            const passwordIcon = document.getElementById("password-toggle-icon");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                passwordIcon.src = "~/images/Password Icon.png"; // Change to open icon if available
+            } else {
+                passwordField.type = "password";
+                passwordIcon.src = "~/images/Password Icon.png"; // Change to closed icon if available
+            }
+        }
+
+        document.getElementById("scanButton").addEventListener("click", function() {
+            setTimeout(function() {
+                const scannedRfid = prompt("Please scan your RFID:"); // Simulate RFID scanning
+
+                if (scannedRfid) {
+                    document.getElementById("rfidInput").value = scannedRfid; // Set the RFID value
+                    document.getElementById("scanButton").innerHTML = 'Link RFID Card: <span class="done-text">DONE</span>'; // Update button text to "DONE"
+                } else {
+                    document.getElementById("scanButton").innerHTML = 'Link RFID Card: <span class="none-text">NONE</span>'; // Update button text to "NONE"
+                }
+            }, 200); // Simulate scanning delay
+        });
+
+        function showPopup(message) {
+            const popup = document.getElementById("rfidPopup");
+            popup.textContent = message;
+            popup.style.display = "block";
+            popup.style.opacity = 1; // Make it visible
+
+            setTimeout(() => {
+                popup.style.opacity = 0; // Fade out
+                setTimeout(() => {
+                    popup.style.display = "none"; // Hide after fade out
+                }, 500); // Wait for the fade out to complete
+            }, 2000); // Display for 2 seconds
+        }
+
+        function validateForm() {
+            const rfid = document.getElementById("rfidInput").value;
+
+            if (!rfid) {
+                showPopup("Please link your RFID card before signing up."); // Use popup for incomplete RFID linking
+                return false; // Prevent form submission
+            }
+        }
+    </script>
+</body>

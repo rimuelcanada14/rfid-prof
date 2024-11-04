@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - UserAuthApp</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/UserAuthApp.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header style="position: relative; background-color: #fbf6f8; z-index: 10;">
+        <img src="~/images/PLM-BACK.png" alt="PLM Background Logo" 
+            style="position: absolute; left: 0; top: -45%; transform: translateY(-50%); height: 300px; opacity: 0.20; z-index: 3;" />
+
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow mb-3" 
+            style="background-color: transparent; border-bottom: 6.5px solid #ffd700; position: relative; z-index: 2;">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/PLM-LOGO.png" alt="PLM Logo" style="height: 65px; width: auto; margin-right: 15px;" />
+                    <div style="margin-top: .6em;">
+                        <h3 class="mb-0" style="font-family: Times New Roman; font-size: 20px; font-weight: bold; color: #d7a613; z-index: 11;">PAMANTASAN NG LUNGSOD NG MAYNILA</h3>
+                        <h5 class="mt-0" style="font-family: Montserrat; font-size: 18.5px; z-index: 11;">UNIVERSITY OF THE CITY OF MANILA</h5>
+                    </div>
+                </a>
+                <div id="dateTime" style="font-family: Tahoma; font-size: 12px; color: #118911; font-weight: 600; margin-top: 6em; margin-bottom: -.5em;"></div>
+            </div>
+        </nav>
+    </header>
+
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        function updateDateTime() {
+            const dateTimeElement = document.getElementById('dateTime');
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const now = new Date();
+            dateTimeElement.innerHTML = now.toLocaleDateString('en-US', options);
+        }
+
+        // Update the date and time on page load and every 60 seconds
+        updateDateTime();
+        setInterval(updateDateTime, 60000);
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
