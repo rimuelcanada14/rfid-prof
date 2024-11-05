@@ -47,7 +47,7 @@
         display: flex;
         flex-direction: column;
         align-items: flex;
-        background-color: #f9f9f9;
+        background-color: #fbf6f8;
         padding: 30px;
         width: 100%;
         max-width: 472px;
@@ -238,6 +238,65 @@
         font-size: 20px;
         font-weight: 400;
     }
+        .rfid-inp {
+        opacity: 1;
+        cursor:;
+    }
+    #confirmRfidButton, #rfidInputPopupField{
+        cursor: default;
+    }
+    .popup-link {
+        position: relative; /* Fixed to ensure it stays centered on screen */
+        top: 46.5%; /* Center vertically */
+        left: 48%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust position to truly center */
+        background-color: white; /* Green background for success */
+        color: black;
+        padding: 15px 25px; /* Add padding for spacing */
+        border-radius: 25px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 25em;
+        height: 25.8em;
+        text-align: center; /* Center text within the popup */
+        font-size: 20px;
+        z-index: 1000;
+    }
+    .popup-link h2{
+        font-family: "PoppinsMedium";
+        font-weight: 700;
+    }
+    .popup-link p {
+        font-family: "TTForsRegular";
+        font-weight: 300;
+    }
+    .rfid-image {
+        width: auto;
+        height: 17em;
+        position: relative;
+        margin-top: -2.5em;
+    }
+    #closeRfidPopupButton {
+        position: absolute;
+        bottom: 1%;
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%);
+        background-color: white ;
+        color: #black;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #4f68d9;
+        border-radius: 20px;
+        cursor: pointer;
+        width: 10em;
+        font-family: 'TTForsRegular', sans-serif;
+    }
+    #closeRfidPopupButton:hover {
+        background-color: #4f68d9;
+        color: #ffffff;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #d5d7d6;
+    }
 </style>
        
 <body>
@@ -267,6 +326,18 @@
                 <h2 class="register-title">Register an Account</h2>
 
                 <form class="register-form" asp-action="Signup" method="post" onsubmit="return validateForm()">
+                    <div id="rfidInputPopup" class="popup-overlay" style="display: none;">
+                        <div class="popup-link">
+                            <h2>RFID Card Linking</h2>
+                            <p>Please scan your RFID Card in the scanner.</p>
+                            <div class = "rfid-inp">
+                                <input asp-for="rfid" id="rfidInputPopupField" type="number" autocomplete="off" placeholder="Scan RFID" />
+                                <button type="button" id="confirmRfidButton">Confirm RFID</button>
+                                <button type="button" id="closeRfidPopupButton">Close</button>
+                                <img src="~/images/rfid-icon.png" class="rfid-image" alt="rfid">
+                            </div>
+                        </div>
+                    </div>
                     <label for="name" class="form-label">Name</label>
                     <div class="input-container">
                         <input type="text" id="name" placeholder="Name" asp-for="Name" required />
@@ -300,57 +371,17 @@
 
                     <div class="horizontal-line"></div>
 
-                    <input asp-for="rfid" id="rfidInput" style="display:none;" />
                     <button type="button" class="linkcard-button" id="scanButton">Link RFID Card</button>
+                    <div id="rfidStatus" style ="display: none;"></div>
 
                     <button type="submit" class="register-button">Register Now</button>
-                    <p class="choice-reg">Already have an account? <a href="/Account/Input">Login</a></p>
+                    <p class="choice-reg">Already have an account? <a href="/Account/Input" style="text-decoration: none;">Login</a></p>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
-        
-        function showPopup(message) {
-            const popup = document.getElementById("rfidPopup");
-            popup.textContent = message;
-            popup.style.display = "block";
-            popup.style.opacity = 1; // Make it visible
-
-            setTimeout(() => {
-                popup.style.opacity = 0; // Fade out
-                setTimeout(() => {
-                    popup.style.display = "none"; // Hide after fade out
-                }, 500); // Wait for the fade out to complete
-            }, 2000); // Display for 2 seconds
-        }
-
-        function togglePassword() {
-            const passwordField = document.getElementById("password");
-            const passwordIcon = document.getElementById("password-toggle-icon");
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                passwordIcon.src = "~/images/Password Icon.png"; // Change to open icon if available
-            } else {
-                passwordField.type = "password";
-                passwordIcon.src = "~/images/Password Icon.png"; // Change to closed icon if available
-            }
-        }
-
-        document.getElementById("scanButton").addEventListener("click", function() {
-            setTimeout(function() {
-                const scannedRfid = prompt("Please scan your RFID:"); // Simulate RFID scanning
-
-                if (scannedRfid) {
-                    document.getElementById("rfidInput").value = scannedRfid; // Set the RFID value
-                    document.getElementById("scanButton").innerHTML = 'Link RFID Card: <span class="done-text">DONE</span>'; // Update button text to "DONE"
-                } else {
-                    document.getElementById("scanButton").innerHTML = 'Link RFID Card: <span class="none-text">NONE</span>'; // Update button text to "NONE"
-                }
-            }, 200); // Simulate scanning delay
-        });
-
         window.addEventListener("DOMContentLoaded", (event) => {
             // Check if the popup should be shown
             @if (TempData["UserAlreadyExists"] != null && (bool)TempData["UserAlreadyExists"] == true)
@@ -388,13 +419,75 @@
             }
         });
 
+        document.getElementById("scanButton").addEventListener("click", function() {
+            const rfidInputPopup = document.getElementById("rfidInputPopup");
+            rfidInputPopup.style.display = 'block'; // Show the RFID input popup
+            rfidInputPopup.style.opacity = 1; // Make it visible
+            document.getElementById("rfidInputPopupField").focus(); // Set focus on the RFID input field
+        });
+
+        // Confirm button click event for the RFID popup
+        document.getElementById("confirmRfidButton").addEventListener("click", function() {
+            const rfidInput = document.getElementById("rfidInputPopupField");
+            const scannedRfid = rfidInput.value.trim(); // Get the value from the RFID input
+
+            if (scannedRfid) {
+                document.getElementById("scanButton").innerHTML = 'Link RFID Card: <span class="done-text">DONE</span>'; // Update button text to "DONE"
+                document.getElementById("rfidStatus").textContent = "DONE"; // Show DONE status
+                document.getElementById("rfidInputPopup").style.display = 'none'; // Hide the RFID input popup
+            } else {
+                // If the input is empty, set the button text to NONE
+                document.getElementById("scanButton").innerHTML = 'Link RFID Card: <span class="none-text">NONE</span>'; // Keep the button text as NONE
+            }
+        });
+
+        // Add event listener for the Enter key in the RFID input field
+        document.getElementById("rfidInputPopupField").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent default form submission
+                document.getElementById("confirmRfidButton").click(); // Trigger the confirm button click
+            }
+        });
+
+        // Close button click event for the RFID popup
+        document.getElementById("closeRfidPopupButton").addEventListener("click", function() {
+            document.getElementById("rfidInputPopup").style.display = 'none'; // Hide the RFID input popup
+        });
+
+        // Validate form
         function validateForm() {
-            const rfid = document.getElementById("rfidInput").value;
+            const rfid = document.getElementById("rfidInputPopupField").value;
 
             if (!rfid) {
                 showPopup("Please link your RFID card before signing up."); // Use popup for incomplete RFID linking
                 return false; // Prevent form submission
             }
         }
+        function showPopup(message) {
+            const popup = document.getElementById("rfidPopup");
+            popup.textContent = message;
+            popup.style.display = "block";
+            popup.style.opacity = 1; // Make it visible
+
+            setTimeout(() => {
+                popup.style.opacity = 0; // Fade out
+                setTimeout(() => {
+                    popup.style.display = "none"; // Hide after fade out
+                }, 500); // Wait for the fade out to complete
+            }, 2000); // Display for 2 seconds
+        }
+
+        function togglePassword() {
+            const passwordField = document.getElementById("password");
+            const passwordIcon = document.getElementById("password-toggle-icon");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                passwordIcon.src = "~/images/Password Icon.png"; // Change to open icon if available
+            } else {
+                passwordField.type = "password";
+                passwordIcon.src = "~/images/Password Icon.png"; // Change to closed icon if available
+            }
+        }
+
     </script>
 </body>
