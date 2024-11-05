@@ -255,6 +255,10 @@
 
     <div class="popup-message" id="rfidPopup" style="display: none;"></div>
 
+    <div id="rfidScanPopup" class="popup-message" style="display: none;">
+        Scan your RFID now
+    </div>
+
     <div class="container">
         <div class="left-side">
             <div class="image-container">
@@ -300,8 +304,14 @@
 
                     <div class="horizontal-line"></div>
 
-                    <input asp-for="rfid" id="rfidInput" style="display:none;" />
-                    <button type="button" class="linkcard-button" id="scanButton">Link RFID Card</button>
+                    <div class="form-group">
+                        <input asp-for="rfid" id="rfidInput" style="display:none;" />
+                        <button type="button" class="linkcard-button" id="scanButton">Link RFID Card</button>
+                        <div id="scanStatus" class="mt-2"></div>
+                    </div>
+
+                    @* Add any validation messages *@
+                    <span asp-validation-for="rfid" class="text-danger"></span>
 
                     <button type="submit" class="register-button">Register Now</button>
                     <p class="choice-reg">Already have an account? <a href="/Account/Input">Login</a></p>
@@ -338,17 +348,55 @@
             }
         }
 
-        document.getElementById("scanButton").addEventListener("click", function() {
-            setTimeout(function() {
-                const scannedRfid = prompt("Please scan your RFID:"); // Simulate RFID scanning
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get elements after DOM is fully loaded
+            const scanButton = document.getElementById('scanButton');
+            const rfidInput = document.getElementById('rfidInput');
+            const scanStatus = document.getElementById('scanStatus');
+            
+            // Verify elements exist
+            if (!scanButton || !rfidInput || !scanStatus) {
+                console.error('Required elements not found!');
+                return;
+            }
 
-                if (scannedRfid) {
-                    document.getElementById("rfidInput").value = scannedRfid; // Set the RFID value
-                    document.getElementById("scanButton").innerHTML = 'Link RFID Card: <span class="done-text">DONE</span>'; // Update button text to "DONE"
-                } else {
-                    document.getElementById("scanButton").innerHTML = 'Link RFID Card: <span class="none-text">NONE</span>'; // Update button text to "NONE"
+            let isScanning = false;
+
+            async function scanRFID() {
+                if (isScanning) return;
+                
+                try {
+                    isScanning = true;
+                    scanButton.disabled = true;
+                    scanButton.textContent = 'Scanning...';
+                    
+                    const response = await fetch('/api/rfid/read');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success && data.rfidValue) {
+                        rfidInput.value = data.rfidValue;
+                        scanButton.innerHTML = 'Link RFID Card: <span class="done-text">DONE</span>';
+                        scanStatus.textContent = `Card detected: ${data.rfidValue}`;
+                    } else {
+                        scanButton.innerHTML = 'Link RFID Card: <span class="none-text">NONE</span>';
+                        scanStatus.textContent = data.message || "No card detected";
+                    }
+                } catch (error) {
+                    console.error('RFID scanning error:', error);
+                    scanButton.innerHTML = 'Link RFID Card: <span class="error-text">ERROR</span>';
+                    scanStatus.textContent = "Error reading RFID card. Please try again.";
+                } finally {
+                    isScanning = false;
+                    scanButton.disabled = false;
                 }
-            }, 200); // Simulate scanning delay
+            }
+
+            // Add event listener to button
+            scanButton.addEventListener('click', scanRFID);
         });
 
         window.addEventListener("DOMContentLoaded", (event) => {
