@@ -1,8 +1,8 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\UserAuthApp.bundle.scp.css",
-      "PackagePath": "staticwebassets\\UserAuthApp.bundle.scp.css"
+      "Id": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\PLM-Library.bundle.scp.css",
+      "PackagePath": "staticwebassets\\PLM-Library.bundle.scp.css"
     },
     {
       "Id": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\wwwroot\\css\\site.css",
@@ -293,20 +293,20 @@
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
     },
     {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.UserAuthApp.Microsoft.AspNetCore.StaticWebAssets.props",
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.PLM-Library.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
     },
     {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.UserAuthApp.props",
-      "PackagePath": "build\\UserAuthApp.props"
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.PLM-Library.props",
+      "PackagePath": "build\\PLM-Library.props"
     },
     {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.UserAuthApp.props",
-      "PackagePath": "buildMultiTargeting\\UserAuthApp.props"
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.PLM-Library.props",
+      "PackagePath": "buildMultiTargeting\\PLM-Library.props"
     },
     {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.UserAuthApp.props",
-      "PackagePath": "buildTransitive\\UserAuthApp.props"
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.PLM-Library.props",
+      "PackagePath": "buildTransitive\\PLM-Library.props"
     }
   ],
   "ElementsToRemove": []

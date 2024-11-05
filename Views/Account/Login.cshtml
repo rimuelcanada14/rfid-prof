@@ -1,3 +1,7 @@
+@{
+    ViewData["Title"] = "Login";
+}
+
 <style>
     .body {
         width: 100%;
@@ -108,6 +112,7 @@
         width: 100%;
         margin-bottom: 13px;
         font-family: 'TTForsRegular', sans-serif;
+        font-weight: 400;
     }
 
     .separator {
@@ -130,6 +135,7 @@
         width: 100%;
         margin-bottom: 20px;
         font-family: 'TTForsRegular', sans-serif;
+        font-weight: 400;
     }
 
     .forgot-password {
@@ -150,6 +156,34 @@
         text-align: center;
         font-weight: bold;
         font-family: 'TTNormsBold', sans-serif;
+    }
+    .popup-message {
+        position: absolute;
+        top: 8.5%; /* Center vertically */
+        left: 98%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust position to truly center */
+        background-color: #f44336; /* Red background for error */
+        color: white;
+        padding: 15px;
+        padding-left: 25px;
+        border-radius: 8px;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        transition: opacity 0.5s ease; /* Transition for smooth fading */
+        opacity: 0; /* Start hidden */
+        width: 18em;
+    }
+
+    /* Class to show the popup */
+    .popup-message.show {
+        display: block; /* Show the popup */
+        opacity: 1; /* Make it visible */
+    }
+
+    /* Class to hide the popup */
+    .popup-message.hide {
+        opacity: 0; /* Fade out */
     }
 </style>
 
@@ -208,6 +242,9 @@
             </div>
         </div>
     </div>
+    <div id="userNotFoundPopup" class="popup-message">
+        User not found. Please try again.
+    </div>
 
     <script>
         function toggleLoginMethod(method) {
@@ -239,5 +276,22 @@
         function navigateToSignup() {
             window.location.href = "/Account/Signup";
         }
+        window.addEventListener("DOMContentLoaded", (event) => {
+            // Check if the popup should be shown
+            @if (TempData["UserNotFound"] != null && (bool)TempData["UserNotFound"] == true)
+            {
+                <text>
+                    const popup = document.getElementById("userNotFoundPopup");
+                    popup.classList.add("show"); // Show the popup
+                    setTimeout(() => {
+                        popup.classList.remove("show"); // Hide the popup
+                        popup.classList.add("hide"); // Add hide class for fade out
+                        setTimeout(() => {
+                            popup.style.display = "none"; // Set display to none after fade out
+                        }, 500); // Wait for the fade out transition before setting to none
+                    }, 4000);
+                </text>
+            }
+        });
     </script>
 </body>

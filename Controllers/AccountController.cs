@@ -20,15 +20,28 @@ public class AccountController : Controller
     [HttpPost]
     public IActionResult Signup(User user)
     {
+        // Check if StudentNumber, Email, or RFID already exists in the database
+        bool userExists = _context.Users.Any(u => u.StudentNumber == user.StudentNumber 
+                                                || u.Email == user.Email 
+                                                || u.rfid == user.rfid);
+        if (userExists)
+        {
+            TempData["UserAlreadyExists"] = true; // Set TempData to trigger the popup
+            return View(user); // Return the view without redirecting
+        }
+
         if (ModelState.IsValid)
         {
             var passwordHasher = new PasswordHasher<User>();
-            user.Password = passwordHasher.HashPassword(user, user.Password); // Hash the password
-            _context.Users.Add(user); // Add user to the database
-            _context.SaveChanges(); // Save changes to the database
-            return RedirectToAction("Index", "Home"); // Redirect to the login page
+            user.Password = passwordHasher.HashPassword(user, user.Password);
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+            TempData["RegistrationSuccess"] = true; // Set TempData flag for success
+            return RedirectToAction("Signup"); // Redirect back to the Signup view
         }
-        return View(user); // Return the view with validation errors
+        
+        return View(user);
     }
 
     [HttpGet]
@@ -51,6 +64,11 @@ public class AccountController : Controller
                     TempData["UserName"] = user.Name; // Store the user's name in TempData
                     return RedirectToAction("Welcome"); // Redirect to welcome page
                 }
+            }
+            else
+            {
+                TempData["UserNotFound"] = true; // Set flag to show popup
+                return RedirectToAction("Login", "Account");
             }
         }
         else if (loginMethod == "rfid")

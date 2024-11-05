@@ -3777,9 +3777,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\UserAuthApp.csproj",
-      "projectName": "UserAuthApp",
-      "projectPath": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\UserAuthApp.csproj",
+      "projectUniqueName": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\PLM-Library.csproj",
+      "projectName": "PLM-Library",
+      "projectPath": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\PLM-Library.csproj",
       "packagesPath": "C:\\Users\\rimue\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\obj\\",
       "projectStyle": "PackageReference",
