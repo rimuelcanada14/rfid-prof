@@ -22,5 +22,8 @@ public class User
     public string Password { get; set; }
 
     [Required]
-    public string rfid { get; set; } // Add RFID property
+    public string rfid { get; set; } // RFID property
+
+    [Required]
+    public string role { get; set; } = "student"; // Role property with default value
 }
