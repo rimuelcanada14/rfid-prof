@@ -95,8 +95,16 @@ public class AccountController : Controller
 
     public IActionResult Welcome()
     {
-        var userName = TempData["UserName"]?.ToString(); // Retrieve UserName from TempData
-        ViewBag.UserName = userName; // Pass the user's name to the ViewBag
+        var userName = TempData["UserName"]?.ToString();
+
+        if (string.IsNullOrEmpty(userName))
+        {
+            // Redirect to index if user is not logged in
+            return RedirectToAction("Index", "Home");
+        }
+
+        ViewBag.UserName = userName;
         return View();
     }
+
 }

@@ -2,5 +2,211 @@
     ViewBag.Title = "Welcome";
 }
 
-<h2>Welcome, @ViewBag.UserName!</h2> <!-- Display the user's name -->
-<p>You have successfully logged in.</p>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-image: url('/images/PLM-HOME.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        min-height: 100vh;
+        display: block;
+        justify-content: center;
+        align-items: center;
+    }
+    .container {
+        width: 100vw;
+        height: 100vh; 
+        z-index: 0;
+    }
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 80%; /* Full viewport height */
+        margin: 0 auto; /* Centers horizontally */
+        gap: 25px;
+    }
+
+    .button {
+        background-color: #ffffff;
+        color: #4f68d9;
+        font-size: 33px;
+        padding: 10px;
+        border: 1px solid #d5d7d6;
+        border-radius: 40px;
+        cursor: pointer;
+        width: 14em;
+        text-align: center;
+        text-decoration: none; 
+        font-family: 'PoppinsMedium';
+        display: block;
+        transition: background 0.3s, color 0.3s, transform 0.2s;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .button:hover {
+        background-color: #4f68d9;
+        color: #ffffff;
+    }
+
+    #logoutModal {
+        display: none; 
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: white;
+        padding: 10px 70px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 700px;
+        font-family: 'PoppinsMedium', sans-serif;
+    }
+
+    .modal-content p {
+        font-size: 27px;
+        margin: 10px;
+        color: #b50a0a;
+    }
+
+    .modal-content button {
+        padding: 7px 40px;
+        font-size: 21px;
+        margin: 15px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+    }
+
+    #confirmLogout {
+        background-color: #c82333;
+        color: white;
+    }
+
+    #cancelLogout {
+        border: 1px solid #c82333; 
+        border-radius: 5px;
+        background-color: #ffffff; 
+        color: #c82333;
+        cursor: pointer;
+    }
+
+    .notification-banner {
+        display: none;
+        position: fixed;
+        bottom: 30px;
+        right: 40px;
+        background-color: #feb602;
+        color: #333;
+        font-size: 18px;
+        padding: 20px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: 'Arial', sans-serif;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+    }
+
+    .notification-banner .icon {
+        width: 25px;
+        height: 35px;
+        margin-right: 20px;
+    }
+
+    .notification-banner .text-content {
+        flex: 1;
+    }
+
+    .notification-banner .notif {
+        font-weight: bold;
+        color: #b50a0a;
+    }
+
+    .notification-banner .message {
+        flex: 1;
+        color: #fbf6f8;
+        font-weight: bold;
+    }
+
+    .notification-banner .close-btn {
+    font-weight: bold;
+    font-size: 20px;
+    cursor: pointer;
+    color: #ffffff;
+    margin-left: 50px;
+    background-color: #d89b02; /* Add background color */
+    padding: 5px 10px; /* Add padding */
+    border-radius: 5px; /* Add border radius for rounded corners */
+    border: none; /* Remove any default border */
+}
+</style>
+
+<body>  
+
+<div class="container">
+        <div class="button-container">
+        <a href="#" class="button">RETURN</a>
+        <a href="#" class="button">BORROW</a>
+        <a href="#" class="button">SEARCH</a>
+        <a href="#" class="button">PROFILE</a>
+        <a id="logoutButton" class="button">LOGOUT</a>
+    </div>
+
+    <div id="logoutModal">
+        <div class="modal-content">
+            <p>Log out of your account?</p>
+            <button id="cancelLogout">Cancel</button>
+            <button id="confirmLogout">Log out</button>
+        </div>
+    </div>
+
+    <div id="loginNotification" class="notification-banner">
+        <img src="/Icons/Exclamation Icon.png" alt="Notification Icon" class="icon">
+        <div class="text-content">
+            <div class="notif">RETURN OVERDUE:</div>
+            <div class="message">Book “Front and Center” is overdue to return for 3 days, return the book now.</div>
+        </div>
+        <span class="close-btn" onclick="document.getElementById('loginNotification').style.display='none'">✖</span>
+    </div>
+</div>
+
+
+<script>
+    const logoutButton = document.getElementById("logoutButton");
+    const logoutModal = document.getElementById("logoutModal");
+    const cancelLogout = document.getElementById("cancelLogout");
+    const confirmLogout = document.getElementById("confirmLogout");
+
+    logoutButton.onclick = function() {
+        logoutModal.style.display = "flex";
+    };
+
+    cancelLogout.onclick = function() {
+        logoutModal.style.display = "none";
+    };
+
+    window.onclick = function(event) {
+        if (event.target == logoutModal) {
+            logoutModal.style.display = "none";
+        }
+    };
+
+    window.onload = function() {
+        const loginNotification = document.getElementById("loginNotification");
+        loginNotification.style.display = "flex";
+    }
+</script>
+</body>
+</html>
