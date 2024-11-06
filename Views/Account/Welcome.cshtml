@@ -1,5 +1,20 @@
 @{
-    ViewBag.Title = "Welcome";
+    ViewBag.Title = "Home";
+}
+@{
+    var userName = Context.Session.GetString("UserName");
+}
+
+@if (!string.IsNullOrEmpty(userName))
+{
+    <h2 style = "display: none;">Welcome, @userName</h2>
+}
+else
+{
+    <h2 style = "display: none;">Please log in to continue.</h2>
+    <script>
+        window.location.href = '@Url.Action("Input", "Account")';
+    </script>
 }
 
 <style>
@@ -63,15 +78,17 @@
         background-color: rgba(0, 0, 0, 0.5);
         justify-content: center;
         align-items: center;
+        backdrop-filter: blur(5px);
     }
 
     .modal-content {
         background-color: white;
-        padding: 10px 70px;
-        border-radius: 10px;
+        padding: 20px;
+        border-radius: 35px;
         text-align: center;
-        max-width: 700px;
+        max-width: 30em;
         font-family: 'PoppinsMedium', sans-serif;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .modal-content p {
@@ -86,7 +103,7 @@
         margin: 15px;
         cursor: pointer;
         border: none;
-        border-radius: 5px;
+        border-radius: 20px;
     }
 
     #confirmLogout {
@@ -96,10 +113,9 @@
 
     #cancelLogout {
         border: 1px solid #c82333; 
-        border-radius: 5px;
         background-color: #ffffff; 
         color: #c82333;
-        cursor: pointer;
+        border-radius: 20px;
     }
 
     .notification-banner {
@@ -141,23 +157,31 @@
     }
 
     .notification-banner .close-btn {
-    font-weight: bold;
-    font-size: 20px;
-    cursor: pointer;
-    color: #ffffff;
-    margin-left: 50px;
-    background-color: #d89b02; /* Add background color */
-    padding: 5px 10px; /* Add padding */
-    border-radius: 5px; /* Add border radius for rounded corners */
-    border: none; /* Remove any default border */
-}
+        font-weight: bold;
+        font-size: 20px;
+        cursor: pointer;
+        color: #ffffff;
+        margin-left: 50px;
+        background-color: #d89b02; /* Add background color */
+        padding: 5px 10px; /* Add padding */
+        border-radius: 5px; /* Add border radius for rounded corners */
+        border: none; /* Remove any default border */
+    }
+    .logout-cont {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+    }
 </style>
 
-<body>  
 
-<div class="container">
+
+<body>  
+    <div class="container">
         <div class="button-container">
-        <a href="#" class="button">RETURN</a>
+        <a class="button" onclick="navigatetoReturn()">RETURN</a>
         <a href="#" class="button">BORROW</a>
         <a href="#" class="button">SEARCH</a>
         <a href="#" class="button">PROFILE</a>
@@ -167,8 +191,10 @@
     <div id="logoutModal">
         <div class="modal-content">
             <p>Log out of your account?</p>
-            <button id="cancelLogout">Cancel</button>
-            <button id="confirmLogout">Log out</button>
+            <div class = "logout-cont">
+                <button id="cancelLogout">Cancel</button>
+                <button id="confirmLogout" onclick="logout()">Log out</button>
+            </div>
         </div>
     </div>
 
@@ -202,11 +228,32 @@
             logoutModal.style.display = "none";
         }
     };
-
+    function navigatetoIndex (){
+        window.location.href = '@Url.Action("Index", "Home")'
+    }
+    function navigatetoReturn (){
+        window.location.href = '@Url.Action("Return", "Account")'
+    }
+    function logout() {
+            // Call logout action on the server
+            fetch('@Url.Action("Logout", "Account")', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        // Redirect after logout
+                        window.location.href = '@Url.Action("Index", "Home")';
+                    } else {
+                        alert('Error logging out. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during logout:', error);
+                    alert('Error logging out. Please try again.');
+                });
+        }
     window.onload = function() {
         const loginNotification = document.getElementById("loginNotification");
         loginNotification.style.display = "flex";
     }
 </script>
+    
 </body>
-</html>

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 
 public class AccountController : Controller
 {
@@ -48,7 +49,7 @@ public class AccountController : Controller
     public IActionResult Login() => View(); // Return the login view
 
     [HttpPost]
-        public IActionResult Login(string loginMethod, string email, string password, string rfid)
+    public IActionResult Login(string loginMethod, string email, string password, string rfid)
     {
         if (loginMethod == "manual")
         {
@@ -61,7 +62,7 @@ public class AccountController : Controller
                 if (result == PasswordVerificationResult.Success)
                 {
                     // Successful manual login
-                    TempData["UserName"] = user.Name; // Store the user's name in TempData
+                    HttpContext.Session.SetString("UserName", user.Name); // Store the user's name in session
                     return RedirectToAction("Welcome"); // Redirect to welcome page
                 }
             }
@@ -78,7 +79,7 @@ public class AccountController : Controller
             if (user != null)
             {
                 // Successful RFID login
-                TempData["UserName"] = user.Name; // Store the user's name in TempData
+                HttpContext.Session.SetString("UserName", user.Name); // Store the user's name in session
                 return RedirectToAction("Welcome"); // Redirect to welcome page
             }
             else
@@ -95,7 +96,7 @@ public class AccountController : Controller
 
     public IActionResult Welcome()
     {
-        var userName = TempData["UserName"]?.ToString();
+        var userName = HttpContext.Session.GetString("UserName");
 
         if (string.IsNullOrEmpty(userName))
         {
@@ -107,4 +108,22 @@ public class AccountController : Controller
         return View();
     }
 
+    public IActionResult Return()
+    {
+        var userName = HttpContext.Session.GetString("UserName");
+
+        if (string.IsNullOrEmpty(userName))
+        {
+            // Redirect to index if user is not logged in
+            return RedirectToAction("Index", "Home");
+        }
+
+        ViewBag.UserName = userName;
+        return View();
+    }
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Remove("UserName");
+        return RedirectToAction("Index", "Home"); // Redirect to home page after logout
+    }
 }

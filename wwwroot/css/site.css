@@ -21,6 +21,30 @@ html {
   font-weight: bold;
   font-style: normal;
 }
+@font-face {
+  font-family: 'FrauncesSemiBold';
+  src: url('/fonts/f1.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'MontserratSemiBold';
+  src: url('/fonts/m1.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'TTNormsRegular';
+  src: url('/fonts/t2.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'TTForsTrialBold';
+  src: url('/fonts/t1.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
 @media (min-width: 768px) {
   html {
     font-size: 16px;
