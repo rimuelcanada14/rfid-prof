@@ -73,7 +73,7 @@
     }
 
     .right-side img {
-        max-width: 100%; 
+        max-width: 95%; 
         height: auto;
     }
 
@@ -97,7 +97,6 @@
         color: #4f68d9; 
         font-size: 1.8em;
         font-weight: 600;
-        margin-top: 1.5em;
     }
 
     .login-button {
@@ -121,11 +120,13 @@
         color: #ffffff;
     }
 
-    .separator-text {
+    .separator {
         color: #a09f9f; 
         font-weight: bold;
         font-size: 0.9em;
         font-family: 'TTForsRegular', sans-serif;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 
     .choice-inquiry {
@@ -190,6 +191,94 @@
     .popup-message.hide {
         opacity: 0; /* Fade out */
     }
+        #confirmRfidButton, #rfidInputPopupField{
+        cursor: default;
+    }
+    .popup-link {
+        position: absolute; /* Fixed to ensure it stays centered on screen */
+        top: 46.5%; /* Center vertically */
+        left: 48%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust position to truly center */
+        background-color: white; /* Green background for success */
+        color: black;
+        padding: 15px 25px; /* Add padding for spacing */
+        border-radius: 25px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 25em;
+        height: 25.8em;
+        text-align: center; /* Center text within the popup */
+        font-size: 20px;
+        z-index: 1000;
+    }
+    .popup-link h2{
+        font-family: "PoppinsMedium";
+        font-weight: 700;
+    }
+    .popup-link p {
+        font-family: "TTForsRegular";
+        font-weight: 300;
+    }
+    .rfid-image {
+        width: auto;
+        height: 17em;
+        position: relative;
+        margin-top: -2.5em;
+    }
+    #closeRfidPopupButton {
+        position: absolute;
+        bottom: 1%;
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%);
+        background-color: white ;
+        color: #black;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #4f68d9;
+        border-radius: 20px;
+        cursor: pointer;
+        width: 10em;
+        font-family: 'TTForsRegular', sans-serif;
+    }
+    #closeRfidPopupButton:hover {
+        background-color: #4f68d9;
+        color: #ffffff;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #d5d7d6;
+    }
+        .popup-overlay {
+        position: fixed; /* Fixed to ensure it stays centered on screen */
+        top: 50%; /* Center vertically */
+        left: 55%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust position to truly center */
+        background-color: rgba(0, 0, 0, 0.4); /* Green background for success */
+        color: #13ab25;
+        padding: 15px 25px; /* Add padding for spacing */
+        border-radius: 8px;
+        font-family: "PoppinsMedium";
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        transition: opacity 0.5s ease; /* Smooth fading transition */
+        opacity: 0; /* Start hidden */
+        width: 110%;
+        height: 100%;
+        text-align: center; /* Center text within the popup */
+        font-size: 20px;
+        font-weight: 400;
+        display: none;
+        backdrop-filter: blur(5px);
+    }
+
+    /* Class to show the popup */
+    .popup-overlay.show {
+        display: block; /* Show the popup */
+        opacity: 1; /* Make it visible */
+    }
+
+    /* Class to hide the popup */
+    .popup-overlay.hide {
+        opacity: 0; /* Fade out */
+    }
 
 </style>
 
@@ -205,7 +294,7 @@
         <div class="right-side">
             <div class="account-selection">
                 <h2>Select an Option</h2>
-                <form asp-action="Login" method="post" id="loginForm">
+                <form asp-action="Login" method="post" id="loginForm" onsubmit="return validateForm();">
                     <div style="display: none;">
                         <label>
                             <input type="radio" name="loginMethod" value="manual" onchange="toggleLoginMethod(this.value)"> Manual Login
@@ -219,17 +308,29 @@
                         <button class="login-button librarian-button" type="button" id="scanButton">Scan RFID</button>
                     </div>
 
-                    <input type="hidden" name="rfid" id="rfidInput" /> <!-- Hidden input to store scanned RFID -->
-                    <button type="submit" style="display: none;">Login</button>
-                </form>
-                
-                <div class="separator">
-                    <span class="separator-text">OR</span>
-                </div>
+                    <div id="rfidInputPopup" class="popup-overlay" style="display: none;">
+                        <div class="popup-link">
+                            <h2>RFID Card Linking</h2>
+                            <p>Please scan your RFID Card in the scanner.</p>
+                            <div class="rfid-inp">
+                                <input id="rfidInputPopupField" type="number" autocomplete="off" placeholder="Scan RFID" name="rfid" />
+                                <button type="submit" id="confirmRfidButton">Confirm RFID</button>
+                                <button type="button" id="closeRfidPopupButton">Close</button>
+                                <img src="~/images/rfid-icon.png" class="rfid-image" alt="rfid">
+                            </div>
+                        </div>
+                    </div>
 
-                <button class="login-button librarian-button" onclick="navigateToManual()">Manual Login</button>
-                <p class="choice-reg">Don't have an account? <a href="/Account/Signup">Register now!</a></p>
-                <p class="choice-inquiry">For more inquiries or concerns, please email <a href="mailto:ul@plm.edu.ph">ul@plm.edu.ph</a></p>
+                    <div id="rfidPopup" class="popup-message"></div>
+
+                    <div class="separator">
+                        <span class="separator-text">OR</span>
+                    </div>
+
+                    <button class="login-button librarian-button" onclick="navigateToManual()">Manual Login</button>
+                    <p class="choice-reg">Don't have an account? <a href="/Account/Signup">Register now!</a></p>
+                    <p class="choice-inquiry">For more inquiries or concerns, please email <a href="mailto:ul@plm.edu.ph">ul@plm.edu.ph</a></p>
+                </form>
             </div>
         </div>
     </div>
@@ -244,18 +345,64 @@
             window.location.href = "/Account/Login";
         }
 
-        // Function to handle RFID scan
-        function toggleLoginMethod(method) {
-            const manualLogin = document.getElementById("manualLogin");
-            const rfidLogin = document.getElementById("rfidLogin");
+        // Function to handle RFID scan popup
+        document.getElementById("scanButton").addEventListener("click", function() {
+            const rfidInputPopup = document.getElementById("rfidInputPopup");
+            rfidInputPopup.style.display = 'block';
+            rfidInputPopup.style.opacity = 1;
+            document.getElementById("rfidInputPopupField").focus();
+        });
 
-            if (method === "manual") {
-                manualLogin.style.display = "block";
-                rfidLogin.style.display = "none";
+        // Confirm button click event for the RFID popup
+        document.getElementById("confirmRfidButton").addEventListener("click", function() {
+            const rfidInput = document.getElementById("rfidInputPopupField");
+            const scannedRfid = rfidInput.value.trim();
+
+            if (scannedRfid) {
+                document.getElementById("scanButton").innerHTML = 'Scan RFID';
+                document.getElementById("rfidInputPopup").style.display = 'none';
             } else {
-                manualLogin.style.display = "none";
-                rfidLogin.style.display = "block";
+                document.getElementById("scanButton").innerHTML = 'Scan RFID';
             }
+        });
+
+        // Event listener for Enter key in RFID input field
+        document.getElementById("rfidInputPopupField").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                document.getElementById("confirmRfidButton").click();
+            }
+        });
+
+        // Close button event for RFID popup
+        document.getElementById("closeRfidPopupButton").addEventListener("click", function() {
+            document.getElementById("rfidInputPopup").style.display = 'none';
+        });
+
+        // Validate form for RFID linking completion
+        function validateForm() {
+            const rfid = document.getElementById("rfidInputPopupField").value;
+
+            if (!rfid) {
+                showPopup("Please link your RFID card before signing up.");
+                return false;
+            }
+            return true;
+        }
+
+        // Function to show popup message
+        function showPopup(message) {
+            const popup = document.getElementById("rfidPopup");
+            popup.textContent = message;
+            popup.style.display = "block";
+            popup.style.opacity = 1;
+
+            setTimeout(() => {
+                popup.style.opacity = 0;
+                setTimeout(() => {
+                    popup.style.display = "none";
+                }, 500);
+            }, 2000);
         }
         window.addEventListener("DOMContentLoaded", (event) => {
             // Check if the popup should be shown
@@ -274,16 +421,6 @@
                 </text>
             }
         });
-
-        document.getElementById("scanButton").addEventListener("click", function() {
-            // Simulate RFID scanning and setting the value
-            const scannedRfid = prompt("Please scan your RFID:");
-            if (scannedRfid) {
-                document.getElementById("rfidInput").value = scannedRfid; // Set the RFID value
-                document.getElementById("loginForm").submit(); // Submit the form after scanning
-            }
-        });
-
-        
     </script>
 </body>
+
