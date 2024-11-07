@@ -184,7 +184,7 @@ else
         <a class="button" onclick="navigatetoReturn()">RETURN</a>
         <a href="#" class="button">BORROW</a>
         <a href="#" class="button">SEARCH</a>
-        <a href="#" class="button">PROFILE</a>
+        <a class="button" onclick="navigatetoProfile()">PROFILE</a>
         <a id="logoutButton" class="button">LOGOUT</a>
     </div>
 
@@ -228,11 +228,11 @@ else
             logoutModal.style.display = "none";
         }
     };
-    function navigatetoIndex (){
-        window.location.href = '@Url.Action("Index", "Home")'
-    }
     function navigatetoReturn (){
         window.location.href = '@Url.Action("Return", "Account")'
+    }
+    function navigatetoProfile (){
+        window.location.href = '@Url.Action("Profile", "Account")'
     }
     function logout() {
             // Call logout action on the server

@@ -121,6 +121,19 @@ public class AccountController : Controller
         ViewBag.UserName = userName;
         return View();
     }
+    public IActionResult Profile()
+    {
+        var userName = HttpContext.Session.GetString("UserName");
+
+        if (string.IsNullOrEmpty(userName))
+        {
+            // Redirect to index if user is not logged in
+            return RedirectToAction("Index", "Home");
+        }
+
+        ViewBag.UserName = userName;
+        return View();
+    }
     public IActionResult Logout()
     {
         HttpContext.Session.Remove("UserName");
