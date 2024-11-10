@@ -3766,30 +3766,34 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 8.0.10",
+      "Microsoft.EntityFrameworkCore >= 8.0.10",
       "Microsoft.EntityFrameworkCore.Design >= 8.0.10",
       "MySql.EntityFrameworkCore >= 8.0.8",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 8.0.10"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rimue\\.nuget\\packages\\": {}
+    "C:\\Users\\Admin\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\PLM-Library.csproj",
+      "projectUniqueName": "D:\\Admin\\Documents\\GitHub\\rfid-prof\\PLM-Library.csproj",
       "projectName": "PLM-Library",
-      "projectPath": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\PLM-Library.csproj",
-      "packagesPath": "C:\\Users\\rimue\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\rimue\\Desktop\\GH\\UserAuthApp\\UserAuthApp\\rfid-prof\\obj\\",
+      "projectPath": "D:\\Admin\\Documents\\GitHub\\rfid-prof\\PLM-Library.csproj",
+      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+      "outputPath": "D:\\Admin\\Documents\\GitHub\\rfid-prof\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\rimue\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -3814,6 +3818,10 @@
         "targetAlias": "net8.0",
         "dependencies": {
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+            "target": "Package",
+            "version": "[8.0.10, )"
+          },
+          "Microsoft.EntityFrameworkCore": {
             "target": "Package",
             "version": "[8.0.10, )"
           },

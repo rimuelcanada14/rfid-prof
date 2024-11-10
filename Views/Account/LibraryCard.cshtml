@@ -1,0 +1,252 @@
+@{
+    ViewBag.Title = "Library Card";
+}
+@{
+    var userName = Context.Session.GetString("UserName");
+    var studentId = Context.Session.GetString("StudentId");
+    var course = Context.Session.GetString("Course");
+    var plmEmail = Context.Session.GetString("PlmEmail");
+}
+
+@if (!string.IsNullOrEmpty(userName))
+{
+    <h2 style = "display: none;">Welcome, @userName</h2>
+}
+else
+{
+    <h2 style = "display: none;">Please log in to continue.</h2>
+    <script>
+        window.location.href = '@Url.Action("Input", "Account")';
+    </script>
+}
+
+<style>
+
+    /* Body Styling */
+    body {
+        margin: 0;
+        padding: 0;
+        background-image: url('/images/PLM-HOME.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        min-height: 100vh;
+        display: block;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .navbar-menu {
+        display: flex;
+        gap: 50px;
+        align-items: center;
+        position: absolute;
+        top: 2em;
+        z-index: 1000;
+        left: 50.5em;
+    }
+
+    .navbar-menu a {
+        text-decoration: none;
+        color: #2e2c2b;
+        font-family: 'MontserratSemiBold';
+        font-size: 20px;
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
+
+    .navbar-menu .highlight {
+        color: #DAA520;
+        font-size: 28px;
+        font-family: 'MontserratSemiBold';
+    }
+
+    .navbar-menu a:hover {
+        color: #DAA520;
+    }
+
+    /* Library Card Styling */
+    .library-card-container {
+        width: 90%;
+        background-color: #ffffff;
+        border-radius: 35px;
+        padding: 20px;
+        margin-top: 50px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #a9a7a7;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 70vh;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .header .university-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header .university-info img {
+        width: 75px;
+        height: 75px;
+    }
+
+    .university-text {
+        color: #505053;
+        font-family: 'FrauncesSemiBold', Arial, sans-serif;
+    }
+
+    .university-text h2 {
+        font-size: 20px;
+        margin: 0;
+        color: #d7a613;
+        font-family: 'FrauncesSemiBold', Arial, sans-serif;
+    }
+
+    .university-text p {
+        font-size: 16px;
+        margin: 0;
+        color: #505053;
+        font-family: 'PoppinsMedium', Arial, sans-serif;
+    }
+
+    .card-title {
+        font-size: 28px;
+        font-weight: bold;
+        font-family: 'PoppinsMedium', Arial, sans-serif;
+        color: #000;
+        font-family: 'MontserratSemiBold', Arial, sans-serif;
+        white-space: nowrap;
+    }
+
+    /* Main Content */
+    .card-content {
+        display: flex;
+        gap: 30px;
+    }
+
+    .profile-pic {
+        width: 180px;
+        height: 180px;
+        border-radius: 10px;
+        background-color: #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid black;
+        margin-left: 50px;
+    }
+
+    .profile-pic img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    /* Label and Content Alignment */
+    .details p {
+        font-size: 22px;
+        margin: 3px 0;
+        color: #000;
+        display: flex;
+        align-items: center; 
+        font-family: 'PoppinsMedium', Arial, sans-serif; 
+    }
+
+    .details p strong {
+        color: #000;
+        min-width: 200px; 
+        text-align: left;
+        padding-right: 10px; 
+        font-family: 'PoppinsMedium', Arial, sans-serif; 
+    }
+
+    .details p span {
+        flex-grow: 1; /* Ensures the value takes up remaining space */
+        text-align: left; /* Aligns text to the left */
+        font-family: 'PoppinsMedium', Arial, sans-serif; 
+    }
+
+    /* Barcode Section */
+    .barcode-section {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        width: 200px;
+        height: 60px;
+    }
+
+    .barcode-section img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .date-info {
+        margin-top: 80px;
+        font-family: 'MontserratSemiBold', Arial, sans-serif;
+
+    }
+</style>
+
+<body>
+    <div class="navbar-menu">
+        <a href="Welcome">HOME</a>
+        <a href="Return">RETURN</a>
+        <a href="#" >BORROW</a>
+        <a href="#">TRACK</a>
+        <a href="Profile" class="highlight">PROFILE</a>
+    </div>
+
+    <!-- University Library Card -->
+    <div class="library-card-container">
+        <div class="header">
+            <div class="university-info">
+                <img src="/images/PLM-LOGO.png" alt="University Logo">
+                <div class="university-text">
+                    <h2>PAMANTASAN NG LUNGSOD NG MAYNILA</h2>
+                    <p>UNIVERSITY OF THE CITY OF MANILA</p>
+                </div>
+            </div>
+        <div class="card-title">University Library Card</div>
+    </div>
+
+    <div class="card-content">
+        <div class="profile-pic">
+            <img src="~/images/pfp.png" alt="Profile Picture">
+        </div>
+
+        <div class="details">
+            <p><strong>Name:</strong> <span>@ViewBag.UserName</span></p>
+            <p><strong>Library Card ID:</strong> <span>@ViewBag.LibraryCardId</span></p>
+            <p><strong>Student ID:</strong> <span>@ViewBag.StudentId</span></p>
+            <p><strong>Course:</strong> <span>@ViewBag.Course</span></p>
+            <p><strong>Email:</strong> <span>@ViewBag.PlmEmail</span></p>
+            <p><strong>Contact Number:</strong> <span>0990909</span></p>
+
+            <div class="date-info">
+                <p><strong>Date Issued:</strong> <span>mepww</span></p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="barcode-section">
+        <img src="images/barcode.png" alt="Barcode">
+    </div>
+</body>

@@ -4,6 +4,9 @@
 }
 @{
     var userName = Context.Session.GetString("UserName");
+    var studentId = Context.Session.GetString("StudentId");
+    var course = Context.Session.GetString("Course");
+    var plmEmail = Context.Session.GetString("PlmEmail");
 }
 
 @if (!string.IsNullOrEmpty(userName))
@@ -17,7 +20,8 @@ else
         window.location.href = '@Url.Action("Input", "Account")';
     </script>
 }
- <style>
+
+<style>
     body {
         margin: 0;
         padding: 0;
@@ -30,149 +34,154 @@ else
         justify-content: center;
         align-items: center;
     }
-        .navbar-menu {
-            display: flex;
-            gap: 50px;
-            align-items: center;
-            position: absolute;
-            top: 2em;
-            z-index: 1000;
-            left: 50.5em;
-        }
+    .navbar-menu {
+        display: flex;
+        gap: 50px;
+        align-items: center;
+        position: absolute;
+        top: 2em;
+        z-index: 1000;
+        left: 50.5em;
+    }
 
-        .navbar-menu a {
-            text-decoration: none;
-            color: #2e2c2b;
-            font-family: 'MontserratSemiBold';
-            font-size: 20px;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
+    .navbar-menu a {
+        text-decoration: none;
+        color: #2e2c2b;
+        font-family: 'MontserratSemiBold';
+        font-size: 20px;
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
 
-        .navbar-menu .highlight {
-            color: #DAA520;
-            font-size: 28px;
-            font-family: 'MontserratSemiBold';
-        }
+    .navbar-menu .highlight {
+        color: #DAA520;
+        font-size: 28px;
+        font-family: 'MontserratSemiBold';
+    }
 
-        .navbar-menu a:hover {
-            color: #DAA520;
-        }
+    .navbar-menu a:hover {
+        color: #DAA520;
+    }
 
-        /* Card Styling */
-        .profile-page {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .card-container {
-            width: 90%;
-            background-color: #ffffff;
-            border-radius: 35px;
-            padding: 20px;
-            margin-top: 50px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            border: 1px solid #a9a7a7;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 70vh;
-        }
-        .card-content {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-            justify-content: flex-start;
-            transform: scale(1.3);
-            margin-top: -2em;
-        }
-        .profile-pic {
-            width: 230px;
-            height: 230px;
-            background-color: #e0e0e0;
-            display: flex;
-            align-items: center;
-            border: 2px solid black;
-            justify-content: center;
-            border-radius: 10px;
-            margin-top: 45px;
-            margin-right: 50px;
-            margin-left:31px;
-        }
+    /* Card Styling */
+    .profile-page {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .card-container {
+        width: 90%;
+        background-color: #ffffff;
+        border-radius: 35px;
+        padding: 20px;
+        margin-top: 50px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #a9a7a7;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 70vh;
+    }
+    .card-content {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: flex-start;
+        transform: scale(1.3);
+        margin-top: -2em;
+    }
+    .profile-pic {
+        width: 230px;
+        height: 230px;
+        background-color: #e0e0e0;
+        display: flex;
+        align-items: center;
+        border: 2px solid black;
+        justify-content: center;
+        border-radius: 10px;
+        margin-top: 45px;
+        margin-right: 50px;
+        margin-left:31px;
+    }
 
-        .info {
-            line-height: 1.5;
-        }
+    .info {
+        line-height: 1.5;
+    }
 
-        .info h2 {
-            margin-top: 40px;
-            font-size: 30px;
-            font-weight: bold;
-            font-family: 'PoppinsMedium1';
-        }
+    .info h2 {
+        margin-top: 40px;
+        font-size: 30px;
+        font-weight: bold;
+        font-family: 'PoppinsMedium1';
+    }
 
-        .info p {
-            margin: 20px 0;
-            font-size: 23px;
-            font-family: 'PoppinsMedium1';
-        }
+    .info p {
+        margin: 20px 0;
+        font-size: 23px;
+        font-family: 'PoppinsMedium1';
+    }
 
-        .view-card-button {
-            padding: 5px 28px;
-            background-color: #4a73e5;
-            color: white;
-            border: none;
-            border-radius: 24px;
-            font-family: 'PoppinsMedium';
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            position: relative;
-            font-size: 24px;
-            top: 2.5em;
-        }
+    .view-card-button {
+        padding: 5px 28px;
+        background-color: #4a73e5;
+        color: white;
+        border: none;
+        border-radius: 24px;
+        font-family: 'PoppinsMedium';
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        position: relative;
+        font-size: 24px;
+        top: 2.5em;
+    }
 
-        .edit-icon {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-        }
-    </style>
-<div class="navbar-menu">
-    <a href="Welcome">HOME</a>
-    <a href="Return">RETURN</a>
-    <a href="#" >BORROW</a>
-    <a href="#">TRACK</a>
-    <a href="Profile" class="highlight">PROFILE</a>
-</div>
+    .edit-icon {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        z-index: 50;
+    }
+</style>
+
 
 <body>
+    <div class="navbar-menu">
+        <a href="Welcome">HOME</a>
+        <a href="Return">RETURN</a>
+        <a href="#" >BORROW</a>
+        <a href="#">TRACK</a>
+        <a href="Profile" class="highlight">PROFILE</a>
+    </div>
+
     <div class="profile-page">
         <!-- Student Information Card -->
         <div class="card-container">
             <div class="card-content">
-                    @* <a href="profileedit.html">
-                    <img src="~/images/edit-icon.png" alt="Edit Icon" class="edit-icon"></a> *@
+                <a href="@Url.Action("EditProfile", "Account")">
+                    <img src="~/images/edit-icon.png" alt="Edit Icon" class="edit-icon">
+                </a>
+
                 <div class="profile-pic">
                     <img src="~/images/pfp.png" alt="Profile Picture" width="auto" height="200" style="border-radius: 10px;">
                 </div>
                 <div class="info">
                     <h2>@userName</h2>
-                    <p><strong>Student ID:</strong> 202105446</p>
-                    <p><strong>Course:</strong> BSIT</p>
-                    <p><strong>PLM Email:</strong> jdmoreno2021@plm.edu.ph</p>
+                    <p><strong>Student ID:</strong> @studentId</p>
+                    <p><strong>Course:</strong> @course</p>
+                    <p><strong>PLM Email:</strong> @plmEmail</p>
                     <p><strong>Contact Number:</strong> 09756463256</p>
                 </div>
             </div>
             
             <div class="view-card">
-                <a href="profilecard.html" class="view-card-button">View Library Card</a>
+               <a href="@Url.Action("LibraryCard", "Account")" class="view-card-button">View Library Card</a>
             </div>
         </div>
     </div>

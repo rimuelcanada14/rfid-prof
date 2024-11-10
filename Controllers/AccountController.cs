@@ -104,6 +104,15 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home");
         }
 
+        // Fetch the user from the database and store additional data in the session
+        var user = _context.Users.SingleOrDefault(u => u.Name == userName);
+        if (user != null)
+        {
+            HttpContext.Session.SetString("StudentId", user.StudentNumber);
+            HttpContext.Session.SetString("Course", user.Course);
+            HttpContext.Session.SetString("PlmEmail", user.Email);
+        }
+
         ViewBag.UserName = userName;
         return View();
     }
@@ -127,16 +136,138 @@ public class AccountController : Controller
 
         if (string.IsNullOrEmpty(userName))
         {
-            // Redirect to index if user is not logged in
             return RedirectToAction("Index", "Home");
+        } 
+        // Fetch the user from the database and store additional data in the session
+        var user = _context.Users.SingleOrDefault(u => u.Name == userName);
+        if (user != null)
+        {
+            HttpContext.Session.SetString("StudentId", user.StudentNumber);
+            HttpContext.Session.SetString("Course", user.Course);
+            HttpContext.Session.SetString("PlmEmail", user.Email);
         }
 
         ViewBag.UserName = userName;
+        ViewBag.StudentId = HttpContext.Session.GetString("StudentId");
+        ViewBag.Course = HttpContext.Session.GetString("Course");
+        ViewBag.PlmEmail = HttpContext.Session.GetString("PlmEmail");
+    
         return View();
     }
-    public IActionResult Logout()
+
+    [HttpGet]
+    public IActionResult EditProfile()
     {
-        HttpContext.Session.Remove("UserName");
-        return RedirectToAction("Index", "Home"); // Redirect to home page after logout
+        var userName = HttpContext.Session.GetString("UserName");
+        var studentId = HttpContext.Session.GetString("StudentId");
+        var course = HttpContext.Session.GetString("Course");
+        var plmEmail = HttpContext.Session.GetString("PlmEmail");
+        // var contactNumber = HttpContext.Session.GetString("ContactNumber");
+
+        if (string.IsNullOrEmpty(userName))
+        {
+            return RedirectToAction("Index", "Home"); // Redirect if user is not logged in
+        }
+
+        ViewBag.UserName = userName;
+        ViewBag.StudentId = studentId;
+        ViewBag.Course = course;
+        ViewBag.PlmEmail = plmEmail;
+        // ViewBag.ContactNumber = contactNumber;
+
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult EditProfile([FromBody] User updatedUser)
+    {
+        var userName = HttpContext.Session.GetString("UserName");
+
+        if (string.IsNullOrEmpty(userName))
+        {
+            return RedirectToAction("Input", "Account");
+        }
+
+        // Fetch the existing user from the database
+        var user = _context.Users.SingleOrDefault(u => u.Name == userName);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        // Check for duplicates (excluding the current user)
+        var isDuplicate = _context.Users
+            .Any(u => u.Id != user.Id && (
+                u.StudentNumber == updatedUser.StudentNumber ||
+                u.Email == updatedUser.Email
+                //add contact number
+            ));
+
+        if (isDuplicate)
+        {
+            return BadRequest(new { message = "Invalid credentials. User already exists." });
+        }
+
+        // Update user properties
+        user.StudentNumber = updatedUser.StudentNumber;
+        user.Course = updatedUser.Course;
+        user.Email = updatedUser.Email;
+        // Uncomment if you have ContactNumber in your User model
+        // user.ContactNumber = updatedUser.ContactNumber;
+
+        try
+        {
+            _context.SaveChanges();
+
+            // Update session data
+            HttpContext.Session.SetString("StudentId", user.StudentNumber);
+            HttpContext.Session.SetString("Course", user.Course);
+            HttpContext.Session.SetString("PlmEmail", user.Email);
+            // HttpContext.Session.SetString("ContactNumber", user.ContactNumber);
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            // Log the exception if you have logging configured
+            return StatusCode(500, "An error occurred while updating the profile.");
+        }
+    
+
+    }
+
+    [HttpGet]
+    public IActionResult LibraryCard()
+    {
+        var userName = HttpContext.Session.GetString("UserName");
+
+        if (string.IsNullOrEmpty(userName))
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
+        // Fetch the user from the database
+        var user = _context.Users.SingleOrDefault(u => u.Name == userName);
+        if (user != null)
+        {
+            // Update session with all necessary user data
+            HttpContext.Session.SetString("StudentId", user.StudentNumber);
+            HttpContext.Session.SetString("Course", user.Course);
+            HttpContext.Session.SetString("PlmEmail", user.Email);
+            // HttpContext.Session.SetString("ContactNumber", user.ContactNumber ?? "");
+            // HttpContext.Session.SetString("LibraryCardId", user.LibraryCardId ?? "");
+            // HttpContext.Session.SetString("DateIssued", user.DateIssued?.ToString("MMMM dd, yyyy") ?? "");
+        }
+
+        // Pass all the data to the view through ViewBag
+        ViewBag.UserName = userName;
+        ViewBag.StudentId = HttpContext.Session.GetString("StudentId");
+        ViewBag.Course = HttpContext.Session.GetString("Course");
+        ViewBag.PlmEmail = HttpContext.Session.GetString("PlmEmail");
+        // ViewBag.ContactNumber = HttpContext.Session.GetString("ContactNumber");
+        // ViewBag.LibraryCardId = HttpContext.Session.GetString("LibraryCardId");
+        // ViewBag.DateIssued = HttpContext.Session.GetString("DateIssued");
+        return View();
     }
 }
+    

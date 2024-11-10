@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PLM-Library")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8780289687ea28595e30b6af5825c45b7450e90c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e74c5774cbb0136f8d533e1ee506175090f57c1a")]
 [assembly: System.Reflection.AssemblyProductAttribute("PLM-Library")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PLM-Library")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
