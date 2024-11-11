@@ -1,6 +1,6 @@
 
 @{
-    ViewBag.Title = "Library Card";
+    ViewBag.Title = "Profile";
 }
 @await Html.PartialAsync("_RfidPopup")
 @{
@@ -8,6 +8,7 @@
     var studentId = Context.Session.GetString("StudentId");
     var course = Context.Session.GetString("Course");
     var email = Context.Session.GetString("Email");
+    var contactNum = Context.Session.GetString("ContactNumber");
 }
 
 @if (!string.IsNullOrEmpty(userName))
@@ -143,7 +144,7 @@ else
     .edit-icon {
         position: absolute;
         top: 20px;
-        right: 20px;
+        right: -35px;
         width: 30px;
         height: 30px;
         cursor: pointer;
@@ -177,7 +178,7 @@ else
                     <p><strong>Student ID:</strong> @studentId</p>
                     <p><strong>Course:</strong> @course</p>
                     <p><strong>PLM Email:</strong> @email</p>
-                    <p><strong>Contact Number:</strong> 09756463256</p>
+                   <p><strong>Contact Number:</strong> @(string.IsNullOrEmpty(contactNum) || contactNum == "NA" ? "--NOT SET--" : contactNum)</p>
                 </div>
             </div>
             

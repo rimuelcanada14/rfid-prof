@@ -29,4 +29,7 @@ public class User
     public string role { get; set; } = "student"; // Role property with default value
 
     public DateTime? DateIssued { get; set; }
+
+    [Required]
+    public string ContactNumber { get; set; } 
 }

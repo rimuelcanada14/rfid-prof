@@ -9,6 +9,7 @@
     var email = Context.Session.GetString("Email");
     var libId = Context.Session.GetInt32("UserId");
     var dateIssued = Context.Session.GetString("DateIssued");
+    var contactNum = Context.Session.GetString("ContactNumber");
 }
 
 @if (!string.IsNullOrEmpty(userName))
@@ -218,7 +219,7 @@ else
     }
 
     .date-info {
-        margin-top: 80px;
+        margin-top: 60px;
         font-family: 'MontserratSemiBold', Arial, sans-serif;
 
     }
@@ -259,6 +260,7 @@ else
                 <p><strong>Student ID</strong> <span>: @studentId</span></p>
                 <p><strong>Course</strong> <span>: @course</span></p>
                 <p><strong>Email</strong> <span>: @email</span></p>
+                <p><strong>Contact Number:</strong> @(string.IsNullOrEmpty(contactNum) || contactNum == "NA" ? "--NOT SET--" : contactNum)</p>
 
                 <div class="date-info">
                     <p><strong>Date Issued:</strong> <span>@dateIssued</span></p>
