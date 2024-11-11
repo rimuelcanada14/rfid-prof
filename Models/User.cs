@@ -2,13 +2,14 @@ using System.ComponentModel.DataAnnotations;
 
 public class User
 {
-    public int Id { get; set; }
+    public int UserId { get; set; }
 
     [Required]
     public string Name { get; set; }
 
     [Required]
-    public string StudentNumber { get; set; }
+    public string? StudentNumber { get; set; }
+
 
     [Required]
     public string Course { get; set; }
@@ -26,4 +27,6 @@ public class User
 
     [Required]
     public string role { get; set; } = "student"; // Role property with default value
+
+    public DateTime? DateIssued { get; set; }
 }

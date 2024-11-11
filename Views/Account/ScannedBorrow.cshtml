@@ -1,0 +1,351 @@
+@model Book
+@await Html.PartialAsync("_RfidPopup")
+
+@{
+ViewBag.Title = "Scanned Book";
+}
+@{
+var userName = Context.Session.GetString("UserName");
+}
+@if (!string.IsNullOrEmpty(userName))
+{
+<h2 style = "display: none;">Welcome, @userName</h2>
+}
+else
+{
+<h2 style = "display: none;">Please log in to continue.</h2>
+<script>
+	window.location.href = '@Url.Action("Input", "Account")';
+</script>
+}
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-image: url('/images/PLM-HOME.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        min-height: 100vh;
+        display: block;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .navbar-menu {
+        display: flex;
+        gap: 50px;
+        align-items: center;
+        position: absolute;
+        top: 2em;
+        z-index: 1000;
+        left: 50.5em;
+    }
+
+    .navbar-menu a {
+        text-decoration: none;
+        color: #2e2c2b;
+        font-family: 'MontserratSemiBold';
+        font-size: 20px;
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
+
+    .navbar-menu .highlight {
+        color: #DAA520;
+        font-size: 28px;
+        font-family: 'MontserratSemiBold';
+    }
+
+    .navbar-menu a:hover {
+        color: #DAA520;
+    }
+
+    .borrow-container {
+        width: 90%;
+        background-color: #ffffff;
+        border-radius: 35px;
+        padding: 20px;
+        margin-top: 50px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        height: 70vh;
+        border: 1px solid #a9a7a7;
+    }
+    .borrowed-page {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .title {
+        color: #A52A2A;
+        font-size: 50px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 20px;
+        font-family: 'TTForsTrialBold', Arial, sans-serif;
+        position: relative;
+        width: 100%;
+    }
+
+    .title:after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -10px;
+        height: 2px;
+        background-color: #808080;
+    }
+
+    .book-info {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        width: 100%;
+        gap: 50px;
+        margin-top: 30px;
+    }
+
+    .book-cover img {
+        width: 400px;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .book-details p {
+        font-size: 30px;
+        margin: 10px 0;
+        font-family: 'TNormsRegular', Arial, sans-serif;
+    }
+
+    .book-details .label {
+        font-family: 'TTForsTrialBold', Arial, sans-serif;
+        color: #2e2c2b;
+    }
+
+    .status {
+        color: green;
+        font-weight: bold;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 13px;
+        align-items: flex-start;
+        margin-top: 1em;
+    }
+
+    .register-button, .scan-button {
+        padding: 11px 20px;
+        font-size: 18px;
+        border-radius: 30px;
+        font-family: "MontserratSemiBold";
+        border: 1px solid black;
+        cursor: pointer;
+        background-color: #fff;
+        color: #31241e;
+        transition: transform 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+        width: 200px;
+    }
+
+    .register-button:hover, .scan-button:hover {
+        background-color: #4169E1;
+        color: #fff;
+    }
+    .register-button:disabled {
+        background-color: #cccccc;  /* Lighter color for disabled state */
+        color: #666666;             /* Darker gray for text */
+        cursor: not-allowed;        /* Changes cursor to indicate it’s disabled */
+        border: 1px solid #b3b3b3;  /* Optional: border to make it look more distinct */
+    }
+    .check-image {
+        width: auto;
+        height: 3em;
+    }
+    .popup-success {
+        position: relative; /* Fixed to ensure it stays centered on screen */
+        top: 50%; /* Center vertically */
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust position to truly center */
+        background-color: white; /* Green background for success */
+        color: #13ab25;
+        padding: 15px 25px; /* Add padding for spacing */
+        border-radius: 8px;
+        font-family: "PoppinsMedium";
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 19em;
+        height: 6em;
+        text-align: center; /* Center text within the popup */
+        font-size: 20px;
+        font-weight: 400;
+    }
+    .popup-link {
+        position: absolute;
+        top: 48%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        color: black;
+        padding: 15px 25px;
+        border-radius: 25px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 25em;
+        height: 25.8em;
+        text-align: center;
+        font-size: 20px;
+        z-index: 1000;
+    }
+
+    .popup-link h2 {
+        font-family: "PoppinsMedium";
+        font-weight: 700;
+    }
+
+    .popup-link p {
+        font-family: "TTForsRegular";
+        font-weight: 300;
+    }
+
+    .rfid-image {
+        width: auto;
+        height: 17em;
+        position: relative;
+        margin-top: -2.5em;
+    }
+
+    #closeRfidPopupButton {
+        position: absolute;
+        bottom: 1%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        color: black;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #4f68d9;
+        border-radius: 20px;
+        cursor: pointer;
+        width: 10em;
+        font-family: 'TTForsRegular', sans-serif;
+    }
+
+    #closeRfidPopupButton:hover {
+        background-color: #4f68d9;
+        color: #ffffff;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #d5d7d6;
+    }
+
+    .popup-overlay {
+        position: fixed;
+        top: 53%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.4);
+        color: #13ab25;
+        padding: 15px 25px;
+        border-radius: 8px;
+        font-family: "PoppinsMedium";
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        transition: opacity 0.5s ease;
+        width: 110%;
+        height: 110%;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 400;
+        display: none;
+        backdrop-filter: blur(5px);
+    }
+
+    .popup-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+
+    .popup-overlay.hide {
+        opacity: 0;
+    }
+</style>
+<div class="navbar-menu">
+	<a href="Welcome">HOME</a>
+	<a href="Return">RETURN</a>
+	<a href="#" class="highlight" onclick="showRfidPopup()">BORROW</a>
+	<a href="Search">SEARCH</a>
+	<a href="Profile">PROFILE</a>
+</div>
+
+<body>
+    <!-- Success Popup -->
+    <div id="registrationSuccessPopup" class="popup-overlay" style="display: none;">
+        <div class="popup-success">
+            Book borrowed successfully!
+            <img src="~/images/Check icon.png" class="check-image" alt="Check">
+        </div>  
+    </div>
+
+    <div class="borrowed-page">
+        <div class="borrow-container">
+            <div class="title">Scanned Book</div>
+            <div class="book-info">
+                @if (Model != null)
+                {
+                    <div class="book-cover">
+                        <img src="~/images/RIZAL-INDEX.png" alt="Book Cover" style="width:15em;">
+                    </div>
+
+                    <div class="book-details">
+                        <p><span class="label">Book Title:</span> @(Model.Title ?? "No Title")</p>
+                        <p><span class="label">Author:</span> @(Model.Author ?? "Unknown Author")</p>
+                        <p><span class="label">Publisher:</span> @(Model.Publisher ?? "No Publisher")</p>
+                        <p><span class="label">Status:</span> <span class="status">@(Model.Availability ?? "None")</span></p>
+                        <div class="buttons">
+                            <form asp-action="RegisterBorrow" method="post">
+                                <input type="hidden" name="bookId" value="@Model.BookId" />
+                                <button type="submit" class="register-button" 
+                                    @(Model.Availability == "Borrowed" ? "disabled" : "")>
+                                    Borrow Book
+                                </button>
+                            </form>
+                            <button class="scan-button" onclick="showRfidPopup()">Scan Again</button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p>No Books Available</p>
+                }
+            </div>
+        </div> 
+    </div>
+
+    <!-- Add Script to Show Success Popup -->
+    <script>
+        // Show the success popup if the TempData contains a success message
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                // Show the popup
+                const popup = document.getElementById("registrationSuccessPopup");
+                popup.style.display = "flex";
+
+                // Wait for 2 seconds, then redirect to Welcome page
+                setTimeout(() => {
+                    window.location.href = '@Url.Action("Welcome", "Account")';
+                }, 2000);
+            </text>
+        }
+    function showSuccessPopup() {
+        const popup = document.getElementById("registrationSuccessPopup");
+        popup.style.display = "flex";  // Show the popup
+
+        // Wait for 2 seconds, then redirect to Welcome page
+        setTimeout(() => {
+            window.location.href = '@Url.Action("Welcome", "Account")';
+        }, 2000);
+    }
+</script>
+</body>

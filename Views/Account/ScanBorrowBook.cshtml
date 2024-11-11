@@ -1,0 +1,154 @@
+@{
+ViewBag.Title = "Scan a Book";
+}
+@{
+var userName = Context.Session.GetString("UserName");
+}
+@if (!string.IsNullOrEmpty(userName))
+{
+<h2 style = "display: none;">Welcome, @userName</h2>
+}
+else
+{
+<h2 style = "display: none;">Please log in to continue.</h2>
+<script>
+	window.location.href = '@Url.Action("Input", "Account")';
+</script>
+}
+
+<style>
+        .popup-link {
+        position: absolute;
+        top: 48%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        color: black;
+        padding: 15px 25px;
+        border-radius: 25px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 25em;
+        height: 25.8em;
+        text-align: center;
+        font-size: 20px;
+        z-index: 1000;
+    }
+
+    .popup-link h2 {
+        font-family: "PoppinsMedium";
+        font-weight: 700;
+    }
+
+    .popup-link p {
+        font-family: "TTForsRegular";
+        font-weight: 300;
+    }
+
+    .rfid-image {
+        width: auto;
+        height: 17em;
+        position: relative;
+        margin-top: -2.5em;
+    }
+
+    #closeRfidPopupButton {
+        position: absolute;
+        bottom: 1%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        color: black;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #4f68d9;
+        border-radius: 20px;
+        cursor: pointer;
+        width: 10em;
+        font-family: 'TTForsRegular', sans-serif;
+    }
+
+    #closeRfidPopupButton:hover {
+        background-color: #4f68d9;
+        color: #ffffff;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #d5d7d6;
+    }
+
+    .popup-overlay {
+        position: fixed;
+        top: 53%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.4);
+        color: #13ab25;
+        padding: 15px 25px;
+        border-radius: 8px;
+        font-family: "PoppinsMedium";
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        transition: opacity 0.5s ease;
+        width: 110%;
+        height: 110%;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 400;
+        display: none;
+        backdrop-filter: blur(5px);
+    }
+
+    .popup-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+
+    .popup-overlay.hide {
+        opacity: 0;
+    }
+</style>
+
+<body>
+        <div id="rfidInputPopup" class="popup-overlay" style="display: none;">
+			<div class="popup-link">
+				<h2>Scan Book</h2>
+				<p>Please scan the book in the scanner.</p>
+				<div class="rfid-inp">
+					<input id="rfidInputPopupField" type="number" autocomplete="off" placeholder="Scan RFID" name="rfid" />
+					<button type="button" id="confirmRfidButton">Confirm RFID</button>
+					<button type="button" id="closeRfidPopupButton">Close</button>
+					<img src="~/images/rfid-icon.png" class="rfid-image" alt="rfid">
+				</div>
+			</div>
+		</div>
+</body>
+
+<script>
+function showRfidPopup() {
+            const rfidPopup = document.getElementById("rfidInputPopup");
+            const rfidInputField = document.getElementById("rfidInputPopupField");
+
+            rfidPopup.style.display = "flex";  // Show the RFID popup
+            rfidInputField.focus();            // Focus on the RFID input field
+        }
+
+        document.getElementById("rfidInputPopupField").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                document.getElementById("confirmRfidButton").click();  // Trigger confirmation button
+            }
+        });
+
+        document.getElementById("confirmRfidButton").onclick = function() {
+            const rfidValue = document.getElementById("rfidInputPopupField").value;
+            if (rfidValue) {
+                // Redirect to ScannedBorrow with RFID as a query parameter
+                window.location.href = '@Url.Action("ScannedBorrow", "Account")' + '?rfid=' + rfidValue;
+            } else {
+                alert("Please scan the book's RFID.");
+            }
+        };
+
+        document.getElementById("closeRfidPopupButton").onclick = function() {
+            document.getElementById("rfidInputPopup").style.display = "none";
+            document.getElementById("rfidInputPopupField").value = "";
+        };
+    </script>

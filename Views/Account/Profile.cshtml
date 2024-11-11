@@ -1,12 +1,13 @@
 
 @{
-    ViewBag.Title = "Profile";
+    ViewBag.Title = "Library Card";
 }
+@await Html.PartialAsync("_RfidPopup")
 @{
     var userName = Context.Session.GetString("UserName");
     var studentId = Context.Session.GetString("StudentId");
     var course = Context.Session.GetString("Course");
-    var plmEmail = Context.Session.GetString("PlmEmail");
+    var email = Context.Session.GetString("Email");
 }
 
 @if (!string.IsNullOrEmpty(userName))
@@ -155,8 +156,8 @@ else
     <div class="navbar-menu">
         <a href="Welcome">HOME</a>
         <a href="Return">RETURN</a>
-        <a href="#" >BORROW</a>
-        <a href="#">TRACK</a>
+        <a href="#" onclick="showRfidPopup()">BORROW</a>
+        <a href="Search">SEARCH</a>
         <a href="Profile" class="highlight">PROFILE</a>
     </div>
 
@@ -175,7 +176,7 @@ else
                     <h2>@userName</h2>
                     <p><strong>Student ID:</strong> @studentId</p>
                     <p><strong>Course:</strong> @course</p>
-                    <p><strong>PLM Email:</strong> @plmEmail</p>
+                    <p><strong>PLM Email:</strong> @email</p>
                     <p><strong>Contact Number:</strong> 09756463256</p>
                 </div>
             </div>

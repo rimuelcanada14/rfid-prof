@@ -1,11 +1,14 @@
 @{
-    ViewBag.Title = "Library Card";
+    ViewBag.Title = "Profile";
 }
+@await Html.PartialAsync("_RfidPopup")
 @{
     var userName = Context.Session.GetString("UserName");
     var studentId = Context.Session.GetString("StudentId");
     var course = Context.Session.GetString("Course");
-    var plmEmail = Context.Session.GetString("PlmEmail");
+    var email = Context.Session.GetString("Email");
+    var libId = Context.Session.GetInt32("UserId");
+    var dateIssued = Context.Session.GetString("DateIssued");
 }
 
 @if (!string.IsNullOrEmpty(userName))
@@ -66,6 +69,12 @@ else
     }
 
     /* Library Card Styling */
+    .libcard-page {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
     .library-card-container {
         width: 90%;
         background-color: #ffffff;
@@ -77,24 +86,26 @@ else
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
         height: 70vh;
     }
 
     .header {
         display: flex;
+        flex-direction: row;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
         margin-bottom: 20px;
+        gap: 8em;
+        transform: scale(1.089);
     }
 
-    .header .university-info {
+    .university-info {
         display: flex;
         align-items: center;
         gap: 15px;
     }
 
-    .header .university-info img {
+    .university-info img {
         width: 75px;
         height: 75px;
     }
@@ -123,8 +134,9 @@ else
         font-weight: bold;
         font-family: 'PoppinsMedium', Arial, sans-serif;
         color: #000;
-        font-family: 'MontserratSemiBold', Arial, sans-serif;
-        white-space: nowrap;
+    }
+    .card-title h2 {
+        font-weight: 800;
     }
 
     /* Main Content */
@@ -134,8 +146,8 @@ else
     }
 
     .profile-pic {
-        width: 180px;
-        height: 180px;
+        width: 15em;
+        height: 15em;
         border-radius: 10px;
         background-color: #e0e0e0;
         display: flex;
@@ -157,6 +169,11 @@ else
         display: flex;
         flex-direction: column;
         gap: 2px;
+    }
+    .details h2 {
+        font-weight: bold;
+        font-size: 35px;
+        font-family: 'PoppinsMedium', Arial, sans-serif; 
     }
 
     /* Label and Content Alignment */
@@ -193,8 +210,11 @@ else
     }
 
     .barcode-section img {
-        width: 100%;
-        height: 100%;
+        width: 20em;
+        height: auto;
+        position: absolute;
+        bottom: 3.5em;
+        right: 12em;
     }
 
     .date-info {
@@ -208,12 +228,12 @@ else
     <div class="navbar-menu">
         <a href="Welcome">HOME</a>
         <a href="Return">RETURN</a>
-        <a href="#" >BORROW</a>
-        <a href="#">TRACK</a>
+        <a href="#" onclick="showRfidPopup()">BORROW</a>
+        <a href="Search">SEARCH</a>
         <a href="Profile" class="highlight">PROFILE</a>
     </div>
 
-    <!-- University Library Card -->
+<div class="libcard-page">
     <div class="library-card-container">
         <div class="header">
             <div class="university-info">
@@ -223,30 +243,34 @@ else
                     <p>UNIVERSITY OF THE CITY OF MANILA</p>
                 </div>
             </div>
-        <div class="card-title">University Library Card</div>
-    </div>
-
-    <div class="card-content">
-        <div class="profile-pic">
-            <img src="~/images/pfp.png" alt="Profile Picture">
-        </div>
-
-        <div class="details">
-            <p><strong>Name:</strong> <span>@ViewBag.UserName</span></p>
-            <p><strong>Library Card ID:</strong> <span>@ViewBag.LibraryCardId</span></p>
-            <p><strong>Student ID:</strong> <span>@ViewBag.StudentId</span></p>
-            <p><strong>Course:</strong> <span>@ViewBag.Course</span></p>
-            <p><strong>Email:</strong> <span>@ViewBag.PlmEmail</span></p>
-            <p><strong>Contact Number:</strong> <span>0990909</span></p>
-
-            <div class="date-info">
-                <p><strong>Date Issued:</strong> <span>mepww</span></p>
+            <div class = "card-title">
+                <h2>University Library Card</h2>
             </div>
-
         </div>
-    </div>
+        
 
-    <div class="barcode-section">
-        <img src="images/barcode.png" alt="Barcode">
+        <div class="card-content">
+            <div class="profile-pic">
+                <img src="~/images/pfp.png" alt="Profile Picture">
+            </div>
+            <div class="details">
+                <h2>@userName</h2>
+                <p><strong>Library Card ID</strong> <span>: @libId</span></p>
+                <p><strong>Student ID</strong> <span>: @studentId</span></p>
+                <p><strong>Course</strong> <span>: @course</span></p>
+                <p><strong>Email</strong> <span>: @email</span></p>
+
+                <div class="date-info">
+                    <p><strong>Date Issued:</strong> <span>@dateIssued</span></p>
+                </div>
+            </div>
+            @* <div class="barcode-section">
+                <img src="~/images/barcode.png" alt="Barcode">
+            </div> *@
+        </div>
+
+        
     </div>
+</div>
+    
 </body>

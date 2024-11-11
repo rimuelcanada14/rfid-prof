@@ -1,297 +1,268 @@
 @{
-    ViewData["Title"] = "Login";
+ViewData["Title"] = "Login";
 }
-
 <style>
-    .body {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-    }
-
-    .container {
-        display: flex;
-        width: 100vw;
-        height: 80vh;
-        transform: scale(1.089);
-        margin-top: 1.3em;
-        margin-left: 2.75em;
-        z-index: 0;
-    }
-
-    .left-side {
-        flex: 2;
-        justify-content: flex-start;
-        align-items: center;
-        background-image: url('/images/PLM-RIGHT-INDEX.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
-
-    .left-side img {
-        display: flex;
-        margin-top: -7.5em;
-        width: 80%;
-        max-width: 600px;
-        height: auto;
-        border-radius: 10px;
-        margin-left: 50px;
-    }
-
-    .right-side {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background-color: #fbf6f8;
-        padding: 30px;
-        width: 100%;
-        max-width: 472px;
-    }
-
-    .login-title {
-        font-size: 28px;
-        color: #4f68d9;
-        margin-bottom: 20px;
-        font-family: 'PoppinsMedium', sans-serif;
-        font-weight: 700;
-    }
-
-    .login-form {
-        width: 100%;
-    }
-
-    .form-label {
-        font-size: 14px;
-        color: #a09f9f;
-        margin-bottom: 5px;
-        display: block;
-        font-family: 'TTForsRegular', sans-serif;
-    }
-
-    .input-container {
-        position: relative;
-        margin-bottom: 20px;
-    }
-
-    .input-container input {
-        width: 100%;
-        padding: 10px 15px;
-        padding-right: 40px;
-        font-size: 14px;
-        border: 1px solid #d5d7d6;
-        border-radius: 20px;
-    }
-
-    .input-container input::placeholder {
-        color: #a09f9f;
-        opacity: 1;
-    }
-
-    .icon .input-icon {
-        width: 16px;
-        height: 22px;
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-    }
-
-    .login-button {
-        color: #ffffff;
-        background-color: #4f68d9;
-        font-size: 15px;
-        padding: 10px;
-        border: 1px solid #d5d7d6;
-        border-radius: 20px;
-        cursor: pointer;
-        width: 100%;
-        margin-bottom: 13px;
-        font-family: 'TTForsRegular', sans-serif;
-        font-weight: 400;
-    }
-
-    .separator {
-        color: #a09f9f;
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 12px;
-        font-size: 14px;
-        font-family: 'TTForsRegular', sans-serif;
-    }
-
-    .register-button {
-        background-color: #fbf6f8;
-        color: #4f68d9;
-        font-size: 15px;
-        padding: 10px;
-        border: 1px solid #d5d7d6;
-        border-radius: 20px;
-        cursor: pointer;
-        width: 100%;
-        margin-bottom: 20px;
-        font-family: 'TTForsRegular', sans-serif;
-        font-weight: 400;
-    }
-
-    .forgot-password {
-        text-align: center;
-        color: #a09f9f;
-        font-size: 14px;
-        display: block;
-        margin-top: 10px;
-        text-decoration: none;
-        margin-bottom: 80px;
-        font-family: 'TTNormsRegular', sans-serif;
-    }
-
-    .right-side p {
-        margin-top: 2em;
-        font-size: 15px;
-        color: #555;
-        text-align: center;
-        font-weight: bold;
-        font-family: 'TTNormsBold', sans-serif;
-    }
-    .popup-message {
-        position: absolute;
-        top: 8.5%; /* Center vertically */
-        left: 98%; /* Center horizontally */
-        transform: translate(-50%, -50%); /* Adjust position to truly center */
-        background-color: #f44336; /* Red background for error */
-        color: white;
-        padding: 15px;
-        padding-left: 25px;
-        border-radius: 8px;
-        font-family: Arial, sans-serif;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-        transition: opacity 0.5s ease; /* Transition for smooth fading */
-        opacity: 0; /* Start hidden */
-        width: 18em;
-    }
-
-    /* Class to show the popup */
-    .popup-message.show {
-        display: block; /* Show the popup */
-        opacity: 1; /* Make it visible */
-    }
-
-    /* Class to hide the popup */
-    .popup-message.hide {
-        opacity: 0; /* Fade out */
-    }
+	.body {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		overflow: hidden;
+	}
+	.container {
+		display: flex;
+		width: 100vw;
+		height: 80vh;
+		transform: scale(1.089);
+		margin-top: 1.3em;
+		margin-left: 2.75em;
+		z-index: 0;
+	}
+	.left-side {
+		flex: 2;
+		justify-content: flex-start;
+		align-items: center;
+		background-image: url('/images/PLM-RIGHT-INDEX.jpg');
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+	.left-side img {
+		display: flex;
+		margin-top: -7.5em;
+		width: 80%;
+		max-width: 600px;
+		height: auto;
+		border-radius: 10px;
+		margin-left: 50px;
+	}
+	.right-side {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		background-color: #fbf6f8;
+		padding: 30px;
+		width: 100%;
+		max-width: 472px;
+	}
+	.login-title {
+		font-size: 28px;
+		color: #4f68d9;
+		margin-bottom: 20px;
+		font-family: 'PoppinsMedium', sans-serif;
+		font-weight: 700;
+	}
+	.login-form {
+		width: 100%;
+	}
+	.form-label {
+		font-size: 14px;
+		color: #a09f9f;
+		margin-bottom: 5px;
+		display: block;
+		font-family: 'TTForsRegular', sans-serif;
+	}
+	.input-container {
+		position: relative;
+		margin-bottom: 20px;
+	}
+	.input-container input {
+		width: 100%;
+		padding: 10px 15px;
+		padding-right: 40px;
+		font-size: 14px;
+		border: 1px solid #d5d7d6;
+		border-radius: 20px;
+	}
+	.input-container input::placeholder {
+		color: #a09f9f;
+		opacity: 1;
+	}
+	.icon .input-icon {
+		width: 16px;
+		height: 22px;
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		cursor: pointer;
+	}
+	.login-button {
+		color: #ffffff;
+		background-color: #4f68d9;
+		font-size: 15px;
+		padding: 10px;
+		border: 1px solid #d5d7d6;
+		border-radius: 20px;
+		cursor: pointer;
+		width: 100%;
+		margin-bottom: 13px;
+		font-family: 'TTForsRegular', sans-serif;
+		font-weight: 400;
+	}
+	.separator {
+		color: #a09f9f;
+		font-weight: bold;
+		text-align: center;
+		margin-bottom: 12px;
+		font-size: 14px;
+		font-family: 'TTForsRegular', sans-serif;
+	}
+	.register-button {
+		background-color: #fbf6f8;
+		color: #4f68d9;
+		font-size: 15px;
+		padding: 10px;
+		border: 1px solid #d5d7d6;
+		border-radius: 20px;
+		cursor: pointer;
+		width: 100%;
+		margin-bottom: 20px;
+		font-family: 'TTForsRegular', sans-serif;
+		font-weight: 400;
+	}
+	.forgot-password {
+		text-align: center;
+		color: #a09f9f;
+		font-size: 14px;
+		display: block;
+		margin-top: 10px;
+		text-decoration: none;
+		margin-bottom: 80px;
+		font-family: 'TTNormsRegular', sans-serif;
+	}
+	.right-side p {
+		margin-top: 2em;
+		font-size: 15px;
+		color: #555;
+		text-align: center;
+		font-weight: bold;
+		font-family: 'TTNormsBold', sans-serif;
+	}
+	.popup-message {
+		position: absolute;
+		top: 8.5%; /* Center vertically */
+		left: 98%; /* Center horizontally */
+		transform: translate(-50%, -50%); /* Adjust position to truly center */
+		background-color: #f44336; /* Red background for error */
+		color: white;
+		padding: 15px;
+		padding-left: 25px;
+		border-radius: 8px;
+		font-family: Arial, sans-serif;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		z-index: 1000;
+		transition: opacity 0.5s ease; /* Transition for smooth fading */
+		opacity: 0; /* Start hidden */
+		width: 18em;
+	}
+	/* Class to show the popup */
+	.popup-message.show {
+		display: block; /* Show the popup */
+		opacity: 1; /* Make it visible */
+	}
+	/* Class to hide the popup */
+	.popup-message.hide {
+		opacity: 0; /* Fade out */
+	}
 </style>
 
 <body>
-    <div class="container">
-        <div class="left-side">
-            <div class="image-container">
-                <!-- Add image or leave blank for background image -->
-            </div>
-        </div>
-
-        <div class="right-side">
-            <div class="login-Input">
-                <h2 class="login-title">Login</h2>
-
-                <form class="login-form" asp-action="Login" method="post" id="loginForm">
-                    <div style="display: none;">
-                        <label>
-                            <input type="radio" name="loginMethod" value="manual" checked onchange="toggleLoginMethod(this.value)"> Manual Login
-                        </label>
-                        <label>
-                            <input type="radio" name="loginMethod" value="rfid" onchange="toggleLoginMethod(this.value)"> RFID Login
-                        </label>
-                    </div>
-
-                    <div id="manualLogin" class="login-form">
-                        <label for="email" class="form-label">Email Address</label>
-                        <div class="input-container">
-                            <input type="email" id="email" name="email" placeholder="Email Address" required>
-                            <span class="icon">
-                                <img src="~/images/Email Icon.png" alt="Email Icon" class="input-icon">
-                            </span>
-                        </div>
-
-                        <label for="password" class="form-label">Password</label>
-                        <div class="input-container">
-                            <input type="password" id="password" name="password" placeholder="Password" required>
-                            <span class="icon" onclick="togglePassword()">
-                                <img src="~/images/Password Icon.png" alt="Password Icon" class="input-icon" id="password-toggle-icon">
-                            </span>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="login-button">Login</button>
-
-                    <div class="separator">
-                        <span>OR</span>
-                    </div>
-
-                    <button type="button" class="register-button" onclick="navigateToSignup()">Register an Account</button>
-
-                    <!-- <a href="#" class="forgot-password">Forgot Password?</a> -->
-                </form>
-
-                <p class="inquiry">For more inquiries or concerns, please email <a href="mailto:ul@plm.edu.ph">ul@plm.edu.ph</a></p>
-            </div>
-        </div>
-    </div>
-    <div id="userNotFoundPopup" class="popup-message">
-        User not found. Please try again.
-    </div>
-
-    <script>
-        function toggleLoginMethod(method) {
-            const manualLogin = document.getElementById("manualLogin");
-            const rfidLogin = document.getElementById("rfidLogin");
-
-            if (method === "manual") {
-                manualLogin.style.display = "block";
-                rfidLogin.style.display = "none";
-            } else {
-                manualLogin.style.display = "none";
-                rfidLogin.style.display = "block";
-            }
-        }
-
-        function togglePassword() {
-            const passwordField = document.getElementById("password");
-            const passwordIcon = document.getElementById("password-toggle-icon");
-
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                passwordIcon.src = "~/images/Password Icon copy.png";
-            } else {
-                passwordField.type = "password";
-                passwordIcon.src = "~/images/Password Icon.png";
-            }
-        }
-
-        function navigateToSignup() {
-            window.location.href = "/Account/Signup";
-        }
-        window.addEventListener("DOMContentLoaded", (event) => {
-            // Check if the popup should be shown
-            @if (TempData["UserNotFound"] != null && (bool)TempData["UserNotFound"] == true)
-            {
-                <text>
-                    const popup = document.getElementById("userNotFoundPopup");
-                    popup.classList.add("show"); // Show the popup
-                    setTimeout(() => {
-                        popup.classList.remove("show"); // Hide the popup
-                        popup.classList.add("hide"); // Add hide class for fade out
-                        setTimeout(() => {
-                            popup.style.display = "none"; // Set display to none after fade out
-                        }, 500); // Wait for the fade out transition before setting to none
-                    }, 4000);
-                </text>
-            }
-        });
-    </script>
+	<div class="container">
+		<div class="left-side">
+			<div class="image-container">
+				<!-- Add image or leave blank for background image -->
+			</div>
+		</div>
+		<div class="right-side">
+			<div class="login-Input">
+				<h2 class="login-title">Login</h2>
+				<form class="login-form" asp-action="Login" method="post" id="loginForm">
+					<div style="display: none;">
+						<label>
+						<input type="radio" name="loginMethod" value="manual" checked onchange="toggleLoginMethod(this.value)"> Manual Login
+						</label>
+						<label>
+						<input type="radio" name="loginMethod" value="rfid" onchange="toggleLoginMethod(this.value)"> RFID Login
+						</label>
+					</div>
+					<div id="manualLogin" class="login-form">
+						<label for="email" class="form-label">Email Address</label>
+						<div class="input-container">
+							<input type="email" id="email" name="email" placeholder="Email Address" required>
+							<span class="icon">
+							<img src="~/images/Email Icon.png" alt="Email Icon" class="input-icon">
+							</span>
+						</div>
+						<label for="password" class="form-label">Password</label>
+						<div class="input-container">
+							<input type="password" id="password" name="password" placeholder="Password" required>
+							<span class="icon" onclick="togglePassword()">
+							<img src="~/images/Password Icon.png" alt="Password Icon" class="input-icon" id="password-toggle-icon">
+							</span>
+						</div>
+					</div>
+					<button type="submit" class="login-button">Login</button>
+					<div class="separator">
+						<span>OR</span>
+					</div>
+					<button type="button" class="register-button" onclick="navigateToSignup()">Register an Account</button>
+					<!-- <a href="#" class="forgot-password">Forgot Password?</a> -->
+				</form>
+				<p class="inquiry">For more inquiries or concerns, please email <a href="mailto:ul@plm.edu.ph">ul@plm.edu.ph</a></p>
+			</div>
+		</div>
+	</div>
+	<div id="userNotFoundPopup" class="popup-message">
+		User not found. Please try again.
+	</div>
+	<script>
+		function toggleLoginMethod(method) {
+		    const manualLogin = document.getElementById("manualLogin");
+		    const rfidLogin = document.getElementById("rfidLogin");
+		
+		    if (method === "manual") {
+		        manualLogin.style.display = "block";
+		        rfidLogin.style.display = "none";
+		    } else {
+		        manualLogin.style.display = "none";
+		        rfidLogin.style.display = "block";
+		    }
+		}
+		
+		function togglePassword() {
+		    const passwordField = document.getElementById("password");
+		    const passwordIcon = document.getElementById("password-toggle-icon");
+		
+		    if (passwordField.type === "password") {
+		        passwordField.type = "text";
+		        passwordIcon.src = "~/images/Password Icon copy.png";
+		    } else {
+		        passwordField.type = "password";
+		        passwordIcon.src = "~/images/Password Icon.png";
+		    }
+		}
+		
+		function navigateToSignup() {
+		    window.location.href = "/Account/Signup";
+		}
+		window.addEventListener("DOMContentLoaded", (event) => {
+		    // Check if the popup should be shown
+		    @if (TempData["UserNotFound"] != null && (bool)TempData["UserNotFound"] == true)
+		    {
+		        <text>
+		            const popup = document.getElementById("userNotFoundPopup");
+		            popup.classList.add("show"); // Show the popup
+		            setTimeout(() => {
+		                popup.classList.remove("show"); // Hide the popup
+		                popup.classList.add("hide"); // Add hide class for fade out
+		                setTimeout(() => {
+		                    popup.style.display = "none"; // Set display to none after fade out
+		                }, 500); // Wait for the fade out transition before setting to none
+		            }, 4000);
+		        </text>
+		    }
+		});
+	</script>
 </body>

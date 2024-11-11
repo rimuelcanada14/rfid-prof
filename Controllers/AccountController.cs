@@ -94,147 +94,230 @@ public class AccountController : Controller
         return View("Input"); // Return to the login view with error
     }
 
-    public IActionResult Welcome()
+public IActionResult Welcome()
+{
+    var userName = HttpContext.Session.GetString("UserName");
+
+    if (string.IsNullOrEmpty(userName))
+    {
+        // Redirect to the home page if the user is not logged in
+        return RedirectToAction("Index", "Home");
+    }
+
+    // Use FirstOrDefault to avoid the exception when there are multiple users with the same name
+    var user = _context.Users.FirstOrDefault(u => u.Name == userName);
+    if (user == null)
+    {
+        TempData["ErrorMessage"] = "User not found. Please try logging in again.";
+        return RedirectToAction("Input", "Account");
+    }
+
+    // Set additional user information in session for quick access
+    HttpContext.Session.SetString("StudentId", user.StudentNumber);
+    HttpContext.Session.SetString("Course", user.Course);
+    HttpContext.Session.SetString("Email", user.Email);
+    HttpContext.Session.SetInt32("UserId", user.UserId);
+
+    // Handle nullable DateIssued by checking if it has a value
+    if (user.DateIssued.HasValue)
+    {
+        HttpContext.Session.SetString("DateIssued", user.DateIssued.Value.ToString("yyyy-MM-dd"));
+    }
+    else
+    {
+        // Optionally set a default value or handle the case where DateIssued is null
+        HttpContext.Session.SetString("DateIssued", string.Empty); // Or another appropriate default
+    }
+
+    // Pass user's name to the view
+    ViewBag.UserName = userName;
+
+    return View();
+}
+
+
+
+    public IActionResult Search()
     {
         var userName = HttpContext.Session.GetString("UserName");
 
         if (string.IsNullOrEmpty(userName))
         {
-            // Redirect to index if user is not logged in
-            return RedirectToAction("Index", "Home");
+            // Redirect to Input page if user is not logged in
+            return RedirectToAction("Input", "Account");
         }
 
-        // Fetch the user from the database and store additional data in the session
-        var user = _context.Users.SingleOrDefault(u => u.Name == userName);
-        if (user != null)
-        {
-            HttpContext.Session.SetString("StudentId", user.StudentNumber);
-            HttpContext.Session.SetString("Course", user.Course);
-            HttpContext.Session.SetString("PlmEmail", user.Email);
-        }
+        // Retrieve books from the database
+        var books = _context.Books.ToList(); // Gets all books from the "Books" table
 
         ViewBag.UserName = userName;
-        return View();
+        return View(books); // Pass books as the model to the view
     }
-
-    public IActionResult Return()
+    public IActionResult ScannedBorrow(string rfid)
     {
-        var userName = HttpContext.Session.GetString("UserName");
-
-        if (string.IsNullOrEmpty(userName))
+        if (string.IsNullOrEmpty(rfid))
         {
-            // Redirect to index if user is not logged in
-            return RedirectToAction("Index", "Home");
+            ViewBag.ErrorMessage = "RFID not provided";
+            return View("Welcome");
         }
 
-        ViewBag.UserName = userName;
-        return View();
+        var book = _context.Books.FirstOrDefault(b => b.BookRFID == rfid);
+        if (book != null)
+        {
+            return View("ScannedBorrow", book); // Pass a single Book object
+        }
+        else
+        {
+            ViewBag.ErrorMessage = "No book found. Please try again";
+            return View("Welcome");
+        }
     }
+
+[HttpPost]
+public IActionResult RegisterBorrow(int bookId)
+{
+    var userName = HttpContext.Session.GetString("UserName");
+
+    if (string.IsNullOrEmpty(userName))
+    {
+        // Redirect to login if user is not logged in
+        return RedirectToAction("Input", "Account");
+    }
+
+    var user = _context.Users.FirstOrDefault(u => u.Name == userName);
+    if (user == null)
+    {
+        TempData["ErrorMessage"] = "User not found. Please try logging in again.";
+        return RedirectToAction("Input", "Account");
+    }
+
+    var book = _context.Books.FirstOrDefault(b => b.BookId == bookId);
+    if (book == null)
+    {
+        TempData["ErrorMessage"] = "Book not found.";
+        return RedirectToAction("ScannedBorrow", new { rfid = book.BookRFID });
+    }
+
+    // Add an entry in BorrowedBooks
+    var borrowedBook = new BorrowedBooks
+    {
+        UserId = user.UserId,
+        BookId = book.BookId,
+        DateBorrowed = DateTimeOffset.UtcNow, // Current time in UTC
+        DLBorrow = DateTimeOffset.UtcNow.AddDays(20) // Deadline 20 days from now
+    };
+
+    // Update TimesBorrowed and Availability of the book
+    book.TimesBorrowed += 1;  // Increment TimesBorrowed
+    book.Availability = "Borrowed"; // Set availability to "Borrowed"
+
+    // Explicitly mark the book as modified to ensure Entity Framework tracks it
+    _context.Books.Update(book);
+
+    // Add the borrowed book entry to BorrowedBooks table
+    _context.BorrowedBooks.Add(borrowedBook);
+
+    // Save changes to the database
+    _context.SaveChanges();
+
+    TempData["SuccessMessage"] = "Book successfully registered as borrowed.";  // Set success message
+    return RedirectToAction("ScannedBorrow", new { rfid = book.BookRFID });
+}
+
+
     public IActionResult Profile()
+{
+    var userName = HttpContext.Session.GetString("UserName");
+
+    if (string.IsNullOrEmpty(userName))
     {
-        var userName = HttpContext.Session.GetString("UserName");
-
-        if (string.IsNullOrEmpty(userName))
-        {
-            return RedirectToAction("Index", "Home");
-        } 
-        // Fetch the user from the database and store additional data in the session
-        var user = _context.Users.SingleOrDefault(u => u.Name == userName);
-        if (user != null)
-        {
-            HttpContext.Session.SetString("StudentId", user.StudentNumber);
-            HttpContext.Session.SetString("Course", user.Course);
-            HttpContext.Session.SetString("PlmEmail", user.Email);
-        }
-
-        ViewBag.UserName = userName;
-        ViewBag.StudentId = HttpContext.Session.GetString("StudentId");
-        ViewBag.Course = HttpContext.Session.GetString("Course");
-        ViewBag.PlmEmail = HttpContext.Session.GetString("PlmEmail");
-    
-        return View();
+        // Redirect to the home page if the user is not logged in
+        return RedirectToAction("Index", "Home");
     }
+
+    // Use FirstOrDefault to avoid the exception when there are multiple users with the same name
+    var user = _context.Users.FirstOrDefault(u => u.Name == userName);
+    if (user == null)
+    {
+        TempData["ErrorMessage"] = "User not found. Please try logging in again.";
+        return RedirectToAction("Input", "Account");
+    }
+
+    // Set user data in ViewBag or ViewModel for display on the profile page
+    ViewBag.User = user;
+    return View();
+}
+
+
+
 
     [HttpGet]
     public IActionResult EditProfile()
     {
         var userName = HttpContext.Session.GetString("UserName");
-        var studentId = HttpContext.Session.GetString("StudentId");
-        var course = HttpContext.Session.GetString("Course");
-        var plmEmail = HttpContext.Session.GetString("PlmEmail");
-        // var contactNumber = HttpContext.Session.GetString("ContactNumber");
 
         if (string.IsNullOrEmpty(userName))
         {
-            return RedirectToAction("Index", "Home"); // Redirect if user is not logged in
+            return RedirectToAction("Index", "Home");
         }
 
-        ViewBag.UserName = userName;
-        ViewBag.StudentId = studentId;
-        ViewBag.Course = course;
-        ViewBag.PlmEmail = plmEmail;
-        // ViewBag.ContactNumber = contactNumber;
-
-        return View();
-    }
-
-    [HttpPost]
-    public IActionResult EditProfile([FromBody] User updatedUser)
-    {
-        var userName = HttpContext.Session.GetString("UserName");
-
-        if (string.IsNullOrEmpty(userName))
-        {
-            return RedirectToAction("Input", "Account");
-        }
-
-        // Fetch the existing user from the database
-        var user = _context.Users.SingleOrDefault(u => u.Name == userName);
+        // Using FirstOrDefault to prevent the exception
+        var user = _context.Users.FirstOrDefault(u => u.Name == userName);
         if (user == null)
         {
-            return NotFound();
+            return RedirectToAction("Index", "Home");
         }
 
-        // Check for duplicates (excluding the current user)
-        var isDuplicate = _context.Users
-            .Any(u => u.Id != user.Id && (
-                u.StudentNumber == updatedUser.StudentNumber ||
-                u.Email == updatedUser.Email
-                //add contact number
-            ));
-
-        if (isDuplicate)
-        {
-            return BadRequest(new { message = "Invalid credentials. User already exists." });
-        }
-
-        // Update user properties
-        user.StudentNumber = updatedUser.StudentNumber;
-        user.Course = updatedUser.Course;
-        user.Email = updatedUser.Email;
-        // Uncomment if you have ContactNumber in your User model
-        // user.ContactNumber = updatedUser.ContactNumber;
-
-        try
-        {
-            _context.SaveChanges();
-
-            // Update session data
-            HttpContext.Session.SetString("StudentId", user.StudentNumber);
-            HttpContext.Session.SetString("Course", user.Course);
-            HttpContext.Session.SetString("PlmEmail", user.Email);
-            // HttpContext.Session.SetString("ContactNumber", user.ContactNumber);
-
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            // Log the exception if you have logging configured
-            return StatusCode(500, "An error occurred while updating the profile.");
-        }
-    
-
+        return View(user); // Pass the User model to the view for editing
     }
+
+
+
+[HttpPost]
+public IActionResult EditProfile(User updatedUser)
+{
+    var userName = HttpContext.Session.GetString("UserName");
+
+    if (string.IsNullOrEmpty(userName))
+    {
+        return RedirectToAction("Input", "Account");
+    }
+
+    var user = _context.Users.FirstOrDefault(u => u.Name == userName);
+    if (user == null)
+    {
+        return NotFound();
+    }
+
+    // Check if StudentNumber is empty or null and handle accordingly
+    if (string.IsNullOrEmpty(updatedUser.StudentNumber))
+    {
+        // You could set a default value or handle it based on your business logic
+        updatedUser.StudentNumber = user.StudentNumber; // retain the current StudentNumber
+    }
+
+    // Perform update
+    user.StudentNumber = updatedUser.StudentNumber;
+    user.Course = updatedUser.Course;
+    user.Email = updatedUser.Email;
+    user.rfid = updatedUser.rfid;
+    user.role = updatedUser.role;
+
+    try
+    {
+        _context.SaveChanges();
+        HttpContext.Session.SetString("StudentId", user.StudentNumber);
+        HttpContext.Session.SetString("Course", user.Course);
+        HttpContext.Session.SetString("PlmEmail", user.Email);
+        return Ok();
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { message = "An error occurred while updating the profile.", details = ex.Message });
+    }
+}
+
+
 
     [HttpGet]
     public IActionResult LibraryCard()
@@ -243,31 +326,22 @@ public class AccountController : Controller
 
         if (string.IsNullOrEmpty(userName))
         {
+            // Redirect to the home page if the user is not logged in
             return RedirectToAction("Index", "Home");
         }
 
-        // Fetch the user from the database
-        var user = _context.Users.SingleOrDefault(u => u.Name == userName);
-        if (user != null)
+        // Use FirstOrDefault to avoid the exception when there are multiple users with the same name
+        var user = _context.Users.FirstOrDefault(u => u.Name == userName);
+        if (user == null)
         {
-            // Update session with all necessary user data
-            HttpContext.Session.SetString("StudentId", user.StudentNumber);
-            HttpContext.Session.SetString("Course", user.Course);
-            HttpContext.Session.SetString("PlmEmail", user.Email);
-            // HttpContext.Session.SetString("ContactNumber", user.ContactNumber ?? "");
-            // HttpContext.Session.SetString("LibraryCardId", user.LibraryCardId ?? "");
-            // HttpContext.Session.SetString("DateIssued", user.DateIssued?.ToString("MMMM dd, yyyy") ?? "");
+            TempData["ErrorMessage"] = "User not found. Please try logging in again.";
+            return RedirectToAction("Input", "Account");
         }
 
-        // Pass all the data to the view through ViewBag
-        ViewBag.UserName = userName;
-        ViewBag.StudentId = HttpContext.Session.GetString("StudentId");
-        ViewBag.Course = HttpContext.Session.GetString("Course");
-        ViewBag.PlmEmail = HttpContext.Session.GetString("PlmEmail");
-        // ViewBag.ContactNumber = HttpContext.Session.GetString("ContactNumber");
-        // ViewBag.LibraryCardId = HttpContext.Session.GetString("LibraryCardId");
-        // ViewBag.DateIssued = HttpContext.Session.GetString("DateIssued");
+        // Set user data in ViewBag or ViewModel for display on the profile page
+        ViewBag.User = user;
         return View();
     }
 }
+
     

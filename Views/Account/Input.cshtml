@@ -3,283 +3,287 @@
 }
 
 <style>
-    .body {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden; 
-    }
+   .body {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden; 
+   }
 
-    .container {
-        display: flex;
-        width: 100vw;
-        height: 80vh; 
-        transform: scale(1.089);
-        margin-top: 1.3em;
-        margin-left: 2.75em;
-        z-index: 0;
-    }
+   .container {
+      display: flex;
+      width: 100vw;
+      height: 80vh; 
+      transform: scale(1.089);
+      margin-top: 1.3em;
+      margin-left: 2.75em;
+      z-index: 0;
+   }
 
-    .left-side {
-        flex: 2;
-        justify-content: flex-start;
-        align-items: center;
-        background-image: url('/images/PLM-RIGHT-INDEX.jpg'); 
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
+   .left-side {
+      flex: 2;
+      justify-content: flex-start;
+      align-items: center;
+      background-image: url('/images/PLM-RIGHT-INDEX.jpg'); 
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+   }
 
-    .left-side img {
-        display: flex;
-        margin-top: -7.5em;
-        width: 80%; 
-        max-width: 600px;
-        height: auto; 
-        border-radius: 10px; 
-        margin-left: 50px;
-    }
+   .left-side img {
+      display: flex;
+      margin-top: -7.5em;
+      width: 80%; 
+      max-width: 600px;
+      height: auto; 
+      border-radius: 10px; 
+      margin-left: 50px;
+   }
 
-    .image-container {
-        display: flex;
-        flex-direction: column;
-        background-color: rgba(0, 0, 0, 0.5);
-        border-top-right-radius: 15px;
-        border-bottom-right-radius: 15px;
-        width: 90%;
-        max-width: 500px;
-        margin-left: 0;
-        height: 15em;
-        margin-top: 12em;
-    }
+   .image-container {
+      display: flex;
+      flex-direction: column;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-top-right-radius: 15px;
+      border-bottom-right-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      margin-left: 0;
+      height: 15em;
+      margin-top: 12em;
+   }
 
-    .right-side {
-        flex: 1;
-        padding: 30px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        background-color: rgba(244, 244, 244, 0.9);
-        background-image: url('/images/RIZAL-INDEX.png'); 
-        text-align: center;
-        background-size: cover;
-        align-items: center;
-    }
+   .right-side {
+      flex: 1;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: rgba(244, 244, 244, 0.9);
+      background-image: url('/images/RIZAL-INDEX.png'); 
+      text-align: center;
+      background-size: cover;
+      align-items: center;
+      max-width: 100%;
+   }
 
-    #loginForm {
-        width: 100%;
-    }
+   #loginForm {
+      width: 100%;
+   }
 
-    .right-side img {
-        max-width: 95%; 
-        height: auto;
-    }
+   .right-side img {
+      max-width: 90%; 
+      height: auto;
+   }
 
-    .account-selection {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        background-color: rgba(251, 246, 248, 0.95);
-        border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border: 1px solid #a9a7a7;
-        width: 80%;
-        height: 25em;
-        justify-content: center;
-    }
+   .account-selection {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background-color: rgba(251, 246, 248, 0.95);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 1px solid #a9a7a7;
+      width: 80%;
+      height: 25em;
+      justify-content: center;
+   }
 
-    .account-selection h2 {
-        font-family: 'PoppinsMedium', sans-serif; 
-        color: #4f68d9; 
-        font-size: 1.8em;
-        font-weight: 600;
-    }
+   .account-selection h2 {
+      font-family: 'PoppinsMedium', sans-serif; 
+      color: #4f68d9; 
+      font-size: 1.8em;
+      font-weight: 600;
+   }
 
-    .login-button {
-        display: block;
-        width: 100%;
-        padding: 10px; 
-        font-size: 1.2em;
-        font-family: 'TTForsRegular', sans-serif;
-        color: #4f68d9;
-        background-color: #ffffff;
-        border: 1px solid #a9a7a7;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: background 0.3s, color 0.3s, transform 0.2s; 
-        font-weight: 600;
-    }
+   .login-button {
+      display: block;
+      width: 100%;
+      padding: 10px; 
+      font-size: 1.2em;
+      font-family: 'TTForsRegular', sans-serif;
+      color: #4f68d9;
+      background-color: #ffffff;
+      border: 1px solid #a9a7a7;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s, transform 0.2s; 
+      font-weight: 600;
+   }
 
-    .student-button:hover,
-    .librarian-button:hover {
-        background-color: #4f68d9;
-        color: #ffffff;
-    }
+   .student-button:hover,
+   .librarian-button:hover {
+      background-color: #4f68d9;
+      color: #ffffff;
+   }
 
-    .separator {
-        color: #a09f9f; 
-        font-weight: bold;
-        font-size: 0.9em;
-        font-family: 'TTForsRegular', sans-serif;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
+   .separator {
+      color: #a09f9f; 
+      font-weight: bold;
+      font-size: 0.9em;
+      font-family: 'TTForsRegular', sans-serif;
+      margin-top: 10px;
+      margin-bottom: 10px;
+   }
 
-    .choice-inquiry {
-        font-size: 0.9em;
-        color: #555;
-        text-align: center;
-        font-family: 'TTNormsBold', sans-serif;
-    }
+   .choice-inquiry {
+      font-size: 0.9em;
+      color: #555;
+      text-align: center;
+      font-family: 'TTNormsBold', sans-serif;
+   }
 
-    .choice-reg {
-        font-weight: 400;
-        margin-top: 30px;
-        font-size: 0.9em;
-        color: #555;
-        text-align: center;
-        font-family: 'TTNormsRegular', sans-serif;
-    }
+   .choice-reg {
+      font-weight: 400;
+      margin-top: 30px;
+      font-size: 0.9em;
+      color: #555;
+      text-align: center;
+      font-family: 'TTNormsRegular', sans-serif;
+   }
 
-    .right-side a {
-        color: #007bff;
-        text-decoration: none;
-    }
+   .right-side a {
+      color: #007bff;
+      text-decoration: none;
+   }
 
-    .right-side a:hover {
-        text-decoration: underline;
-    }
+   .right-side a:hover {
+      text-decoration: underline;
+   }
 
-    .left-border {
-        border-left: 8px solid white;
-        height: 10.5em;
-        position: absolute;
-        margin-left: 1.5em;
-        margin-top: 2.1em;
-    }
-    /* Popup message base style */
-    /* Popup message base style */
-    .popup-message {
-        position: absolute;
-        top: 8.5%; /* Center vertically */
-        left: 98%; /* Center horizontally */
-        transform: translate(-50%, -50%); /* Adjust position to truly center */
-        background-color: #f44336; /* Red background for error */
-        color: white;
-        padding: 15px;
-        padding-left: 25px;
-        border-radius: 8px;
-        font-family: Arial, sans-serif;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-        transition: opacity 0.5s ease; /* Transition for smooth fading */
-        opacity: 0; /* Start hidden */
-        width: 18em;
-    }
+   .left-border {
+      border-left: 8px solid white;
+      height: 10.5em;
+      position: absolute;
+      margin-left: 1.5em;
+      margin-top: 2.1em;
+   }
 
-    /* Class to show the popup */
-    .popup-message.show {
-        display: block; /* Show the popup */
-        opacity: 1; /* Make it visible */
-    }
+   .popup-message {
+      position: absolute;
+      top: 8.5%;
+      left: 98%;
+      transform: translate(-50%, -50%);
+      background-color: #f44336;
+      color: white;
+      padding: 15px;
+      padding-left: 25px;
+      border-radius: 8px;
+      font-family: Arial, sans-serif;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      transition: opacity 0.5s ease;
+      opacity: 0;
+      width: 18em;
+   }
 
-    /* Class to hide the popup */
-    .popup-message.hide {
-        opacity: 0; /* Fade out */
-    }
-        #confirmRfidButton, #rfidInputPopupField{
-        cursor: default;
-    }
-    .popup-link {
-        position: absolute; /* Fixed to ensure it stays centered on screen */
-        top: 46.5%; /* Center vertically */
-        left: 48%; /* Center horizontally */
-        transform: translate(-50%, -50%); /* Adjust position to truly center */
-        background-color: white; /* Green background for success */
-        color: black;
-        padding: 15px 25px; /* Add padding for spacing */
-        border-radius: 25px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        width: 25em;
-        height: 25.8em;
-        text-align: center; /* Center text within the popup */
-        font-size: 20px;
-        z-index: 1000;
-    }
-    .popup-link h2{
-        font-family: "PoppinsMedium";
-        font-weight: 700;
-    }
-    .popup-link p {
-        font-family: "TTForsRegular";
-        font-weight: 300;
-    }
-    .rfid-image {
-        width: auto;
-        height: 17em;
-        position: relative;
-        margin-top: -2.5em;
-    }
-    #closeRfidPopupButton {
-        position: absolute;
-        bottom: 1%;
-        left: 50%; /* Center horizontally */
-        transform: translate(-50%, -50%);
-        background-color: white ;
-        color: #black;
-        font-size: 15px;
-        padding: 10px;
-        border: 1px solid #4f68d9;
-        border-radius: 20px;
-        cursor: pointer;
-        width: 10em;
-        font-family: 'TTForsRegular', sans-serif;
-    }
-    #closeRfidPopupButton:hover {
-        background-color: #4f68d9;
-        color: #ffffff;
-        font-size: 15px;
-        padding: 10px;
-        border: 1px solid #d5d7d6;
-    }
-        .popup-overlay {
-        position: fixed; /* Fixed to ensure it stays centered on screen */
-        top: 50%; /* Center vertically */
-        left: 55%; /* Center horizontally */
-        transform: translate(-50%, -50%); /* Adjust position to truly center */
-        background-color: rgba(0, 0, 0, 0.4); /* Green background for success */
-        color: #13ab25;
-        padding: 15px 25px; /* Add padding for spacing */
-        border-radius: 8px;
-        font-family: "PoppinsMedium";
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 999;
-        transition: opacity 0.5s ease; /* Smooth fading transition */
-        opacity: 0; /* Start hidden */
-        width: 110%;
-        height: 100%;
-        text-align: center; /* Center text within the popup */
-        font-size: 20px;
-        font-weight: 400;
-        display: none;
-        backdrop-filter: blur(5px);
-    }
+   .popup-message.show {
+      display: block;
+      opacity: 1;
+   }
 
-    /* Class to show the popup */
-    .popup-overlay.show {
-        display: block; /* Show the popup */
-        opacity: 1; /* Make it visible */
-    }
+   .popup-message.hide {
+      opacity: 0;
+   }
 
-    /* Class to hide the popup */
-    .popup-overlay.hide {
-        opacity: 0; /* Fade out */
-    }
+   #confirmRfidButton, #rfidInputPopupField {
+      cursor: default;
+   }
 
+   .popup-link {
+      position: absolute;
+      top: 46.5%;
+      left: 48%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      color: black;
+      padding: 15px 25px;
+      border-radius: 25px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 20em;
+      height: 22em;
+      text-align: center;
+      font-size: 20px;
+      z-index: 1000;
+   }
+
+   .popup-link h2 {
+      font-family: "PoppinsMedium";
+      font-weight: 700;
+      color: #4f68d9;
+      font-size: 33px;
+   }
+
+   .popup-link p {
+      font-family: "TTForsRegular";
+      font-weight: 300;
+   }
+
+   .rfid-image {
+      width: auto;
+      position: relative;
+      margin-top: -5.5em;
+   }
+
+   #closeRfidPopupButton {
+      position: absolute;
+      bottom: 1%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      color: black;
+      font-size: 15px;
+      padding: 10px;
+      border: 1px solid #4f68d9;
+      border-radius: 20px;
+      cursor: pointer;
+      width: 10em;
+      font-family: 'TTForsRegular', sans-serif;
+   }
+
+   #closeRfidPopupButton:hover {
+      background-color: #4f68d9;
+      color: #ffffff;
+      font-size: 15px;
+      padding: 10px;
+      border: 1px solid #d5d7d6;
+   }
+
+   .popup-overlay {
+      position: fixed;
+      top: 50%;
+      left: 55%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.4);
+      color: #13ab25;
+      padding: 15px 25px;
+      border-radius: 8px;
+      font-family: "PoppinsMedium";
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      transition: opacity 0.5s ease;
+      opacity: 0;
+      width: 110%;
+      height: 100%;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 400;
+      display: none;
+      backdrop-filter: blur(5px);
+   }
+
+   .popup-overlay.show {
+      display: block;
+      opacity: 1;
+   }
+
+   .popup-overlay.hide {
+      opacity: 0;
+   }
 </style>
 
 <body>
@@ -377,6 +381,7 @@
         // Close button event for RFID popup
         document.getElementById("closeRfidPopupButton").addEventListener("click", function() {
             document.getElementById("rfidInputPopup").style.display = 'none';
+            document.getElementById("rfidInputPopupField").value = "";
         });
 
         // Validate form for RFID linking completion
@@ -384,7 +389,6 @@
             const rfid = document.getElementById("rfidInputPopupField").value;
 
             if (!rfid) {
-                showPopup("Please link your RFID card before signing up.");
                 return false;
             }
             return true;

@@ -1,24 +1,23 @@
 @{
-    ViewBag.Title = "Home";
+ViewBag.Title = "Home";
 }
+@await Html.PartialAsync("_RfidPopup")
 @{
-    var userName = Context.Session.GetString("UserName");
+var userName = Context.Session.GetString("UserName");
 }
-
 @if (!string.IsNullOrEmpty(userName))
 {
-    <h2 style = "display: none;">Welcome, @userName</h2>
+<h2 style = "display: none;">Welcome, @userName</h2>
 }
 else
 {
-    <h2 style = "display: none;">Please log in to continue.</h2>
-    <script>
-        window.location.href = '@Url.Action("Input", "Account")';
-    </script>
+<h2 style = "display: none;">Please log in to continue.</h2>
+<script>
+	window.location.href = '@Url.Action("Input", "Account")';
+</script>
 }
-
 <style>
-    body {
+	body {
         margin: 0;
         padding: 0;
         background-image: url('/images/PLM-HOME.png');
@@ -30,18 +29,20 @@ else
         justify-content: center;
         align-items: center;
     }
+
     .container {
         width: 100vw;
-        height: 100vh; 
+        height: 100vh;
         z-index: 0;
     }
+
     .button-container {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 80%; /* Full viewport height */
-        margin: 0 auto; /* Centers horizontally */
+        height: 80%;
+        margin: 0 auto;
         gap: 25px;
     }
 
@@ -49,13 +50,14 @@ else
         background-color: #ffffff;
         color: #4f68d9;
         font-size: 33px;
+        font-weight: 600;
         padding: 10px;
         border: 1px solid #d5d7d6;
         border-radius: 40px;
         cursor: pointer;
         width: 14em;
         text-align: center;
-        text-decoration: none; 
+        text-decoration: none;
         font-family: 'PoppinsMedium';
         display: block;
         transition: background 0.3s, color 0.3s, transform 0.2s;
@@ -68,7 +70,7 @@ else
     }
 
     #logoutModal {
-        display: none; 
+        display: none;
         position: fixed;
         z-index: 1;
         left: 0;
@@ -112,8 +114,8 @@ else
     }
 
     #cancelLogout {
-        border: 1px solid #c82333; 
-        background-color: #ffffff; 
+        border: 1px solid #c82333;
+        background-color: #ffffff;
         color: #c82333;
         border-radius: 20px;
     }
@@ -162,11 +164,12 @@ else
         cursor: pointer;
         color: #ffffff;
         margin-left: 50px;
-        background-color: #d89b02; /* Add background color */
-        padding: 5px 10px; /* Add padding */
-        border-radius: 5px; /* Add border radius for rounded corners */
-        border: none; /* Remove any default border */
+        background-color: #d89b02;
+        padding: 5px 10px;
+        border-radius: 5px;
+        border: none;
     }
+
     .logout-cont {
         display: flex;
         flex-direction: row;
@@ -174,72 +177,181 @@ else
         text-align: center;
         align-items: center;
     }
+
+    .popup-link {
+        position: absolute;
+        top: 48%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        color: black;
+        padding: 15px 25px;
+        border-radius: 25px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 25em;
+        height: 25.8em;
+        text-align: center;
+        font-size: 20px;
+        z-index: 1000;
+    }
+
+    .popup-link h2 {
+        font-family: "PoppinsMedium";
+        font-weight: 700;
+    }
+
+    .popup-link p {
+        font-family: "TTForsRegular";
+        font-weight: 300;
+    }
+
+    .rfid-image {
+        width: auto;
+        height: 17em;
+        position: relative;
+        margin-top: -2.5em;
+    }
+
+    #closeRfidPopupButton {
+        position: absolute;
+        bottom: 1%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        color: black;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #4f68d9;
+        border-radius: 20px;
+        cursor: pointer;
+        width: 10em;
+        font-family: 'TTForsRegular', sans-serif;
+    }
+
+    #closeRfidPopupButton:hover {
+        background-color: #4f68d9;
+        color: #ffffff;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #d5d7d6;
+    }
+
+    .popup-overlay {
+        position: fixed;
+        top: 53%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.4);
+        color: #13ab25;
+        padding: 15px 25px;
+        border-radius: 8px;
+        font-family: "PoppinsMedium";
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        transition: opacity 0.5s ease;
+        width: 110%;
+        height: 110%;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 400;
+        display: none;
+        backdrop-filter: blur(5px);
+    }
+
+    .popup-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+
+    .popup-overlay.hide {
+        opacity: 0;
+    }
+    .popup-message {
+        position: fixed;
+        top: 20%;
+        left: 91%;
+        transform: translate(-50%, -50%);
+        background-color: #f44336;
+        color: white;
+        padding: 15px;
+        padding-left: 25px;
+        border-radius: 8px;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1001;
+        transition: opacity 0.5s ease;
+        width: 18em;
+        font-size: 20px;
+   }
 </style>
 
+<body>
+	<div class="container">
+		<div class="button-container">
+			<a class="button" onclick="navigatetoReturn()">RETURN</a>
+			<a href="#" class="button" onclick="showRfidPopup()">BORROW</a>
+			<a class="button" onclick="navigatetoSearch()">SEARCH</a>
+			<a class="button" onclick="navigatetoProfile()">PROFILE</a>
+			<a id="logoutButton" class="button">LOGOUT</a>
+		</div>
+		<div id="logoutModal">
+			<div class="modal-content">
+				<p>Log out of your account?</p>
+				<div class="logout-cont">
+					<button id="cancelLogout">Cancel</button>
+					<button id="confirmLogout" onclick="logout()">Log out</button>
+				</div>
+			</div>
+		</div>
+		<div id="loginNotification" class="notification-banner">
+			<img src="/Icons/Exclamation Icon.png" alt="Notification Icon" class="icon">
+			<div class="text-content">
+				<div class="notif">RETURN OVERDUE:</div>
+				<div class="message">Book “Front and Center” is overdue to return for 3 days, return the book now.</div>
+			</div>
+			<span class="close-btn" onclick="document.getElementById('loginNotification').style.display='none'">✖</span>
+		</div>
+	</div>
 
-
-<body>  
-    <div class="container">
-        <div class="button-container">
-        <a class="button" onclick="navigatetoReturn()">RETURN</a>
-        <a href="#" class="button">BORROW</a>
-        <a href="#" class="button">SEARCH</a>
-        <a class="button" onclick="navigatetoProfile()">PROFILE</a>
-        <a id="logoutButton" class="button">LOGOUT</a>
+    <div id="userNotFoundPopup" class="popup-message" style="display: none;">
+        <span id="errorMessage">@ViewBag.ErrorMessage</span>
     </div>
 
-    <div id="logoutModal">
-        <div class="modal-content">
-            <p>Log out of your account?</p>
-            <div class = "logout-cont">
-                <button id="cancelLogout">Cancel</button>
-                <button id="confirmLogout" onclick="logout()">Log out</button>
-            </div>
-        </div>
-    </div>
+    <script>
+        // Logout modal functionality
+        const logoutButton = document.getElementById("logoutButton");
+        const logoutModal = document.getElementById("logoutModal");
+        const cancelLogout = document.getElementById("cancelLogout");
 
-    <div id="loginNotification" class="notification-banner">
-        <img src="/Icons/Exclamation Icon.png" alt="Notification Icon" class="icon">
-        <div class="text-content">
-            <div class="notif">RETURN OVERDUE:</div>
-            <div class="message">Book “Front and Center” is overdue to return for 3 days, return the book now.</div>
-        </div>
-        <span class="close-btn" onclick="document.getElementById('loginNotification').style.display='none'">✖</span>
-    </div>
-</div>
+        logoutButton.onclick = function() {
+            logoutModal.style.display = "flex";
+        };
 
-
-<script>
-    const logoutButton = document.getElementById("logoutButton");
-    const logoutModal = document.getElementById("logoutModal");
-    const cancelLogout = document.getElementById("cancelLogout");
-    const confirmLogout = document.getElementById("confirmLogout");
-
-    logoutButton.onclick = function() {
-        logoutModal.style.display = "flex";
-    };
-
-    cancelLogout.onclick = function() {
-        logoutModal.style.display = "none";
-    };
-
-    window.onclick = function(event) {
-        if (event.target == logoutModal) {
+        cancelLogout.onclick = function() {
             logoutModal.style.display = "none";
+        };
+
+        window.onclick = function(event) {
+            if (event.target == logoutModal) {
+                logoutModal.style.display = "none";
+            }
+        };
+
+        function navigatetoReturn() {
+            window.location.href = '@Url.Action("Return", "Account")';
         }
-    };
-    function navigatetoReturn (){
-        window.location.href = '@Url.Action("Return", "Account")'
-    }
-    function navigatetoProfile (){
-        window.location.href = '@Url.Action("Profile", "Account")'
-    }
-    function logout() {
-            // Call logout action on the server
+        function navigatetoSearch() {
+            window.location.href = '@Url.Action("Search", "Account")';
+        }
+
+        function navigatetoProfile() {
+            window.location.href = '@Url.Action("Profile", "Account")';
+        }
+
+        function logout() {
             fetch('@Url.Action("Logout", "Account")', { method: 'POST' })
                 .then(response => {
                     if (response.ok) {
-                        // Redirect after logout
                         window.location.href = '@Url.Action("Index", "Home")';
                     } else {
                         alert('Error logging out. Please try again.');
@@ -250,10 +362,20 @@ else
                     alert('Error logging out. Please try again.');
                 });
         }
-    window.onload = function() {
-        const loginNotification = document.getElementById("loginNotification");
-        loginNotification.style.display = "flex";
-    }
-</script>
-    
+
+        window.onload = function() {
+            const loginNotification = document.getElementById("loginNotification");
+            loginNotification.style.display = "flex";
+
+            // Show error message popup if it exists, then hide after 3 seconds
+            const errorMessage = document.getElementById("errorMessage").innerText;
+            if (errorMessage && errorMessage.trim().length > 0) {
+                const popup = document.getElementById("userNotFoundPopup");
+                popup.style.display = "block";
+                setTimeout(function() {
+                    popup.style.display = "none";
+                }, 3000); // Hide after 3 seconds
+            }
+        };
+    </script>
 </body>
