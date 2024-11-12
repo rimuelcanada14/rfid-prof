@@ -76,6 +76,7 @@ else
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         height: 70vh;
         border: 1px solid #a9a7a7;
+        overflow: hidden;
     }
 
     .return-container::-webkit-scrollbar {
@@ -113,6 +114,12 @@ else
         margin: 20px 0;
     }
 
+        .book-table-container {
+        max-height: 50vh;
+        overflow-y: auto;
+        margin-top: 10px;
+    }
+
     .book-table {
         width: 100%;
         border-collapse: collapse;
@@ -130,9 +137,10 @@ else
         font-weight: bold;
         font-family: 'PoppinsMedium', Arial, sans-serif;
         background-color: #f9f9f9;
-        position: relative;
+         position: sticky;
+        top: 0;
+        z-index: 1; 
     }
-
     .book-cover {
         width: 60px;
         height: auto;
@@ -173,15 +181,19 @@ else
         flex-direction: row;
         align-items: baseline;
         font-size: 16px;
-    }
+        }
+
     #searchBar {
         border-radius: 15px;
         margin-left: .5em;
         width: 100%;
         padding-left: .5em;
     }
+    
 
 </style>
+
+
 <div class="navbar-menu">
 	<a href="Welcome">HOME</a>
 	<a href="Return">RETURN</a>
@@ -189,7 +201,9 @@ else
 	<a href="SEARCH" class="highlight">SEARCH</a>
 	<a href="Profile">PROFILE</a>
 </div>
+
 <body>
+
     <div class="return-page">
         <div class="return-container">
             <div class="return-title">Search</div>
@@ -200,7 +214,7 @@ else
                 <input type="text" id="searchBar" placeholder="Search for books..." onkeyup="searchBooks()">
             </div>
             
-            
+        <div class="book-table-container">
             <table class="book-table">
                 <thead>
                     <tr>
@@ -237,6 +251,7 @@ else
             </table>
         </div>
     </div>
+</div>
 
     <script>
         function searchBooks() {
