@@ -23,6 +23,7 @@ else
         window.location.href = '@Url.Action("Input", "Account")';
     </script>
 }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 
@@ -221,7 +222,43 @@ else
     .date-info {
         margin-top: 60px;
         font-family: 'MontserratSemiBold', Arial, sans-serif;
-
+        display: flex;
+        flex-direction: row;
+    }
+    .back-button {
+        padding: 5px 28px;
+        background-color: #ff4444;
+        color: white;
+        border: none;
+        border-radius: 24px;
+        font-family: 'PoppinsMedium';
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        position: relative;
+        font-size: 24px;
+        width: 6em;
+    }
+    .save-button {
+        padding: 5px 28px;
+        background-color: #4f68d9;
+        color: white;
+        border: none;
+        border-radius: 24px;
+        font-family: 'PoppinsMedium';
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        position: relative;
+        font-size: 24px;
+        width: 6em;
+    }
+    .button-container {
+        margin-left: 10em;
+        gap: 1em;
+        display: flex;
     }
 </style>
 
@@ -264,6 +301,10 @@ else
 
                 <div class="date-info">
                     <p><strong>Date Issued:</strong> <span>@dateIssued</span></p>
+                    <div class="button-container">
+                        <button type="button" class="save-button" onclick="saveLibraryCard()">Save</button>
+                        <button type="button" class="back-button" onclick="window.history.back()">Back</button>
+                    </div>
                 </div>
             </div>
             @* <div class="barcode-section">
@@ -274,5 +315,25 @@ else
         
     </div>
 </div>
-    
+<script>
+function saveLibraryCard() {
+    // Select the library card container
+    const cardContainer = document.querySelector('.library-card-container');
+
+    html2canvas(cardContainer, {
+        onclone: function (clonedDoc) {
+            // Hide only the buttons inside the cloned `.date-info` div
+            clonedDoc.querySelectorAll('.date-info button').forEach(button => button.style.display = 'none');
+        }
+    }).then(canvas => {
+        // Create a link element to download the image
+        const link = document.createElement('a');
+        link.download = 'library_card.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+}
+</script>
+
+
 </body>

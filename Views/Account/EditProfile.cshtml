@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Edit Profile";
 }
+@await Html.PartialAsync("_RfidPopup")
 @{
     var userName = Context.Session.GetString("UserName");
     var studentId = Context.Session.GetString("StudentId");
@@ -149,6 +150,7 @@ else
         margin-top: -2em;
     }
     .card-title h1 {
+        color: #A52A2A;
         font-family: "PoppinsMedium";
         font-size: 42px;
         font-weight: bold;
@@ -257,8 +259,8 @@ else
 <div class="navbar-menu">
     <a href="Welcome">HOME</a>
     <a href="Return">RETURN</a>
-    <a href="#" >BORROW</a>
-    <a href="#">TRACK</a>
+    <a href="#" onclick="showRfidPopup()" >BORROW</a>
+    <a href="Search">SEARCH</a>
     <a href="Profile" class="highlight">PROFILE</a>
 </div>
 
