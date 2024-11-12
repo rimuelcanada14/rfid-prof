@@ -35,6 +35,10 @@ public class AccountController : Controller
         {
             var passwordHasher = new PasswordHasher<User>();
             user.Password = passwordHasher.HashPassword(user, user.Password);
+
+            // Set the DateIssued to the current UTC date and time
+            user.DateIssued = DateTime.UtcNow;
+
             _context.Users.Add(user);
             _context.SaveChanges();
 
@@ -135,7 +139,49 @@ public class AccountController : Controller
 
         return View();
     }
+    public IActionResult Return()
+    {
+        var userName = HttpContext.Session.GetString("UserName");
 
+        if (string.IsNullOrEmpty(userName))
+        {
+            // Redirect to the home page if the user is not logged in
+            return RedirectToAction("Index", "Home");
+        }
+
+        // Use FirstOrDefault to avoid the exception when there are multiple users with the same name
+        var user = _context.Users.FirstOrDefault(u => u.Name == userName);
+        if (user == null)
+        {
+            TempData["ErrorMessage"] = "User not found. Please try logging in again.";
+            return RedirectToAction("Input", "Account");
+        }
+
+        // Set additional user information in session for quick access
+        HttpContext.Session.SetString("StudentId", user.StudentNumber);
+        HttpContext.Session.SetString("Course", user.Course);
+        HttpContext.Session.SetString("Email", user.Email);
+        HttpContext.Session.SetInt32("UserId", user.UserId);
+        HttpContext.Session.SetString("ContactNumber", user.ContactNumber);
+
+        // Handle nullable DateIssued by checking if it has a value
+        if (user.DateIssued.HasValue)
+        {
+            HttpContext.Session.SetString("DateIssued", user.DateIssued.Value.ToString("yyyy-MM-dd"));
+        }
+        else
+        {
+            // Optionally set a default value or handle the case where DateIssued is null
+            HttpContext.Session.SetString("DateIssued", string.Empty); // Or another appropriate default
+        }
+
+        // Pass user's name to the view
+        ViewBag.UserName = userName;
+
+        return View();
+    }
+
+    
 
 
     public IActionResult Search()

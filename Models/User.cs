@@ -8,8 +8,7 @@ public class User
     public string Name { get; set; }
 
     [Required]
-    public string? StudentNumber { get; set; }
-
+    public string StudentNumber { get; set; }
 
     [Required]
     public string Course { get; set; }
@@ -31,5 +30,5 @@ public class User
     public DateTime? DateIssued { get; set; }
 
     [Required]
-    public string ContactNumber { get; set; } 
+    public string ContactNumber { get; set; } = "NA";
 }

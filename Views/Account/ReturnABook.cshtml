@@ -1,0 +1,275 @@
+
+@{
+    ViewBag.Title = "Return A Book";
+}
+@await Html.PartialAsync("_RfidPopup")
+@{
+    var userName = Context.Session.GetString("UserName");
+    var studentId = Context.Session.GetString("StudentId");
+    var course = Context.Session.GetString("Course");
+    var email = Context.Session.GetString("Email");
+    var contactNum = Context.Session.GetString("ContactNumber");
+}
+
+@if (!string.IsNullOrEmpty(userName))
+{
+    <h2 style = "display: none;">Welcome, @userName</h2>
+}
+else
+{
+    <h2 style = "display: none;">Please log in to continue.</h2>
+    <script>
+        window.location.href = '@Url.Action("Input", "Account")';
+    </script>
+}
+
+<style>
+        /* Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url(images/bg.png);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* Navbar Styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: #ffffff;
+            color: #b50a0a;
+            background-image: url(images/left-bg.png);
+            background-repeat: no-repeat;
+            background-position: left;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            color: #808080;
+            text-decoration: none;
+            border-bottom: none;
+        }
+        .navbar-logo img {
+            height: 95px;
+            margin-right: 10px;
+        }
+        .university-text {
+            color: #505053;
+        }
+        .title-main {
+            font-size: 25px;
+            font-weight: bold;
+            margin: 0;
+            font-family: 'FrauncesSemiBold', Arial, sans-serif;
+            color: #d7a613;
+        }
+        .subtitle {
+            font-size: 20px;
+            color: #505053;
+        }
+        .navbar-menu {
+            display: flex;
+            gap: 50px;
+            align-items: center;
+        }
+        .navbar-menu a {
+            text-decoration: none;
+            color: #2e2c2b;
+            font-family: 'MontserratSemiBold', Arial, sans-serif;
+            font-size: 20px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        .navbar-menu a.return {
+            color: #DAA520;
+            font-size: 28px;
+        }
+        .navbar-menu a:hover {
+            color: #DAA520;
+        }
+        .yellow-bar {
+            height: 5px;
+            background-color: #FFD700;
+            width: 100%;
+        }
+        /* Return Container Styling */
+        .return-container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 50px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            overflow-y: scroll;
+            max-height: 70vh;
+            border: 1px solid #a9a7a7;
+        }
+        .return-container::-webkit-scrollbar {
+            width: 10px;
+        }
+        .return-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+        .return-container::-webkit-scrollbar-thumb {
+            background-color: #818181;
+            border-radius: 5px;
+        }
+        .return-container::-webkit-scrollbar-thumb:hover {
+            background-color: #818181;
+        }
+        .return-title {
+            font-size: 40px;
+            font-weight: bold;
+            color: #b50a0a;
+            display: flex;
+            font-family: 'TTForsTrialBold', Arial, sans-serif;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .divider-line {
+            width: 100%;
+            height: 2px;
+            background-color: #353535;
+            margin: 20px 0;
+        }
+        .book-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .book-table th, .book-table td {
+            padding: 12px;
+            text-align: center;
+            font-family: 'PoppinsMedium', Arial, sans-serif;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        .book-table th {
+            font-weight: bold;
+            font-family: 'PoppinsMedium', Arial, sans-serif;
+            background-color: #f9f9f9;
+            position: relative;
+        }
+        .book-cover {
+            width: 60px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .return-button {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #4a73e5;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-family: 'PoppinsMedium', Arial, sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+        .filter-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 16px; /* Adjust icon size */
+            height: auto;
+        }
+        .overdue td {
+            color: #b50a0a;
+            font-weight: bold;
+            font-family: 'PoppinsMedium', Arial, sans-serif;
+        }
+    </style>
+<div class="navbar-menu">
+    <a href="Welcome">HOME</a>
+    <a href="Return">RETURN</a>
+    <a href="#" onclick="showRfidPopup()" >BORROW</a>
+    <a href="Search">SEARCH</a>
+    <a href="Profile" class="highlight">PROFILE</a>
+</div>
+
+<body>
+    <div class="return-container">
+        <div class="return-title">Return a Book</div>
+        
+        <table class="book-table">
+            <thead>
+                <tr>
+                    <th>Borrowed Books</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Date Borrowed</th>
+                    <th><img src="images/filter.png" alt="Filter" class="filter-icon"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Multiple rows for Borrowed Books -->
+                <tr>
+                    <td><img src="images/front-and-center-small.png" alt="Book Cover" class="book-cover"></td>
+                    <td>Front and Center</td>
+                    <td>Olivia Naval</td>
+                    <td>October 20, 2024</td>
+                    <td><button class="return-button" onclick="window.location.href='booktobereturned.html';">Return</button></td>
+                </tr>
+                <tr>
+                    <td><img src="images/front-and-center-small.png" alt="Book Cover" class="book-cover"></td>
+                    <td>Front and Center</td>
+                    <td>Olivia Naval</td>
+                    <td>October 15, 2024</td>
+                    <td><button class="return-button" onclick="window.location.href='booktobereturned.html';">Return</button></td>
+                </tr>
+                <tr>
+                    <td><img src="images/front-and-center-small.png" alt="Book Cover" class="book-cover"></td>
+                    <td>Front and Center</td>
+                    <td>Olivia Naval</td>
+                    <td>October 15, 2024</td>
+                    <td><button class="return-button" onclick="window.location.href='booktobereturned.html';">Return</button></td>
+                </tr>
+                <tr>
+                    <td><img src="images/front-and-center-small.png" alt="Book Cover" class="book-cover"></td>
+                    <td>Front and Center</td>
+                    <td>Olivia Naval</td>
+                    <td>October 13, 2024</td>
+                    <td><button class="return-button" onclick="window.location.href='booktobereturned.html';">Return</button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="divider-line"></div>
+        
+        <table class="book-table">
+            <thead>
+                <tr>
+                    <th>Return Overdue</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Date Borrowed</th>
+                    <th><img src="images/filter.png" alt="Filter" class="filter-icon"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="overdue">
+                    <td><img src="images/no-more-overthinking-small.png" alt="Book Cover" class="book-cover"></td>
+                    <td>No more Overthinking</td>
+                    <td>Imani Olowe</td>
+                    <td>Borrowed</td>
+                    <td><button class="return-button" onclick="window.location.href='booktobereturned.html';">Return</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
