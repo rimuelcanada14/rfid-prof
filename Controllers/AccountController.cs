@@ -13,6 +13,32 @@ public class AccountController : Controller
     }
 
     [HttpGet]
+    public IActionResult AdminPanel()
+    {
+    return View(); 
+    }
+
+    
+        [HttpGet]
+    public IActionResult AdminBookManagement()
+{
+    var userName = HttpContext.Session.GetString("UserName");
+
+    if (string.IsNullOrEmpty(userName))
+    {
+        // Redirect to Input page if user is not logged in
+        return RedirectToAction("Input", "Account");
+    }
+
+    // Retrieve books from the database
+    var books = _context.Books.ToList(); // Gets all books from the "Books" table
+
+    ViewBag.UserName = userName; // Set the user's name in ViewBag for display in the view
+    return View(books); // Pass books as the model to the view
+}
+
+
+    [HttpGet]
     public IActionResult Input() => View();
 
     [HttpGet]
@@ -409,6 +435,6 @@ public class AccountController : Controller
         HttpContext.Session.Remove("UserName");
         return RedirectToAction("Index", "Home"); // Redirect to home page after logout
     }
-}
 
-    
+
+}
