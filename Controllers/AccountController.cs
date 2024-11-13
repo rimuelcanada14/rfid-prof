@@ -17,6 +17,11 @@ public class AccountController : Controller
     {
     return View(); 
     }
+       [HttpGet]
+    public IActionResult NewBook()
+    {
+    return View(); 
+    }
 
     
         [HttpGet]
@@ -435,6 +440,45 @@ public class AccountController : Controller
         HttpContext.Session.Remove("UserName");
         return RedirectToAction("Index", "Home"); // Redirect to home page after logout
     }
+
+
+
+
+
+
+[HttpPost]
+public async Task<IActionResult> NewBookInformation(Book model, IFormFile bookCover)
+{
+    if (ModelState.IsValid)
+    {
+        // Process the uploaded image
+        if (bookCover != null)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", bookCover.FileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await bookCover.CopyToAsync(stream);
+            }
+            model.BookCoverUrl = $"/images/{bookCover.FileName}";
+        }
+
+        // Add the new book to the database (example using a DbContext)
+        _context.Books.Add(model);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Index", "AdminBookManagement"); // Redirect after successful add
+    }
+
+    return View(model); // Return to the form with validation errors
+}
+
+
+
+
+
+
+
+
 
 
 }

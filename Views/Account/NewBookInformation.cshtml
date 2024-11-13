@@ -1,0 +1,96 @@
+@model Book
+@{
+    ViewBag.Title = "New Book Information";
+}
+
+@{
+    var userName = Context.Session.GetString("UserName");
+}
+
+@if (string.IsNullOrEmpty(userName))
+{
+    <h2>Please log in to continue.</h2>
+    <script>
+        window.location.href = '@Url.Action("Input", "Account")';
+    </script>
+}
+
+<body>
+    <div class="navbar">
+        <div class="navbar-logo">
+            <img src="images/logoreal.png" alt="PLM Logo" class="logo">
+            <div class="university-text">
+                <h2 class="title-main">PAMANTASAN NG LUNGSOD NG MAYNILA</h2>
+                <div class="subtitle">UNIVERSITY OF THE CITY OF MANILA</div>
+            </div>
+        </div>
+        <div class="navbar-menu">
+            <a href="@Url.Action("Index", "AdminPanel")" class="nav-link">HOME</a>
+            <a href="@Url.Action("Index", "AdminBookManagement")" class="nav-link">BOOK MANAGEMENT</a>
+            <a href="@Url.Action("Index", "UserManagement")" class="nav-link">USER MANAGEMENT</a>
+            <a href="@Url.Action("BookStatistics", "BookUsage")" class="nav-link">BOOK STATISTICS</a>
+        </div>
+    </div>
+
+    <div class="yellow-bar"></div>
+
+    <div class="container">
+        <h1 class="new-book-information" align="center">New Book Information</h1>
+        <hr class="styled-hr">
+
+        <form method="post" enctype="multipart/form-data" asp-action="CreateBook" asp-controller="Book" class="table.container">
+            @Html.AntiForgeryToken()
+
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td><strong>Title:</strong></td>
+                        <td>
+                            <div class="input-container">
+                                <div class="input-bar">
+                                    <input type="text" name="Title" value="@Model?.Title" placeholder="Title" required>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Author:</strong></td>
+                        <td>
+                            <div class="input-container">
+                                <div class="input-bar">
+                                    <input type="text" name="Author" value="@Model?.Author" placeholder="Author" required>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>RFID Tag:</strong></td>
+                        <td>
+                            <div class="input-container">
+                                <div class="input-bar">
+                                    <input type="text" name="RfidTag" value="@Model?.BookRFID" placeholder="496867257" required>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Upload Book Cover:</strong></td>
+                        <td>
+                            <label for="imageUpload" class="upload-btn">
+                                <img src="upload.png" style="width: 25px">Upload Image
+                            </label>
+                            <input type="file" id="imageUpload" name="BookCover" accept="image/*">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="submit-button-container">
+                <button type="submit" class="submit-button">Add New Book</button>
+            </div>
+        </form>
+    </div>
+</body>
