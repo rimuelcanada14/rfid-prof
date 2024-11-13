@@ -1,0 +1,365 @@
+@model Book
+@{
+    ViewData["Title"] = "New Book";
+}
+
+
+
+<style>
+       
+    /* Body Styling */
+        body {
+            margin: 0;
+        padding: 0;
+        background-image: url('/images/PLM-HOME.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        min-height: 100vh;
+        display: block;
+        justify-content: center;
+        align-items: center;
+    }
+
+        /* Navbar Styling */
+    .navbar-menu {
+        display: flex;
+        gap: 50px;
+        align-items: center;
+        position: absolute;
+        top: 2em;
+        z-index: 998;
+        left: 50.5em;
+    }
+
+    .navbar-menu a {
+        text-decoration: none;
+        color: #2e2c2b;
+        font-family: 'MontserratSemiBold';
+        font-size: 24px;  /* Increased from 20px */
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
+
+    .navbar-menu .highlight {
+        color: #DAA520;
+        font-size: 32px;  /* Increased from 28px */
+        font-family: 'MontserratSemiBold';
+    }
+
+        .container {
+            width: 40%;
+            max-width: 1300px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            padding-top: 15px;
+            margin-top: 50px;
+    
+            max-height: 60vh;
+            border: 1px solid #a9a7a7;
+        }
+
+        .table.container {
+            align-items: center;
+            align-content: center;
+        }
+
+
+        /* Book Table Styling */
+        .table {
+            width: 85%;
+            border-collapse: collapse;
+            font-size: 24px;
+            align-items: center;
+        }
+
+        .table th, .table td {
+            padding: 0px;
+            text-align: left;
+            font-weight: bold;
+            font-family: 'TT Fors Trial';
+            vertical-align: middle;
+            position: relative;
+            align-items: center;
+        }
+
+        .table th {
+            font-weight: bold;
+            font-family: 'TT Fors Trial';
+            background-color: #f9f9f9;
+            align-items: center;
+        }
+
+        .new-book-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 40px;
+            height: auto;
+        }
+
+        .filter-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 20px;
+            height: auto;
+        }
+
+        .book-cover {
+            width: 70px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .return-button {
+            display: inline-block;
+            padding: 10px 18px;
+            background-color: #4a73e5;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-family: 'TT Fors Trial';
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .borrowed {
+            color: red;
+        }
+
+        .available {
+            color: green;
+        }
+
+        .buttons {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 40px;
+            height: auto;
+        }
+
+        .styled-hr {
+            border: none;
+            border-top: 2px solid #ddd;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .new-book-information {
+            color: #b50a0a;
+            align: center;
+            font-family: 'TT Fors Trial';
+        }
+
+        /* Search Bar Styling */
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 0px;
+            margin-bottom: 10px;
+            max-width: 200px;
+        }
+
+        .input-bar {
+            position: relative;
+            width: 100%;
+            font-family: 'PoppinsMedium', Arial, sans-serif;
+        }
+
+        .input-bar input[type="text"] {
+            font-family: 'PoppinsMedium', Arial, sans-serif;
+            width: 150%;
+            padding: 5px 5px 5px 20px;
+            border: 1px solid gray;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: bold;
+            color: grey;
+            outline: none;
+        }
+
+
+        /* Upload Button */
+        .upload-btn {
+            display: inline-block;
+            padding: 5px 5px;
+            color: black;
+            background-color: #f1f1f1;
+            border: 1px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'TT Norms Regular';
+            font-weight: normal;
+        }
+  
+          .upload-btn:hover {
+            background-color: #D3D3D3;
+        }
+          
+          #imageUpload {
+            display: none;
+        }
+
+
+        /* Submit Button */
+        .submit-button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+            width: 100%;
+        }
+
+        .submit-button {
+            display: inline-block;
+            padding: 7px 12px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'TT Fors Trial';
+            font-weight: bold;
+        }
+  
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+
+
+
+    </style>
+
+<body>
+    <div class="navbar-menu">
+        <a href="Welcome">HOME</a>
+        <a href="Return">RETURN</a>
+        <a href="#" onclick="showRfidPopup()">BORROW</a>
+        <a href="Search">SEARCH</a>
+        <a href="Profile" class="highlight">PROFILE</a>
+    </div>
+    
+
+    
+    <form method="post" asp-action="AddNewBook" asp-controller="Account" enctype="multipart/form-data">
+    <div class="table-container">
+
+        <h1 class="new-book-information" align="center">New Book Information</h1>
+        <hr class="styled-hr">
+
+
+          @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+            <div class="table.container">
+
+
+
+
+                <table class="table">
+            <tbody>    
+                <tr>
+                    <td><strong>Title:</strong></td>
+                    <td>
+                        <div class="input-container">
+                            <div class="input-bar">
+                                <input type="text" name="title" placeholder="Title" required>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><strong>Author:</strong></td>
+                    <td>
+                        <div class="input-container">
+                            <div class="input-bar">
+                                <input type="text" name="author" placeholder="Author" required>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><strong>Genre:</strong></td>
+                    <td>
+                        <div class="input-container">
+                            <div class="input-bar">
+                                <input type="text" name="genre" placeholder="Genre" required>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><strong>RFID Tag:</strong></td>
+                    <td>
+                        <div class="input-container">
+                            <div class="input-bar">
+                                <input type="text" name="rfid" placeholder="496867257" required>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><strong>Upload book cover:</strong></td>
+                    <td>
+                        <div class="upload-container">
+                            <label for="bookCover" class="upload-btn">
+                                <img src="/images/upload.png" style="width: 25px" alt="Upload">
+                                Upload Image
+                            </label>
+                            <input type="file" id="bookCover" name="bookCover" accept="image/*" style="display: none;">
+                            <span id="fileName"></span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+            &nbsp;
+            &nbsp;
+            &nbsp;&nbsp;
+
+               <div class="submit-button-container">
+        <button type="submit" class="submit-button">Add new book</button>
+    </div>
+       </form> 
+<script>
+document.getElementById('bookCover').addEventListener('change', function() {
+    var fileName = this.files[0]?.name;
+    if (fileName) {
+        document.getElementById('fileName').textContent = fileName;
+    }
+});
+</script>
+        
+
+</body>

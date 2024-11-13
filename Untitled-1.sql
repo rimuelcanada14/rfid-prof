@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS "Books";
+DROP TABLE IF EXISTS "BorrowedBooks";
+DROP TABLE IF EXISTS "Users";
+
