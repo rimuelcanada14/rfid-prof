@@ -220,7 +220,7 @@ else
         margin-top: -2.5em;
     }
 
-    #closeReturnRfidPopupButton {
+    .closeReturnRfidPopupButton {
         position: absolute;
         bottom: 1%;
         left: 50%;
@@ -404,7 +404,7 @@ else
                                                 <div class="rfid-inp">
                                                     <input id="rfidReturnInputField_@book.BookId" type="number" autocomplete="off" placeholder="Scan RFID" name="rfid" required />
                                                     <button type="button" id="confirmReturnRfidButton_@book.BookId">Confirm RFID</button>
-                                                    <button type="button" id="closeReturnRfidPopupButton_@book.BookId">Close</button>
+                                                    <button type="button" class= "closeReturnRfidPopupButton" id="closeReturnRfidPopupButton_@book.BookId">Close</button>
                                                     <img src="~/images/rfid-icon.png" class="rfid-image" alt="rfid">
                                                 </div>
                                             </div>
