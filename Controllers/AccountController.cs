@@ -15,33 +15,32 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult AdminPanel()
     {
-    return View(); 
+        return View(); 
     }
-       [HttpGet]
+
+    [HttpGet]
     public IActionResult NewBook()
     {
     return View(); 
     }
-
     
-        [HttpGet]
+    [HttpGet]
     public IActionResult AdminBookManagement()
-{
-    var userName = HttpContext.Session.GetString("UserName");
-
-    if (string.IsNullOrEmpty(userName))
     {
-        // Redirect to Input page if user is not logged in
-        return RedirectToAction("Input", "Account");
+        var userName = HttpContext.Session.GetString("UserName");
+
+        if (string.IsNullOrEmpty(userName))
+        {
+            // Redirect to Input page if user is not logged in
+            return RedirectToAction("Input", "Account");
+        }
+
+        // Retrieve books from the database
+        var books = _context.Books.ToList(); // Gets all books from the "Books" table
+
+        ViewBag.UserName = userName; // Set the user's name in ViewBag for display in the view
+        return View(books); // Pass books as the model to the view
     }
-
-    // Retrieve books from the database
-    var books = _context.Books.ToList(); // Gets all books from the "Books" table
-
-    ViewBag.UserName = userName; // Set the user's name in ViewBag for display in the view
-    return View(books); // Pass books as the model to the view
-}
-
 
     [HttpGet]
     public IActionResult Input() => View();
@@ -170,51 +169,107 @@ public class AccountController : Controller
 
         return View();
     }
+
     public IActionResult Return()
     {
         var userName = HttpContext.Session.GetString("UserName");
 
         if (string.IsNullOrEmpty(userName))
         {
-            // Redirect to the home page if the user is not logged in
-            return RedirectToAction("Index", "Home");
-        }
-
-        // Use FirstOrDefault to avoid the exception when there are multiple users with the same name
-        var user = _context.Users.FirstOrDefault(u => u.Name == userName);
-        if (user == null)
-        {
-            TempData["ErrorMessage"] = "User not found. Please try logging in again.";
+            // Redirect to Input page if the user is not logged in
             return RedirectToAction("Input", "Account");
         }
 
-        // Set additional user information in session for quick access
-        HttpContext.Session.SetString("StudentId", user.StudentNumber);
-        HttpContext.Session.SetString("Course", user.Course);
-        HttpContext.Session.SetString("Email", user.Email);
-        HttpContext.Session.SetInt32("UserId", user.UserId);
-        HttpContext.Session.SetString("ContactNumber", user.ContactNumber);
-
-        // Handle nullable DateIssued by checking if it has a value
-        if (user.DateIssued.HasValue)
+        // Retrieve the user ID based on the username
+        var user = _context.Users.FirstOrDefault(u => u.Name == userName);
+        if (user == null)
         {
-            HttpContext.Session.SetString("DateIssued", user.DateIssued.Value.ToString("yyyy-MM-dd"));
+            // Handle case where the user is not found
+            return RedirectToAction("Input", "Account");
+        }
+
+        var userId = user.UserId;
+
+        // Retrieve books borrowed by the logged-in user by joining with BorrowedBooks and Books
+        var borrowedBooks = _context.BorrowedBooks
+            .Where(b => b.UserId == userId)
+            .Join(
+                _context.Books,
+                borrowedBook => borrowedBook.BookId,
+                book => book.BookId,
+                (borrowedBook, book) => new BorrowedBookViewModel
+                {
+                    BookCoverUrl = book.BookCoverUrl,
+                    Title = book.Title,
+                    Author = book.Author,
+                    DateBorrowed = borrowedBook.DateBorrowed,
+                    DLBorrow = borrowedBook.DLBorrow,
+                    BookId = book.BookId
+                }
+            )
+            .ToList();
+
+        return View(borrowedBooks); // Pass the borrowed books with additional data to the view
+    }
+
+    [HttpPost]
+    public IActionResult ReturnBook(int bookId, string rfid)
+    {
+        var userName = HttpContext.Session.GetString("UserName");
+
+        if (string.IsNullOrEmpty(userName))
+        {
+            TempData["ReturnError"] = "User not logged in.";
+            return RedirectToAction("Return");
+        }
+
+        var user = _context.Users.FirstOrDefault(u => u.Name == userName);
+        if (user == null)
+        {
+            TempData["ReturnError"] = "User not found.";
+            return RedirectToAction("Return");
+        }
+
+        var book = _context.Books.FirstOrDefault(b => b.BookId == bookId);
+        if (book == null)
+        {
+            TempData["ReturnError"] = "Book not found.";
+            return RedirectToAction("Return");
+        }
+
+        // Ensure the RFID match is case-insensitive and trim any extra spaces
+        if (string.Compare(book.BookRFID.Trim(), rfid.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
+        {
+            TempData["ReturnError"] = "Book RFID does not match.";
+            return RedirectToAction("Return");
+        }
+
+        // Check if the book exists in the BorrowedBooks table for this user
+        var borrowedBooks = _context.BorrowedBooks
+                        .Where(b => b.UserId == user.UserId && b.BookId == book.BookId)
+                        .OrderByDescending(b => b.DateBorrowed)
+                        .FirstOrDefault();
+
+        if (borrowedBooks != null)
+        {
+            // Proceed with returning the most recent borrowed book
+            book.TimesReturned += 1;
+            book.Availability = "Available";
+
+            // Remove the most recently borrowed book record
+            _context.BorrowedBooks.Remove(borrowedBooks);
+            _context.Books.Update(book);
+            _context.SaveChanges();
+
+            TempData["ReturnSuccess"] = true;
+            return RedirectToAction("Return");
         }
         else
         {
-            // Optionally set a default value or handle the case where DateIssued is null
-            HttpContext.Session.SetString("DateIssued", string.Empty); // Or another appropriate default
+            TempData["ReturnError"] = "This book hasn't been borrowed by you.";
+            return RedirectToAction("Return");
         }
-
-        // Pass user's name to the view
-        ViewBag.UserName = userName;
-
-        return View();
     }
-
-    
-
-
     public IActionResult Search()
     {
         var userName = HttpContext.Session.GetString("UserName");
@@ -231,6 +286,7 @@ public class AccountController : Controller
         ViewBag.UserName = userName;
         return View(books); // Pass books as the model to the view
     }
+
     public IActionResult ScannedBorrow(string rfid)
     {
         if (string.IsNullOrEmpty(rfid))
@@ -270,10 +326,10 @@ public class AccountController : Controller
         }
 
         var book = _context.Books.FirstOrDefault(b => b.BookId == bookId);
-        if (book == null)
+        if (book == null || book.Availability == "Borrowed")
         {
-            TempData["ErrorMessage"] = "Book not found.";
-            return RedirectToAction("ScannedBorrow", new { rfid = book.BookRFID });
+            TempData["ErrorMessage"] = "This book is already borrowed.";
+            return RedirectToAction("ScannedBorrow", new { rfid = book?.BookRFID });
         }
 
         // Add an entry in BorrowedBooks
@@ -281,13 +337,13 @@ public class AccountController : Controller
         {
             UserId = user.UserId,
             BookId = book.BookId,
-            DateBorrowed = DateTimeOffset.UtcNow, // Current time in UTC
-            DLBorrow = DateTimeOffset.UtcNow.AddDays(20) // Deadline 20 days from now
+            DateBorrowed = DateTime.UtcNow,
+            DLBorrow = DateTime.UtcNow.AddDays(20) // Deadline 20 days from now
         };
 
         // Update TimesBorrowed and Availability of the book
-        book.TimesBorrowed += 1;  // Increment TimesBorrowed
-        book.Availability = "Borrowed"; // Set availability to "Borrowed"
+        book.TimesBorrowed += 1;
+        book.Availability = "Borrowed"; // Mark the book as borrowed
 
         // Explicitly mark the book as modified to ensure Entity Framework tracks it
         _context.Books.Update(book);
@@ -298,10 +354,9 @@ public class AccountController : Controller
         // Save changes to the database
         _context.SaveChanges();
 
-        TempData["SuccessMessage"] = "Book successfully registered as borrowed.";  // Set success message
+        TempData["SuccessMessage"] = "Book successfully registered as borrowed."; // Set success message
         return RedirectToAction("ScannedBorrow", new { rfid = book.BookRFID });
     }
-
 
     public IActionResult Profile()
     {
@@ -325,9 +380,6 @@ public class AccountController : Controller
         ViewBag.User = user;
         return View();
     }
-
-
-
 
     [HttpGet]
     public IActionResult EditProfile()
@@ -386,7 +438,6 @@ public class AccountController : Controller
         user.StudentNumber = updatedUser.StudentNumber;
         user.Course = updatedUser.Course;
         user.Email = updatedUser.Email;
-        // Uncomment if you have ContactNumber in your User model
         user.ContactNumber = updatedUser.ContactNumber;
 
         try
@@ -406,11 +457,7 @@ public class AccountController : Controller
             // Log the exception if you have logging configured
             return StatusCode(500, "An error occurred while updating the profile.");
         }
-    
-
     }
-
-
 
     [HttpGet]
     public IActionResult LibraryCard()
@@ -435,50 +482,35 @@ public class AccountController : Controller
         ViewBag.User = user;
         return View();
     }
+
     public IActionResult Logout()
     {
         HttpContext.Session.Remove("UserName");
         return RedirectToAction("Index", "Home"); // Redirect to home page after logout
     }
-
-
-
-
-
-
-[HttpPost]
-public async Task<IActionResult> NewBookInformation(Book model, IFormFile bookCover)
-{
-    if (ModelState.IsValid)
+    [HttpPost]
+    public async Task<IActionResult> NewBookInformation(Book model, IFormFile bookCover)
     {
-        // Process the uploaded image
-        if (bookCover != null)
+        if (ModelState.IsValid)
         {
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", bookCover.FileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            // Process the uploaded image
+            if (bookCover != null)
             {
-                await bookCover.CopyToAsync(stream);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", bookCover.FileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await bookCover.CopyToAsync(stream);
+                }
+                model.BookCoverUrl = $"/images/{bookCover.FileName}";
             }
-            model.BookCoverUrl = $"/images/{bookCover.FileName}";
+
+            // Add the new book to the database (example using a DbContext)
+            _context.Books.Add(model);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "AdminBookManagement"); // Redirect after successful add
         }
 
-        // Add the new book to the database (example using a DbContext)
-        _context.Books.Add(model);
-        await _context.SaveChangesAsync();
-
-        return RedirectToAction("Index", "AdminBookManagement"); // Redirect after successful add
+        return View(model); // Return to the form with validation errors
     }
-
-    return View(model); // Return to the form with validation errors
-}
-
-
-
-
-
-
-
-
-
-
 }

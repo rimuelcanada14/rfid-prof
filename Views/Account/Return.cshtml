@@ -1,0 +1,500 @@
+@model List<BorrowedBookViewModel>
+@await Html.PartialAsync("_RfidPopup")
+@{
+ViewBag.Title = "Return a Book";
+}
+@{
+var userName = Context.Session.GetString("UserName");
+}
+@if (!string.IsNullOrEmpty(userName))
+{
+<h2 style = "display: none;">Welcome, @userName</h2>
+}
+else
+{
+<h2 style = "display: none;">Please log in to continue.</h2>
+<script>
+	window.location.href = '@Url.Action("Input", "Account")';
+</script>
+}
+<style>
+	body {
+        margin: 0;
+        padding: 0;
+        background-image: url('/images/PLM-HOME.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        min-height: 100vh;
+        display: block;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .navbar-menu {
+        display: flex;
+        gap: 50px;
+        align-items: center;
+        position: absolute;
+        top: 2em;
+        z-index: 998;
+        left: 50.5em;
+    }
+
+    .navbar-menu a {
+        text-decoration: none;
+        color: #2e2c2b;
+        font-family: 'MontserratSemiBold';
+        font-size: 20px;
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
+
+    .navbar-menu .highlight {
+        color: #DAA520;
+        font-size: 28px;
+        font-family: 'MontserratSemiBold';
+    }
+
+    .navbar-menu a:hover {
+        color: #DAA520;
+    }
+
+    /* Return Container Styling */
+    .return-page {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .return-container {
+        width: 90%;
+        background-color: #ffffff;
+        border-radius: 35px;
+        padding: 20px;
+        margin-top: 50px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        height: 70vh;
+        border: 1px solid #a9a7a7;
+        overflow: hidden;
+    }
+    .return-title {
+        font-size: 40px;
+        font-weight: bold;
+        color: #b50a0a;
+        display: flex;
+        font-family: 'TTForsTrialBold', Arial, sans-serif;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .divider-line {
+        width: 100%;
+        height: 2px;
+        background-color: #353535;
+        margin: 20px 0;
+    }
+
+    .book-table-container {
+        max-height: 50vh;
+        overflow-y: auto;
+        margin-top: 10px;
+    }
+    .book-table-container::-webkit-scrollbar {
+        width: 10px;
+    }
+    .book-table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 5px;
+    }
+    .book-table-container::-webkit-scrollbar-thumb {
+        background-color: #818181;
+        border-radius: 5px;
+    }
+    .book-table-container::-webkit-scrollbar-thumb:hover {
+        background-color: #818181;
+    }
+
+    .book-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .book-table th, .book-table td {
+        padding: 12px;
+        text-align: center;
+        font-family: 'PoppinsMedium', Arial, sans-serif;
+        border-bottom: 1px solid #ddd;
+        vertical-align: middle;
+    }
+
+    .book-table th {
+        font-weight: bold;
+        font-family: 'PoppinsMedium', Arial, sans-serif;
+        background-color: #f9f9f9;
+         position: sticky;
+        top: 0;
+        z-index: 1; 
+    }
+    .book-cover {
+        width: 60px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .return-button {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #4a73e5;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        font-family: 'PoppinsMedium', Arial, sans-serif;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .filter-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        width: 16px; /* Adjust icon size */
+        height: auto;
+    }
+
+    .overdue td {
+        color: #b50a0a;
+        font-weight: bold;
+        font-family: 'PoppinsMedium', Arial, sans-serif;
+    }
+    .search-bar {
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+        font-size: 16px;
+        }
+
+    #searchBar {
+        border-radius: 15px;
+        margin-left: .5em;
+        width: 100%;
+        padding-left: .5em;
+    }
+        .popup-link {
+        position: absolute;
+        top: 48%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        color: black;
+        padding: 15px 25px;
+        border-radius: 25px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 25em;
+        height: 25.8em;
+        text-align: center;
+        font-size: 20px;
+        z-index: 1000;
+    }
+
+    .popup-link h2 {
+        font-family: "PoppinsMedium";
+        font-weight: 700;
+        color: #4f68d9;
+        font-size: 33px;
+    }
+
+    .popup-link p {
+        font-family: "TTForsRegular";
+        font-weight: 300;
+    }
+
+    .rfid-image {
+        width: auto;
+        height: 17em;
+        position: relative;
+        margin-top: -2.5em;
+    }
+
+    #closeReturnRfidPopupButton {
+        position: absolute;
+        bottom: 1%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        color: black;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #4f68d9;
+        border-radius: 20px;
+        cursor: pointer;
+        width: 10em;
+        font-family: 'TTForsRegular', sans-serif;
+    }
+
+    #closeRfidPopupButton:hover {
+        background-color: #4f68d9;
+        color: #ffffff;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #d5d7d6;
+    }
+
+    .popup-overlay {
+        position: fixed;
+        top: 53%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.4);
+        color: #13ab25;
+        padding: 15px 25px;
+        border-radius: 8px;
+        font-family: "PoppinsMedium";
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        transition: opacity 0.5s ease;
+        width: 110%;
+        height: 110%;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 400;
+        display: none;
+        backdrop-filter: blur(5px);
+    }
+
+    .popup-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+
+    .popup-overlay.hide {
+        opacity: 0;
+    }
+    .return-button {
+        background-color: #4f68d9;
+        color: white;
+        padding: 5px;
+        border-radius: 15px;
+        font-family: 'PoppinsMedium';
+        width: 6em;
+    }
+    .check-image {
+        width: auto;
+        height: 3em;
+    }
+    .error-image {
+        width: 2em;
+        height: 2em;
+    }
+    .popup-success {
+        position: relative; /* Fixed to ensure it stays centered on screen */
+        top: 50%; /* Center vertically */
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust position to truly center */
+        background-color: white; /* Green background for success */
+        color: #13ab25;
+        padding: 15px 25px; /* Add padding for spacing */
+        border-radius: 8px;
+        font-family: "PoppinsMedium";
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 19em;
+        height: 6em;
+        text-align: center; /* Center text within the popup */
+        font-size: 20px;
+        font-weight: 400;
+    }
+    .popup-error {
+        position: relative; /* Fixed to ensure it stays centered on screen */
+        top: 50%; /* Center vertically */
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust position to truly center */
+        background-color: white; /* Green background for success */
+        color: #b50a0a;
+        padding: 15px 25px; /* Add padding for spacing */
+        border-radius: 8px;
+        font-family: "PoppinsMedium";
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 19em;
+        height: 6em;
+        text-align: center; /* Center text within the popup */
+        font-size: 20px;
+        font-weight: 400;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .5em;
+    }
+</style>
+
+
+<div class="navbar-menu">
+	<a href="Welcome">HOME</a>
+	<a href="Return" class="highlight">RETURN</a>
+	<a href="#" onclick="showRfidPopup()">BORROW</a>
+	<a href="SEARCH">SEARCH</a>
+	<a href="Profile">PROFILE</a>
+</div>
+
+<body>
+    <div id="registrationSuccessPopup" class="popup-overlay" style="display: none;">
+        <div class="popup-success">
+            Book returned successfully! 
+            <img src="~/images/Check icon.png" class="check-image" alt="Check">
+        </div>  
+    </div>
+
+    <div id="registrationErrorPopup" class="popup-overlay" style="display: none;">
+        <div class="popup-error">
+            <span id="errorMessage"></span>
+            <img src="~/images/error-icon.png" class="error-image" alt="Error">
+        </div>
+    </div>
+
+
+    <div class="return-page">
+        <div class="return-container">
+            <div class="return-title">Return a Book</div>
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <p>Search:</p>
+                <input type="text" id="searchBar" placeholder="Search for books..." onkeyup="searchBooks()">
+            </div>
+            
+        <div class="book-table-container">
+            <table class="book-table">
+                <thead>
+                    <tr>
+                        <th>Book Cover</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Date Borrowed</th>
+                        <th>Deadline</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                
+
+                <tbody id="bookTableBody">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var book in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="@(book.BookCoverUrl ?? "/path/to/default-image.jpg")" alt="Book Cover" style="width:50px;">
+                                </td>
+                                <td>@(book.Title ?? "No Title")</td>
+                                <td>@(book.Author ?? "Unknown Author")</td>
+                                <td>@(book.DateBorrowed.ToString("MM/dd/yyyy") ?? "No Date")</td>
+                                <td>@(book.DLBorrow.ToString("MM/dd/yyyy") ?? "No Due Date")</td>
+                                <td>
+                                    <form asp-action="ReturnBook" method="post">
+                                        <input type="hidden" name="bookId" value="@book.BookId" />
+                                        <button type="button" onclick="showRfidReturned()" class='return-button'>Return</button> 
+                                        <div id="returnRfidPopup" class="popup-overlay" style="display: none;">
+                                            <div class="popup-link">
+                                                <h2>Scan Book RFID</h2>
+                                                <p>Please scan the book you wish to return.</p>
+                                                <div class="rfid-inp">
+                                                    <input id="rfidReturnInputField" type="number" autocomplete="off" placeholder="Scan RFID" name="rfid" required />
+                                                    <button type="button" id="confirmReturnRfidButton">Confirm RFID</button>
+                                                    <button type="button" id="closeReturnRfidPopupButton">Close</button>
+                                                    <img src="~/images/rfid-icon.png" class="rfid-image" alt="rfid">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6">No books available.</td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+    <script>
+        function searchBooks() {
+            // Get search value
+            var input = document.getElementById("searchBar").value.toLowerCase();
+            
+            // Get all table rows
+            var rows = document.getElementById("bookTableBody").getElementsByTagName("tr");
+
+            // Loop through each row and hide or show based on search query
+            for (var i = 0; i < rows.length; i++) {
+                var title = rows[i].getElementsByTagName("td")[1].textContent.toLowerCase();
+                var author = rows[i].getElementsByTagName("td")[2].textContent.toLowerCase();
+                var publisher = rows[i].getElementsByTagName("td")[3].textContent.toLowerCase();
+
+                if (title.includes(input) || author.includes(input) || publisher.includes(input)) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+        // Show the RFID popup when "Return" is clicked
+        function showRfidReturned() {
+            const rfidPopup = document.getElementById("returnRfidPopup");
+            const rfidInputField = document.getElementById("rfidReturnInputField");
+
+            rfidPopup.style.display = "flex";  // Show the RFID popup
+            rfidInputField.focus();            // Focus on the RFID input field
+        }
+
+        document.getElementById("confirmReturnRfidButton").onclick = function() {
+            const rfidValue = document.getElementById("rfidReturnInputField").value;
+            if (rfidValue) {
+                // Submit form when RFID is scanned
+                document.querySelector('form').submit();
+            } else {
+                alert("Please scan the book's RFID.");
+            }
+        };
+
+        document.getElementById("closeReturnRfidPopupButton").onclick = function() {
+            document.getElementById("returnRfidPopup").style.display = "none"; // Hide the popup
+            document.getElementById("rfidReturnInputField").value = "";  // Clear the input field
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+        // Check TempData for success or error messages
+        @if (TempData["ReturnSuccess"] != null && (bool)TempData["ReturnSuccess"])
+        {
+            <text>
+                // Show success popup
+                document.getElementById("registrationSuccessPopup").style.display = "flex";
+                setTimeout(function() {
+                    document.getElementById("registrationSuccessPopup").style.display = "none";
+                    window.location.href = '@Url.Action("Return", "Account")';
+                }, 2000); // Show for 3 seconds then redirect
+            </text>
+        }
+        @if (TempData["ReturnError"] != null)
+        {
+            <text>
+                // Show error popup
+                document.getElementById("errorMessage").textContent = "@TempData["ReturnError"]";
+                document.getElementById("registrationErrorPopup").style.display = "flex";
+                setTimeout(function() {
+                    document.getElementById("registrationErrorPopup").style.display = "none";
+                }, 2000); // Show for 3 seconds then hide
+            </text>
+        }
+    });
+    </script>
+</body>
