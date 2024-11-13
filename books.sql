@@ -1,0 +1,16 @@
+INSERT INTO "Books" ("BookId", "Title", "Author", "Publisher", "Availability", "TimesBorrowed", "TimesReturned", "BookRFID", "BookCoverUrl") VALUES
+(1, 'To Kill a Mockingbird', 'Harper Lee', 'J.B. Lippincott & Co.', 'Available', 0, 0, 'RFID001', '/images/to_kill_a_mockingbird.png'),
+(2, '1984', 'George Orwell', 'Secker & Warburg', 'Available', 0, 0, 'RFID002', '/images/1984.png'),
+(3, 'Pride and Prejudice', 'Jane Austen', 'T. Egerton', 'Available', 0, 0, 'RFID003', '/images/pride_and_prejudice.png'),
+(4, 'The Great Gatsby', 'F. Scott Fitzgerald', 'Charles Scribners Sons', 'Available', 0, 0, 'RFID004', '/images/the_great_gatsby.png'),
+(5, 'Moby-Dick', 'Herman Melville', 'Harper & Brothers', 'Available', 0, 0, 'RFID005', '/images/moby_dick.png'),
+(6, 'The Catcher in the Rye', 'J.D. Salinger', 'Little, Brown and Company', 'Available', 0, 0, 'RFID006', '/images/the_catcher_in_the_rye.png'),
+(7, 'The Lord of the Rings', 'J.R.R. Tolkien', 'George Allen & Unwin', 'Available', 0, 0, 'RFID007', '/images/the_lord_of_the_rings.png'),
+(8, 'Harry Potter and the Philosophers Stone', 'J.K. Rowling', 'Bloomsbury', 'Available', 0, 0, 'RFID008', '/images/harry_potter_1.png'),
+(9, 'The Hobbit', 'J.R.R. Tolkien', 'George Allen & Unwin', 'Available', 0, 0, 'RFID009', '/images/the_hobbit.png'),
+(10, 'Fahrenheit 451', 'Ray Bradbury', 'Ballantine Books', 'Available', 0, 0, 'RFID010', '/images/fahrenheit_451.png'),
+(11, 'Jane Eyre', 'Charlotte Brontë', 'Smith, Elder & Co.', 'Available', 0, 0, 'RFID011', '/images/jane_eyre.png'),
+(12, 'Animal Farm', 'George Orwell', 'Secker & Warburg', 'Available', 0, 0, 'RFID012', '/images/animal_farm.png'),
+(13, 'Brave New World', 'Aldous Huxley', 'Chatto & Windus', 'Available', 0, 0, 'RFID013', '/images/brave_new_world.png'),
+(14, 'Wuthering Heights', 'Emily Brontë', 'Thomas Cautley Newby', 'Available', 0, 0, 'RFID014', '/images/wuthering_heights.png'),
+(15, 'The Odyssey', 'Homer', 'Ancient Greece', 'Available', 0, 0, 'RFID015', '/images/the_odyssey.png');

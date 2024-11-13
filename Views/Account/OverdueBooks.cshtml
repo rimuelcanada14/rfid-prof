@@ -1,0 +1,330 @@
+<style>
+    /* Body Styling */
+    body {
+        padding: 0;
+        background-image: url('/images/PLM-HOME.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        min-height: 100vh;
+        display: block;
+        justify-content: center;
+        align-items: center;
+    }
+
+        
+
+       /* Navbar Styling */
+    .navbar-menu {
+        display: flex;
+        gap: 50px;
+        align-items: center;
+        position: absolute;
+        top: 2em;
+        z-index: 998;
+        left: 50.5em;
+    }
+
+    .navbar-menu a {
+        text-decoration: none;
+        color: #2e2c2b;
+        font-family: 'MontserratSemiBold';
+        font-size: 24px;  /* Increased from 20px */
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
+
+    .navbar-menu .highlight {
+        color: #DAA520;
+        font-size: 32px;  /* Increased from 28px */
+        font-family: 'MontserratSemiBold';
+    }
+
+        .nav-link {
+            color: black;
+            text-decoration: none;
+            padding: 10px;
+        }
+
+        .nav-link.active {
+            color: #DAA520;
+            font-size: 16;
+            font-weight: bold;
+        }
+
+        .yellow-bar {
+            height: 5px;
+            background-color: #FFD700;
+            width: 100%;
+        }
+
+        /* Return Container Styling */
+        .return-container {
+            width: 95%;
+            max-width: 1300px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding-left: 30px;
+            padding-right: 30px;
+            margin-top: 50px;
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+            overflow-y: scroll;
+            max-height: 70vh;
+            border: 1px solid #a9a7a7;
+            font-size: 18px;
+        }
+
+        /* Scrollbar styling */
+        .return-container::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .return-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 6px;
+        }
+
+        .return-container::-webkit-scrollbar-thumb {
+            background-color: #818181;
+            border-radius: 6px;
+        }
+
+        .return-container::-webkit-scrollbar-thumb:hover {
+            background-color: #818181;
+        }
+
+
+        /* Top Container Styling */
+        .top-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-icon-container {
+            display: inline-block;
+            height: auto;
+            width: 20px;
+            vertical-align: middle;
+            align-items: center;   
+        }
+
+        .back-icon {
+            height: auto;
+            width: 40px;
+            vertical-align: middle;
+            align-items: center;
+        }
+
+        /* Overdue Books Link Styling */
+        .overdue-books-container {
+            display: flex;
+            text-align: center;
+            gap: 350px;
+            margin-bottom: 10px;
+            width: 73%;
+        }
+
+        .overdue-books {
+            display: inline-block;
+            font-size: 40px;
+            color: #b50a0a;
+            font-weight: bold;
+            font-family: 'TT Fors Trial';
+            align-items: center;
+            padding: 0px;
+
+        }
+
+        .overdue-table {
+            color: #b50a0a;
+            text-decoration: underline;
+            padding: 14px;
+            text-align: center;
+            font-family: 'PoppinsMedium', Arial, sans-serif;
+            font-weight: normal;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        /* Book Table Styling */
+        .book-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 18px;
+        }
+
+        thead {
+            font-weight: bold;
+        }
+
+        .book-table th {
+            padding: 14px;
+            text-align: center;
+            font-family: 'TT Fors Trial';
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        .book-table td {
+            padding: 14px;
+            text-align: center;
+            font-family: 'PoppinsMedium', Arial, sans-serif;
+            font-weight: normal;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        .book-table th {
+            font-weight: bold;
+            font-family: 'TT Fors Trial';
+            background-color: #f9f9f9;
+        }
+
+        .new-book-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 40px;
+            height: auto;
+        }
+
+        .filter-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 20px;
+            height: auto;
+        }
+
+        .book-cover {
+            width: 70px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .return-button {
+            display: inline-block;
+            padding: 10px 18px;
+            background-color: #4a73e5;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-family: 'PoppinsMedium', Arial, sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .borrowed {
+            color: red;
+        }
+
+        .available {
+            color: green;
+        }
+
+        .buttons {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 40px;
+            height: auto;
+        }
+    </style>
+
+<body>
+    <div class="navbar-menu">
+        <a href="Welcome">HOME</a>
+        <a href="Return">RETURN</a>
+        <a href="#" onclick="showRfidPopup()">BORROW</a>
+        <a href="Search">SEARCH</a>
+        <a href="Profile" class="highlight">PROFILE</a>
+    </div>
+
+    <div class="return-container">
+        <div class="top-container">
+            <div class="back-icon-container">
+                <a href="usermanagement.html"><img src="/images/back-icon.png" alt="Back Icon" class="back-icon"></a>
+            </div>
+            <div class="overdue-books-container">
+                <h1 class="overdue-books"> Students with overdue books </h1>
+            </div>
+        </div>
+
+        <table class="book-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Course</th>
+                    <th>Amount of overdue books</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Juanie B. Dela Cruz</td>
+                    <td>BSED</td>
+                    <a href="overduebooks.html"><td class="overdue-table"> 5 </td></a>
+                    <td><img src="/images/profile-icon.png" alt="Profile Icon"></td>
+                </tr>
+                <tr>
+                    <td>Juanie B. Dela Cruz</td>
+                    <td>BSN</td>
+                    <a href="overduebooks.html"><td class="overdue-table"> 2 </td></a>
+                    <td><img src="/images/profile-icon.png" alt="Profile Icon"></td>
+                </tr>
+                <tr>
+                    <td>Juanie B. Dela Cruz</td>
+                    <td>BS CpE</td>
+                    <a href="overduebooks.html"><td class="overdue-table"> 1 </td></a>
+                    <td><img src="/images/profile-icon.png" alt="Profile Icon"></td>
+                </tr>
+                <tr>
+                    <td>Juanie B. Dela Cruz</td>
+                    <td>BSIT</td>
+                    <a href="overduebooks.html"><td class="overdue-table"> 1 </td></a>
+                    <td><img src="/images/profile-icon.png" alt="Profile Icon"></td>
+                </tr>
+                <tr>
+                    <td>Juanie B. Dela Cruz</td>
+                    <td>BS CHE</td>
+                    <a href="overduebooks.html"><td class="overdue-table"> 3 </td></a>
+                    <td><img src="/images/profile-icon.png" alt="Profile Icon"></td>
+                </tr>
+                <tr>
+                    <td>Juanie B. Dela Cruz</td>
+                    <td>BSN</td>
+                    <a href="overduebooks.html"><td class="overdue-table"> 3 </td></a>
+                    <td><img src="/images/profile-icon.png" alt="Profile Icon"></td>
+                </tr><tr>
+                    <td>Juanie B. Dela Cruz</td>
+                    <td>BSCS</td>
+                    <a href="overduebooks.html"><td class="overdue-table"> 1 </td></a>
+                    <td><img src="/images/profile-icon.png" alt="Profile Icon"></td>
+                </tr><tr>
+                    <td>Juanie B. Dela Cruz</td>
+                    <td>BSED</td>
+                    <a href="overduebooks.html"><td class="overdue-table"> 4 </td></a>
+                    <td><img src="/images/profile-icon.png" alt="Profile Icon"></td>
+                </tr><tr>
+                    <td>Juanie B. Dela Cruz</td>
+                    <td>BSPT</td>
+                    <a href="overduebooks.html"><td class="overdue-table"> 2 </td></a>
+                    <td><img src="/images/profile-icon.png" alt="Profile Icon"></td>
+                </tr>            
+            </tbody>
+        </table>
+    </div>
+</body>
