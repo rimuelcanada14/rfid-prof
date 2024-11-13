@@ -245,19 +245,17 @@ public class AccountController : Controller
         }
 
         // Check if the book exists in the BorrowedBooks table for this user
-        var borrowedBooks = _context.BorrowedBooks
-                        .Where(b => b.UserId == user.UserId && b.BookId == book.BookId)
-                        .OrderByDescending(b => b.DateBorrowed)
-                        .FirstOrDefault();
+        var borrowedBook = _context.BorrowedBooks
+            .FirstOrDefault(b => b.UserId == user.UserId && b.BookId == book.BookId);
 
-        if (borrowedBooks != null)
+        if (borrowedBook != null)
         {
-            // Proceed with returning the most recent borrowed book
+            // Proceed with returning the book
             book.TimesReturned += 1;
             book.Availability = "Available";
 
-            // Remove the most recently borrowed book record
-            _context.BorrowedBooks.Remove(borrowedBooks);
+            // Remove the borrowed book record
+            _context.BorrowedBooks.Remove(borrowedBook);
             _context.Books.Update(book);
             _context.SaveChanges();
 
@@ -270,6 +268,8 @@ public class AccountController : Controller
             return RedirectToAction("Return");
         }
     }
+
+
     public IActionResult Search()
     {
         var userName = HttpContext.Session.GetString("UserName");

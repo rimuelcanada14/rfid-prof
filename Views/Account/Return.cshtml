@@ -395,21 +395,23 @@ else
                                 <td>
                                     <form asp-action="ReturnBook" method="post">
                                         <input type="hidden" name="bookId" value="@book.BookId" />
-                                        <button type="button" onclick="showRfidReturned()" class='return-button'>Return</button> 
-                                        <div id="returnRfidPopup" class="popup-overlay" style="display: none;">
+                                        <button type="button" onclick="showRfidReturned(@book.BookId)" class='return-button'>Return</button> 
+
+                                        <div id="returnRfidPopup_@book.BookId" class="popup-overlay" style="display: none;">
                                             <div class="popup-link">
                                                 <h2>Scan Book RFID</h2>
                                                 <p>Please scan the book you wish to return.</p>
                                                 <div class="rfid-inp">
-                                                    <input id="rfidReturnInputField" type="number" autocomplete="off" placeholder="Scan RFID" name="rfid" required />
-                                                    <button type="button" id="confirmReturnRfidButton">Confirm RFID</button>
-                                                    <button type="button" id="closeReturnRfidPopupButton">Close</button>
+                                                    <input id="rfidReturnInputField_@book.BookId" type="number" autocomplete="off" placeholder="Scan RFID" name="rfid" required />
+                                                    <button type="button" id="confirmReturnRfidButton_@book.BookId">Confirm RFID</button>
+                                                    <button type="button" id="closeReturnRfidPopupButton_@book.BookId">Close</button>
                                                     <img src="~/images/rfid-icon.png" class="rfid-image" alt="rfid">
                                                 </div>
                                             </div>
                                         </div>
                                     </form>
                                 </td>
+
                             </tr>
                         }
                     }
@@ -448,28 +450,29 @@ else
             }
         }
         // Show the RFID popup when "Return" is clicked
-        function showRfidReturned() {
-            const rfidPopup = document.getElementById("returnRfidPopup");
-            const rfidInputField = document.getElementById("rfidReturnInputField");
+       function showRfidReturned(bookId) {
+    const rfidPopup = document.getElementById("returnRfidPopup_" + bookId);
+    const rfidInputField = document.getElementById("rfidReturnInputField_" + bookId);
 
-            rfidPopup.style.display = "flex";  // Show the RFID popup
-            rfidInputField.focus();            // Focus on the RFID input field
+    rfidPopup.style.display = "flex";  // Show the RFID popup
+    rfidInputField.focus();            // Focus on the RFID input field
+
+    // Set a global reference for the bookId
+    document.getElementById("confirmReturnRfidButton_" + bookId).onclick = function() {
+        const rfidValue = rfidInputField.value;
+        if (rfidValue) {
+            // Submit form for this specific bookId when RFID is scanned
+            document.querySelector('form input[name="bookId"][value="' + bookId + '"]').form.submit();
+        } else {
+            alert("Please scan the book's RFID.");
         }
-
-        document.getElementById("confirmReturnRfidButton").onclick = function() {
-            const rfidValue = document.getElementById("rfidReturnInputField").value;
-            if (rfidValue) {
-                // Submit form when RFID is scanned
-                document.querySelector('form').submit();
-            } else {
-                alert("Please scan the book's RFID.");
-            }
-        };
-
-        document.getElementById("closeReturnRfidPopupButton").onclick = function() {
-            document.getElementById("returnRfidPopup").style.display = "none"; // Hide the popup
-            document.getElementById("rfidReturnInputField").value = "";  // Clear the input field
-        };
+    };
+    
+    document.getElementById("closeReturnRfidPopupButton_" + bookId).onclick = function() {
+        rfidPopup.style.display = "none"; // Hide the popup
+        rfidInputField.value = "";  // Clear the input field
+    };
+}
 
         document.addEventListener("DOMContentLoaded", function() {
         // Check TempData for success or error messages
