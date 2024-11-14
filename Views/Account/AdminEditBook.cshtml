@@ -1,4 +1,5 @@
-@model Book
+@model BookEditViewModel
+
 @{
     ViewData["Title"] = "New Book";
 }
@@ -371,7 +372,7 @@
             <!-- Hidden input for BookId -->
             <input type="hidden" asp-for="BookId" /> 
 
-            <h1 class="book-information" align="center">Edit Book Information</h1>
+            <h1 class="new-book-information" align="center">Edit Book Information</h1>
             <hr class="styled-hr">
 
             <!-- Display Error or Success Messages -->

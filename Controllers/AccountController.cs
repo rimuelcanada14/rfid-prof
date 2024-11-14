@@ -268,48 +268,65 @@ public class AccountController : Controller
         TempData["SuccessMessage"] = "New book added successfully!";
         return RedirectToAction("AdminBookManagement");
     }
-    public IActionResult AdminEditBook(int id)
+public IActionResult AdminEditBook(int id)
+{
+    var book = _context.Books.Find(id);
+    if (book == null)
     {
-        // Fetch the book by ID from the database
-        var book = _context.Books.Find(id);
-
-        if (book == null)
-        {
-            TempData["ErrorMessage"] = "Book not found.";
-            return RedirectToAction("AdminBookManagement");
-        }
-
-        return View(book); // Pass the book model to the edit view
+        TempData["ErrorMessage"] = "Book not found.";
+        return RedirectToAction("AdminBookManagement");
     }
 
-    [HttpPost]
-    public IActionResult UpdateBook([Bind("BookId,Title,Author,Publisher")] Book model)
+    // Map the Book entity to BookEditViewModel
+    var model = new BookEditViewModel
     {
-        if (ModelState.IsValid)
-        {
-            var book = _context.Books.Find(model.BookId);
-            if (book != null)
-            {
-                book.Title = model.Title;
-                book.Author = model.Author;
-                book.Publisher = model.Publisher;
+        BookId = book.BookId,
+        Title = book.Title,
+        Author = book.Author,
+        Publisher = book.Publisher
+    };
 
-                _context.SaveChanges();
-                TempData["SuccessMessage"] = "Book updated successfully.";
-                return RedirectToAction("AdminBookManagement");
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Book not found.";
-            }
+    return View(model);
+}
+
+[HttpPost]
+public IActionResult UpdateBook(BookEditViewModel model)
+{
+    if (ModelState.IsValid)
+    {
+        var book = _context.Books.Find(model.BookId);
+        if (book != null)
+        {
+            // Update only the required fields
+            book.Title = model.Title;
+            book.Author = model.Author;
+            book.Publisher = model.Publisher;
+
+            _context.SaveChanges();
+            TempData["SuccessMessage"] = "Book updated successfully.";
+            return RedirectToAction("AdminBookManagement");
         }
         else
         {
-            TempData["ErrorMessage"] = "An error occurred. Please check the entered values.";
+            TempData["ErrorMessage"] = "Book not found.";
         }
-
-        return View("AdminEditBook", model);
     }
+    else
+    {
+        foreach (var modelState in ModelState.Values)
+        {
+            foreach (var error in modelState.Errors)
+            {
+                Console.WriteLine(error.ErrorMessage); // Log each error message to console
+            }
+        }
+        
+        TempData["ErrorMessage"] = "An error occurred. Please check the entered values.";
+    }
+
+    return View("AdminEditBook", model);
+}
+
 
 
 

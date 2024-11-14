@@ -21,3 +21,4 @@ public class Book
     public string? Availability { get; set; }
     public string? BookCoverUrl { get; set; }
 }
+    
