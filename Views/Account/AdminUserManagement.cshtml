@@ -1,4 +1,4 @@
-@model List<Book>
+@model List<User>
 @{
     ViewBag.Title = "Book Management";
 }
@@ -226,8 +226,8 @@ else
 <body>
     <div class="navbar-menu">
         <a href="AdminPanel">HOME</a>
-        <a href="AdminBookManagement" class="highlight">BOOK MANAGEMENT</a>
-        <a href="AdminUserManagement">USER MANAGEMENT</a>
+        <a href="AdminBookManagement">BOOK MANAGEMENT</a>
+        <a href="AdminUserManagement" class="highlight">USER MANAGEMENT</a>
         <a href="AdminBookStat">BOOK STATISTICS</a>
     </div>
 
@@ -236,7 +236,7 @@ else
             <div class="search-container">
                 <label class="search-label">Search: </label>
                 <div class="search-bar">
-                    <input type="text" id="searchBar" placeholder="Search for books..." onkeyup="searchBooks()">
+                    <input type="text" id="searchBar" placeholder="Search for user..." onkeyup="searchBooks()">
                     <img src="/images/search-icon.png" alt="Search Icon">
                 </div>
             </div>
@@ -244,37 +244,29 @@ else
                 <table class="book-table">
                     <thead>
                         <tr>
-                            <th>Book Cover</th>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Status</th>
-                            <th><a href="NewBookInformation"><img src="/images/newbook.png" alt="Add New Book" class="new-book-icon"></a></th>
-                            <th><img src="/images/filter.png" alt="Filter" class="filter-icon"></th>
+                            <th>Name</th>
+                            <th>Course</th>
+                            <th>RFID</th>
+                            <th>Reg. Date</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="bookTableBody">
                         @if (Model != null && Model.Any())
                         {
-                            foreach (var book in Model)
+                            foreach (var user in Model)
                             {
                                 <tr>
-                                    <td><img src="@(book.BookCoverUrl ?? "/path/to/default-image.jpg")" alt="Book Cover" class="book-cover"></td>
-                                    <td>@book.Title</td>
-                                    <td>@book.Author</td>
-                                    <td class="@(book.Availability == "Available" ? "available" : "borrowed")">@book.Availability</td>
+                                    <td>@user.Name</td>
+                                    <td>@user.Course</td>
+                                    <td>@user.rfid</td>
+                                    <td>@user.DateIssued?.ToString("yyyy-MM-dd")</td>
                                     
                                     <td>
-                            <a asp-action="NewBookInformation" asp-controller="Account" asp-route-id="@book.BookId">
-                                <img src="/images/edit.png" alt="Edit" class="buttons">
-                            </a></td>
-
-                            
-                                    <td>
-                            <a asp-action="DeleteBook" asp-controller="Account" asp-route-id="@book.BookId" onclick="return confirm('Are you sure you want to delete this book?');">
-                                <img src="/images/delete.png" alt="Delete" class="buttons">
-                            </a></td>
-
-
+                                        <a asp-action="NewBookInformation" asp-controller="Account" asp-route-id="@user.UserId">
+                                            <img src="/images/edit.png" alt="Edit" class="buttons">
+                                        </a>
+                                    </td>
                                 </tr>
                             }
                         }

@@ -2,6 +2,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+public class AdminOnlyAttribute : ActionFilterAttribute
+{
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        var role = context.HttpContext.Session.GetString("Role");
+
+        if (!string.Equals(role, "admin", StringComparison.OrdinalIgnoreCase)) // Case-insensitive check
+        {
+            context.Result = new RedirectToActionResult("Welcome", "Account", null);
+        }
+
+        base.OnActionExecuting(context);
+    }
+}
+
+
 
 public class AccountController : Controller
 {
@@ -10,36 +28,6 @@ public class AccountController : Controller
     public AccountController(UserDbContext context)
     {
         _context = context;
-    }
-
-    [HttpGet]
-    public IActionResult AdminPanel()
-    {
-        return View(); 
-    }
-
-    [HttpGet]
-    public IActionResult NewBook()
-    {
-    return View(); 
-    }
-    
-    [HttpGet]
-    public IActionResult AdminBookManagement()
-    {
-        var userName = HttpContext.Session.GetString("UserName");
-
-        if (string.IsNullOrEmpty(userName))
-        {
-            // Redirect to Input page if user is not logged in
-            return RedirectToAction("Input", "Account");
-        }
-
-        // Retrieve books from the database
-        var books = _context.Books.ToList(); // Gets all books from the "Books" table
-
-        ViewBag.UserName = userName; // Set the user's name in ViewBag for display in the view
-        return View(books); // Pass books as the model to the view
     }
 
     [HttpGet]
@@ -85,19 +73,22 @@ public class AccountController : Controller
     [HttpPost]
     public IActionResult Login(string loginMethod, string email, string password, string rfid)
     {
+        User user = null;
+
         if (loginMethod == "manual")
         {
             // Manual login logic
-            var user = _context.Users.SingleOrDefault(u => u.Email == email);
+            user = _context.Users.SingleOrDefault(u => u.Email == email);
             if (user != null)
             {
                 var passwordHasher = new PasswordHasher<User>();
                 var result = passwordHasher.VerifyHashedPassword(user, user.Password, password);
                 if (result == PasswordVerificationResult.Success)
                 {
-                    // Successful manual login
-                    HttpContext.Session.SetString("UserName", user.Name); // Store the user's name in session
-                    return RedirectToAction("Welcome"); // Redirect to welcome page
+                    // Store user's name in session
+                    HttpContext.Session.SetString("UserName", user.Name);
+                    HttpContext.Session.SetString("Role", user.role);
+                    return RedirectBasedOnRole(user.role); // Redirect based on role
                 }
             }
             else
@@ -109,12 +100,13 @@ public class AccountController : Controller
         else if (loginMethod == "rfid")
         {
             // RFID login logic
-            var user = _context.Users.SingleOrDefault(u => u.rfid == rfid);
+            user = _context.Users.SingleOrDefault(u => u.rfid == rfid);
             if (user != null)
             {
-                // Successful RFID login
-                HttpContext.Session.SetString("UserName", user.Name); // Store the user's name in session
-                return RedirectToAction("Welcome"); // Redirect to welcome page
+                // Store user's name in session
+                HttpContext.Session.SetString("UserName", user.Name);
+                HttpContext.Session.SetString("Role", user.role);
+                return RedirectBasedOnRole(user.role); // Redirect based on role
             }
             else
             {
@@ -126,6 +118,21 @@ public class AccountController : Controller
         // If login failed
         ModelState.AddModelError("", "Invalid login attempt.");
         return View("Input"); // Return to the login view with error
+    }
+
+    private IActionResult RedirectBasedOnRole(string role)
+    {
+        if (role == "student")
+        {
+            return RedirectToAction("Welcome");
+        }
+        else if (role == "admin")
+        {
+            return RedirectToAction("AdminPanel");
+        }
+
+        // Default redirection if role is not matched
+        return RedirectToAction("Input", "Account");
     }
 
     public IActionResult Welcome()
@@ -166,8 +173,61 @@ public class AccountController : Controller
 
         // Pass user's name to the view
         ViewBag.UserName = userName;
-
         return View();
+    }
+
+    [AdminOnly]
+    [HttpGet]
+    public IActionResult AdminPanel()
+    {
+        return View(); 
+    }
+
+    [AdminOnly]
+    [HttpGet]
+    public IActionResult NewBook()
+    {
+        return View(); 
+    }
+
+    [AdminOnly]
+    [HttpGet]
+    public IActionResult AdminBookManagement()
+    {
+        var userName = HttpContext.Session.GetString("UserName");
+
+        if (string.IsNullOrEmpty(userName))
+        {
+            // Redirect to Input page if user is not logged in
+            return RedirectToAction("Input", "Account");
+        }
+
+        // Retrieve books from the database
+        var books = _context.Books.ToList(); // Gets all books from the "Books" table
+
+        ViewBag.UserName = userName; // Set the user's name in ViewBag for display in the view
+        return View(books); // Pass books as the model to the view
+    }
+
+    [HttpGet]
+    [AdminOnly] // Ensure only admins can access this view
+    public IActionResult AdminUserManagement()
+    {
+        var userName = HttpContext.Session.GetString("UserName");
+
+        if (string.IsNullOrEmpty(userName))
+        {
+            // Redirect to Input page if user is not logged in
+            return RedirectToAction("Input", "Account");
+        }
+        var user = _context.Users.ToList(); // Fetch all users from the database
+        return View(user); // Pass the list of users to the view
+    }
+    [HttpGet]
+    [AdminOnly] // Ensure only admins can access this view
+    public IActionResult AdminBookStat()
+    {
+        return View ();
     }
 
     public IActionResult Return()
