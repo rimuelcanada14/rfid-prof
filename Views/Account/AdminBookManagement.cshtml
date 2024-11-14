@@ -69,7 +69,6 @@ else
         flex-direction: column;
     }
 
-    /* Return Container Styling */
     .mbook-container {
         width: 100%;
         background-color: #ffffff;
@@ -82,7 +81,6 @@ else
         overflow: hidden;
     }
 
-    /* Search Bar Styling */
     .search-container {
         display: flex;
         align-items: center;
@@ -116,7 +114,6 @@ else
         cursor: pointer;
     }
 
-    /* Book Table Styling */
     .book-table {
         width: 100%;
         border-collapse: collapse;
@@ -139,6 +136,7 @@ else
         top: 0;
         z-index: 2;
     }
+
     .book-table thead {
          font-weight: bold;
         font-family: 'PoppinsMedium', Arial, sans-serif;
@@ -187,18 +185,16 @@ else
     .book-table th.filter-column,
     .book-table td.add-book-column,
     .book-table td.filter-column {
-        width: 50px; /* Adjust width to desired size */
-        text-align: right; /* Align content to the right */
-        padding-right: 10px; /* Add padding if necessary */
+        width: 50px; 
+        text-align: right; 
+        padding-right: 10px; 
     }
 
-    /* Ensure icons are properly sized */
     .new-book-icon {
         width: 1.7em;
         cursor: pointer;
-        margin: 0;
-        margin-left: 9em;
-        margin-right: .5em;
+        align:# center;
+
     }
     .filter-icon {
         width: 1.6em;
@@ -235,6 +231,37 @@ else
     .last-th{
         text-align: right;
     }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 9999; 
+        border-radius: 5px;
+    }
+
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #f1f1f1;
+    }
+
+    .show {
+        display: block;
+    }
+
 </style>
 
 
@@ -253,22 +280,30 @@ else
                 <div class="search-bar">
                     <input type="text" id="searchBar" placeholder="Search for books..." onkeyup="searchBooks()">
                     <img src="/images/search-icon.png" alt="Search Icon">
+                </div>           
+                    <div class="dropdown">
+                            <img src="/images/filter.png" alt="Filter" class="filter-icon" onclick="toggleDropdown()">
+                            <div id="filterDropdown" class="dropdown-content">
+                                <a href="#" onclick="sortTable('Title')">Sort by Title</a>
+                                <a href="#" onclick="sortTable('Author')">Sort by Author</a>
+                                <a href="#" onclick="sortTable('Status')">Sort by Status</a>
+                            </div>
+                    </div>     
                 </div>
-            </div>
-            <div class="book-table-container">
-                <table class="book-table">
-                    <thead>
-                        <tr>
-                            <th>Book Cover</th>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Status</th>
-                            <th class = "last-th">
-                                <a href="AdminNewBook"><img src="/images/newbook.png" alt="Add New Book" class="new-book-icon"></a>
-                                <img src="/images/filter.png" alt="Filter" class="filter-icon">
-                            </th>
-                        </tr>
-                    </thead>
+
+    <div class="book-table-container">
+        <table class="book-table">
+            <thead>
+                <tr>
+                    <th>Book Cover</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Status</th>
+                    <th class = "last-th">
+                        <a href="AdminNewBook"><img src="/images/newbook.png" alt="Add New Book" class="new-book-icon"></a></th>
+                </tr>
+            </thead>
+
                     <tbody id="bookTableBody">
                         @if (Model != null && Model.Any())
                         {
@@ -322,5 +357,51 @@ else
                 }
             }
         }
+
+        //dropdown
+    function toggleDropdown() {
+        document.getElementById("filterDropdown").classList.toggle("show");
+        }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.filter-icon')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+             }
+        }
+    }
+
+        // sort alpahbetically
+function sortTable(criteria) {
+    var rows = Array.from(document.getElementById("bookTableBody").getElementsByTagName("tr"));
+    var columnIndex;
+
+    if (criteria === "Title") columnIndex = 1;
+    else if (criteria === "Author") columnIndex = 2;
+    else if (criteria === "Status") columnIndex = 3;
+
+    rows.sort(function (a, b) {
+        var textA = a.getElementsByTagName("td")[columnIndex].textContent.toLowerCase();
+        var textB = b.getElementsByTagName("td")[columnIndex].textContent.toLowerCase();
+
+        if (criteria === "Status") {
+            //available first before not
+            return textA === "available" ? -1 : textB === "available" ? 1 : 0;
+        }
+
+        return textA.localeCompare(textB);
+    });
+
+    var tableBody = document.getElementById("bookTableBody");
+    tableBody.innerHTML = ""; 
+    rows.forEach(function(row) {
+        tableBody.appendChild(row); 
+    });
+}
+
     </script>
 </body>
