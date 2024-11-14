@@ -185,13 +185,6 @@ public class AccountController : Controller
 
     [AdminOnly]
     [HttpGet]
-    public IActionResult NewBook()
-    {
-        return View(); 
-    }
-
-    [AdminOnly]
-    [HttpGet]
     public IActionResult AdminBookManagement()
     {
         var userName = HttpContext.Session.GetString("UserName");
@@ -208,6 +201,117 @@ public class AccountController : Controller
         ViewBag.UserName = userName; // Set the user's name in ViewBag for display in the view
         return View(books); // Pass books as the model to the view
     }
+    [AdminOnly]
+    [HttpPost]
+    public IActionResult DeleteBook(int id)
+    {
+        var book = _context.Books.Find(id);
+        
+        if (book == null)
+        {
+            return NotFound();
+        }
+
+        _context.Books.Remove(book);
+        _context.SaveChanges();
+
+        return RedirectToAction("AdminBookManagement");
+    }
+    [AdminOnly]
+    [HttpGet]
+    public IActionResult AdminNewBook()
+    {
+        return View();
+    }
+    [HttpPost]
+    public async Task<IActionResult> AddNewBook(IFormFile bookCover, string title, string author, string rfid, string publisher)
+    {
+        // Validate input
+        if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(author) || string.IsNullOrWhiteSpace(rfid))
+        {
+            TempData["ErrorMessage"] = "All fields are required.";
+            return RedirectToAction("AdminBookManagement");
+        }
+
+        // Define the path to save the uploaded file
+        string bookCoverUrl = "/images/default-cover.jpg"; // Default cover image
+
+        if (bookCover != null && bookCover.Length > 0)
+        {
+            // Save uploaded file
+            var filePath = Path.Combine("wwwroot/images/covers", Path.GetFileName(bookCover.FileName));
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await bookCover.CopyToAsync(stream);
+            }
+            bookCoverUrl = $"/images/covers/{bookCover.FileName}";
+        }
+
+        // Create a new book record
+        var newBook = new Book
+        {
+            Title = title,
+            Author = author,
+            BookRFID = rfid,
+            Publisher = publisher,
+            BookCoverUrl = bookCoverUrl,
+            Availability = "Available", // Assuming a default value for Availability
+            TimesBorrowed = 0,
+            TimesReturned = 0
+        };
+
+        // Add and save the new book to the database
+        _context.Books.Add(newBook);
+        await _context.SaveChangesAsync();
+
+        // Set success message and redirect back to the book management page
+        TempData["SuccessMessage"] = "New book added successfully!";
+        return RedirectToAction("AdminBookManagement");
+    }
+    public IActionResult AdminEditBook(int id)
+    {
+        // Fetch the book by ID from the database
+        var book = _context.Books.Find(id);
+
+        if (book == null)
+        {
+            TempData["ErrorMessage"] = "Book not found.";
+            return RedirectToAction("AdminBookManagement");
+        }
+
+        return View(book); // Pass the book model to the edit view
+    }
+
+    [HttpPost]
+    public IActionResult UpdateBook([Bind("BookId,Title,Author,Publisher")] Book model)
+    {
+        if (ModelState.IsValid)
+        {
+            var book = _context.Books.Find(model.BookId);
+            if (book != null)
+            {
+                book.Title = model.Title;
+                book.Author = model.Author;
+                book.Publisher = model.Publisher;
+
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Book updated successfully.";
+                return RedirectToAction("AdminBookManagement");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Book not found.";
+            }
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "An error occurred. Please check the entered values.";
+        }
+
+        return View("AdminEditBook", model);
+    }
+
+
 
     [HttpGet]
     [AdminOnly] // Ensure only admins can access this view
@@ -227,9 +331,21 @@ public class AccountController : Controller
     [AdminOnly] // Ensure only admins can access this view
     public IActionResult AdminBookStat()
     {
-        return View ();
-    }
+        var userName = HttpContext.Session.GetString("UserName");
 
+        if (string.IsNullOrEmpty(userName))
+        {
+            // Redirect to Input page if user is not logged in
+            return RedirectToAction("Input", "Account");
+        }
+
+        // Retrieve books from the database
+        var books = _context.Books.ToList(); // Gets all books from the "Books" table
+
+        ViewBag.UserName = userName; // Set the user's name in ViewBag for display in the view
+        return View(books); // Pass books as the model to the view
+    }
+    
     public IActionResult Return()
     {
         var userName = HttpContext.Session.GetString("UserName");

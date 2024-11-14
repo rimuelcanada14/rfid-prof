@@ -294,7 +294,7 @@ else
                 @if (Model != null)
                 {
                     <div class="book-cover">
-                        <img src="~/images/RIZAL-INDEX.png" alt="Book Cover" style="width:15em;">
+                        <img src="@(Model.BookCoverUrl ?? "/path/to/default-image.jpg")" alt="Book Cover" style="width:15em;">
                     </div>
 
                     <div class="book-details">

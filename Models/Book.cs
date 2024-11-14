@@ -13,14 +13,11 @@ public class Book
     public string Publisher { get; set; }
 
     [Required]
-    public string Availability { get; set; } // e.g., "Available" or "Borrowed"
-
-    public int TimesBorrowed { get; set; }
-    public int TimesReturned { get; set; }
+    public int TimesBorrowed { get; set; } = 0;  // Default value set to 0
+    public int TimesReturned { get; set; } = 0;  // Default value set to 0
 
     [Required]
-    public string BookRFID { get; set; }
-
-    public string BookCoverUrl { get; set; }
+    public string? BookRFID { get; set; }
+    public string? Availability { get; set; }
+    public string? BookCoverUrl { get; set; }
 }
-

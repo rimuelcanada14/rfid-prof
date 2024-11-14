@@ -1,0 +1,547 @@
+@model Book
+@{
+    ViewData["Title"] = "New Book";
+}
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-image: url('/images/PLM-HOME.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        min-height: 100vh;
+        display: block;
+        justify-content: center;
+        align-items: center;
+    }
+
+   .navbar-menu {
+        display: flex;
+        gap: 50px;
+        align-items: center;
+        position: absolute;
+        top: 1.5em;
+        z-index: 998;
+        left: 51em;
+        text-align: center;
+        line-height: 22px;
+        width: 3em
+    }
+
+    .navbar-menu a {
+        text-decoration: none;
+        color: #2e2c2b;
+        font-family: 'MontserratSemiBold';
+        font-size: 20px;
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
+
+    .navbar-menu .highlight {
+        color: #DAA520;
+        font-size: 24px;
+        font-family: 'MontserratSemiBold';
+    }
+
+    .navbar-menu a:hover {
+        color: #DAA520;
+    }
+    .addnew-page {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .addnew-container {
+        width: 100%;
+        background-color: #ffffff;
+        border-radius: 35px;
+        padding: 20px;
+        margin-top: 30px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        height: 75vh;
+        border: 1px solid #a9a7a7;
+        overflow: hidden;
+    }
+
+        .table.container {
+            align-items: center;
+            align-content: center;
+        }
+
+
+        /* Book Table Styling */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 24px;
+            align-items: center;
+        }
+
+        .table th, .table td {
+            text-align: left;
+            font-weight: bold;
+            font-family: 'TTNormsBold';
+            vertical-align: middle;
+            position: relative;
+            align-items: center;
+        }
+
+        .new-book-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 40px;
+            height: auto;
+        }
+
+        .filter-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 20px;
+            height: auto;
+        }
+
+        .book-cover {
+            width: 70px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .return-button {
+            display: inline-block;
+            padding: 10px 18px;
+            background-color: #4a73e5;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-family: 'TT Fors Trial';
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .borrowed {
+            color: red;
+        }
+
+        .available {
+            color: green;
+        }
+
+        .buttons {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 40px;
+            height: auto;
+        }
+
+        .styled-hr {
+            border: none;
+            border-top: 2px solid #ddd;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .new-book-information {
+            color: #b50a0a;
+            font-family: 'PoppinsMedium';
+            font-weight: 800;
+        }
+
+        /* Search Bar Styling */
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 0px;
+            max-width: 200px;
+        }
+
+        .input-bar {
+            position: relative;
+            width: 100%;
+            font-family: 'PoppinsMedium', Arial, sans-serif;
+        }
+
+        .input-bar input[type="text"] {
+            font-family: 'TTForsRegular';
+            width: 56em;
+            padding: 5px 5px 5px 20px;
+            border: 1px solid gray;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: bold;
+            color: black;
+            outline: none;
+            margin-left: -20em;
+        }
+
+     /* Upload Button */
+        .upload-btn {
+            font-family: 'TTForsRegular', sans-serif;
+            color: #4f68d9;
+            background-color: #ffffff;
+            font-size: 15px;
+            padding: 5px;
+            border: 1px solid gray;
+            border-radius: 20px;
+            cursor: pointer;
+            width: 13em;
+            margin-left: -21.3em;
+            font-weight: 600;
+            text-align: center;
+        }
+  
+          .upload-btn:hover {
+            background-color: #4f68d9;
+            color: white
+        }
+          
+          #imageUpload {
+            display: none;
+        }
+
+
+        /* Submit Button */
+        .submit-button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+            width: 100%;
+        }
+
+        .submit-button {
+            display: inline-block;
+            padding: 7px 12px;
+            color: white;
+            background-color: #4f68d9;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'TTForsRegular';
+            font-weight: bold;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+            width: 12em;
+            margin-top: 2em;
+        }
+  
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+        #confirmRfidButton, #rfidInputPopupField{
+        cursor: default;
+    }
+    .popup-link {
+        position: relative; /* Fixed to ensure it stays centered on screen */
+        top: 46.5%; /* Center vertically */
+        left: 48%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust position to truly center */
+        background-color: white; /* Green background for success */
+        color: black;
+        padding: 15px 25px; /* Add padding for spacing */
+        border-radius: 25px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 20em;
+        height: 22em;
+        text-align: center; /* Center text within the popup */
+        font-size: 20px;
+        z-index: 1000;
+    }
+    .popup-link h2{
+        color: #4f68d9;
+        font-family: "PoppinsMedium";
+        font-weight: 700;
+    }
+    .popup-link p {
+        font-family: "TTForsRegular";
+        font-weight: 300;
+        font-size: 18px;
+    }
+    .rfid-image {
+        width: auto;
+        height: 13.5em;
+        position: relative;
+        margin-top: -4em;
+    }
+    #closeRfidPopupButton {
+        position: absolute;
+        bottom: 1%;
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%);
+        background-color: white ;
+        color: #black;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #4f68d9;
+        border-radius: 20px;
+        cursor: pointer;
+        width: 10em;
+        font-family: 'TTForsRegular', sans-serif;
+    }
+    #closeRfidPopupButton:hover {
+        background-color: #4f68d9;
+        color: #ffffff;
+        font-size: 15px;
+        padding: 10px;
+        border: 1px solid #d5d7d6;
+    }
+    .popup-overlay {
+        position: fixed; /* Fixed to ensure it stays centered on screen */
+        top: 50%; /* Center vertically */
+        left: 55%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust position to truly center */
+        background-color: rgba(0, 0, 0, 0.4); /* Green background for success */
+        color: #13ab25;
+        padding: 15px 25px; /* Add padding for spacing */
+        border-radius: 8px;
+        font-family: "PoppinsMedium";
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        transition: opacity 0.5s ease; /* Smooth fading transition */
+        opacity: 0; /* Start hidden */
+        width: 110%;
+        height: 100%;
+        text-align: center; /* Center text within the popup */
+        font-size: 20px;
+        font-weight: 400;
+        display: none;
+        backdrop-filter: blur(5px);
+    }
+
+    /* Class to show the popup */
+    .popup-overlay.show {
+        display: block; /* Show the popup */
+        opacity: 1; /* Make it visible */
+    }
+
+    /* Class to hide the popup */
+    .popup-overlay.hide {
+        opacity: 0; /* Fade out */
+    }
+    .linkcard-button {
+        font-family: 'TTForsRegular', sans-serif;
+        color: #4f68d9;
+        background-color: #ffffff;
+        font-size: 15px;
+        padding: 5px;
+        border: 1px solid gray;
+        border-radius: 20px;
+        cursor: pointer;
+        width: 13em;
+        margin-left: -21.3em;
+        font-weight: 600;
+    }
+    .linkcard-button:hover{
+        background-color: #4f68d9;
+        color: white
+    }
+    .done-text {
+        color: #13ab25;
+    }
+
+    .none-text {
+        color: #b50a0a;
+    }
+    </style>
+
+<body>
+    <div class="navbar-menu">
+        <a href="AdminPanel">HOME</a>
+        <a href="AdminBookManagement" class="highlight">BOOK MANAGEMENT</a>
+        <a href="AdminUserManagement">USER MANAGEMENT</a>
+        <a href="AdminBookStat">BOOK STATISTICS</a>
+    </div>
+
+    <div class="addnew-page">
+        <div class="addnew-container">
+            <form method="post" asp-action="AddNewBook" asp-controller="Account" enctype="multipart/form-data">
+                <div id="rfidInputPopup" class="popup-overlay" style="display: none;">
+                        <div class="popup-link">
+                            <h2>RFID Card Linking</h2>
+                            <p>Please scan your <thead> book</thead> in the scanner.</p>
+                            <div class = "rfid-inp">
+                                <input name="rfid" id="rfidInputPopupField" type="number" autocomplete="off" placeholder="Scan RFID" />
+                                <button type="button" id="confirmRfidButton">Confirm RFID</button>
+                                <button type="button" id="closeRfidPopupButton">Close</button>
+                                <img src="~/images/rfid-icon.png" class="rfid-image" alt="rfid">
+                            </div>
+                        </div>
+                    </div>
+                    <h1 class="new-book-information" align="center">New Book Information</h1>
+                    <hr class="styled-hr">
+
+                    <!-- Display Error or Success Messages -->
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    <!-- New Book Information Table -->
+                    <table class="table">
+                        <tbody>    
+                            <tr>
+                                <td><strong>Title:</strong></td>
+                                <td>
+                                    <div class="input-container">
+                                        <div class="input-bar">
+                                            <input type="text" name="title" placeholder="Title" required>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Author:</strong></td>
+                                <td>
+                                    <div class="input-container">
+                                        <div class="input-bar">
+                                            <input type="text" name="author" placeholder="Author" required>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Publisher:</strong></td>
+                                <td>
+                                    <div class="input-container">
+                                        <div class="input-bar">
+                                            <input type="text" name="publisher" placeholder="Publisher" required>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>RFID Tag:</strong></td>
+                                <td>
+                                    <div class="input-container">
+                                            <button type="button" class="linkcard-button" id="scanButton">Link RFID Card</button>
+                                            <div id="rfidStatus" style ="display: none;"></div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Upload book cover:</strong></td>
+                                <td>
+                                    <div class="upload-container">
+                                        <label for="bookCover" class="upload-btn" id="fileButton">
+                                            <img src="/images/upload.png" style="width: 25px" alt="Upload">
+                                            Upload Image
+                                        </label>
+                                        <input type="file" id="bookCover" name="bookCover" accept="image/*" style="display: none;">
+                                        <div id="fileStatus" style ="display: none;"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Submit Button -->
+                    <div class="submit-button-container">
+                        <button type="submit" class="submit-button">Add new book</button>
+                    </div>
+                
+            </form>
+        </div>
+    </div>
+
+<script>
+    // Optional: Display the selected file name next to the upload button
+    document.getElementById("bookCover").addEventListener("change", function() {
+        var fileName = this.files[0] ? this.files[0].name : "";
+        document.getElementById("fileName").textContent = fileName;
+    });
+    document.getElementById("bookCover").addEventListener("change", function() {
+            var fileName = this.files[0] ? this.files[0].name : "";
+
+            if (fileName) {
+                document.getElementById("fileButton").innerHTML = '<img src="/images/upload.png" style="width: 25px" alt="Upload"> Upload Image: <span class="done-text">DONE</span>'; // Update button text to "DONE"
+                document.getElementById("fileStatus").textContent = "DONE"; // Show DONE status
+            } else {
+                // If the input is empty, set the button text to NONE
+                document.getElementById("fileButton").innerHTML = 'Upload Image: <span class="none-text">NONE</span>'; // Keep the button text as NONE
+            }
+        });
+
+    document.getElementById("scanButton").addEventListener("click", function() {
+            const rfidInputPopup = document.getElementById("rfidInputPopup");
+            rfidInputPopup.style.display = 'block'; // Show the RFID input popup
+            rfidInputPopup.style.opacity = 1; // Make it visible
+            document.getElementById("rfidInputPopupField").focus(); // Set focus on the RFID input field
+        });
+
+        // Confirm button click event for the RFID popup
+        document.getElementById("confirmRfidButton").addEventListener("click", function() {
+            const rfidInput = document.getElementById("rfidInputPopupField");
+            const scannedRfid = rfidInput.value.trim(); // Get the value from the RFID input
+
+            if (scannedRfid) {
+                document.getElementById("scanButton").innerHTML = 'Link RFID Card: <span class="done-text">DONE</span>'; // Update button text to "DONE"
+                document.getElementById("rfidStatus").textContent = "DONE"; // Show DONE status
+                document.getElementById("rfidInputPopup").style.display = 'none'; // Hide the RFID input popup
+            } else {
+                // If the input is empty, set the button text to NONE
+                document.getElementById("scanButton").innerHTML = 'Link RFID Card: <span class="none-text">NONE</span>'; // Keep the button text as NONE
+            }
+        });
+
+        // Add event listener for the Enter key in the RFID input field
+        document.getElementById("rfidInputPopupField").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent default form submission
+                document.getElementById("confirmRfidButton").click(); // Trigger the confirm button click
+            }
+        });
+
+        // Close button click event for the RFID popup
+        document.getElementById("closeRfidPopupButton").addEventListener("click", function() {
+            document.getElementById("rfidInputPopup").style.display = 'none'; // Hide the RFID input popup
+        });
+
+        // Validate form
+        function validateForm() {
+            const rfid = document.getElementById("rfidInputPopupField").value;
+
+            if (!rfid) {
+                showPopup("Please link your RFID card before signing up."); // Use popup for incomplete RFID linking
+                return false; // Prevent form submission
+            }
+        }
+        function showPopup(message) {
+            const popup = document.getElementById("rfidPopup");
+            popup.textContent = message;
+            popup.style.display = "block";
+            popup.style.opacity = 1; // Make it visible
+
+            setTimeout(() => {
+                popup.style.opacity = 0; // Fade out
+                setTimeout(() => {
+                    popup.style.display = "none"; // Hide after fade out
+                }, 500); // Wait for the fade out to complete
+            }, 2000); // Display for 2 seconds
+        }
+</script>
+</body>

@@ -1,5 +1,21 @@
-
-
+@model List<Book>
+@{
+    ViewBag.Title = "Book Management";
+}
+@{
+    var userName = Context.Session.GetString("UserName");
+}
+@if (!string.IsNullOrEmpty(userName))
+{
+    <h2 style="display: none;">Welcome, @userName</h2>
+}
+else
+{
+    <h2 style="display: none;">Please log in to continue.</h2>
+    <script>
+        window.location.href = '@Url.Action("Input", "Account")';
+    </script>
+}
 
 <style>
     body {
@@ -15,180 +31,206 @@
         align-items: center;
     }
 
-    /* Navbar Styling */
-    .navbar-menu {
+   .navbar-menu {
         display: flex;
         gap: 50px;
         align-items: center;
         position: absolute;
-        top: 2em;
+        top: 1.5em;
         z-index: 998;
-        left: 50.5em;
+        left: 51em;
+        text-align: center;
+        line-height: 22px;
+        width: 3em
     }
 
     .navbar-menu a {
         text-decoration: none;
         color: #2e2c2b;
         font-family: 'MontserratSemiBold';
-        font-size: 24px;  /* Increased from 20px */
+        font-size: 20px;
         font-weight: bold;
         transition: color 0.3s ease;
     }
 
     .navbar-menu .highlight {
         color: #DAA520;
-        font-size: 32px;  /* Increased from 28px */
+        font-size: 24px;
         font-family: 'MontserratSemiBold';
     }
 
-    /* Return Container Styling */
-    .return-container {
-        width: 98%;  /* Increased from 95% */
-        max-width: 1500px;  /* Increased from 1300px */
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 40px;  /* Increased from 30px */
-        margin-top: 40px;  /* Increased from 30px */
-        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
-        overflow-y: scroll;
-        max-height: 75vh;  /* Increased from 65vh */
-        border: 1px solid #a9a7a7;
-        font-size: 20px;  /* Increased from 18px */
+    .navbar-menu a:hover {
+        color: #DAA520;
+    }
+    .sbook-page {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
     }
 
+    /* Return Container Styling */
+    .sbook-container {
+        width: 100%;
+        background-color: #ffffff;
+        border-radius: 35px;
+        padding: 20px;
+        margin-top: 30px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        height: 75vh;
+        border: 1px solid #a9a7a7;
+        overflow: hidden;
+    }
     /* Book Table Styling */
     .book-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 20px;  /* Increased from 18px */
+        font-size: 16px;
     }
 
     .book-table th, .book-table td {
-        padding: 20px;  /* Increased from 14px */
+        padding: 12px;
         text-align: center;
         font-family: 'PoppinsMedium', Arial, sans-serif;
         border-bottom: 1px solid #ddd;
         vertical-align: middle;
-        position: relative;
+        width: 20em;
     }
 
     .book-table th {
-        font-size: 24px;  /* Increased from 20px */
-        font-weight: bold;
-        font-family: 'TT Fors Trial';
-        background-color: #f9f9f9;
+         font-weight: bold;
+    font-family: 'PoppinsMedium', Arial, sans-serif;
+    background-color: #f9f9f9;
+    position: sticky;
+    top: 0;
+    z-index: 2;
     }
 
     .book-cover {
-        width: 100px;  /* Increased from 70px */
+        width: 60px;
         height: auto;
         display: block;
         margin: 0 auto;
     }
 
-    .return-button {
+    .sbook-button {
         display: inline-block;
-        padding: 12px 22px;  /* Increased from 10px 18px */
+        padding: 8px 16px;
         background-color: #4a73e5;
         color: white;
         border: none;
         border-radius: 24px;
         font-family: 'PoppinsMedium', Arial, sans-serif;
-        font-size: 20px;  /* Added font size */
         font-weight: bold;
         cursor: pointer;
         text-align: center;
     }
 
-    /* Search Bar Styling */
-    .search-container {
-        display: flex;
-        align-items: center;
-        gap: 20px;  /* Increased from 15px */
-        margin-bottom: 25px;  /* Increased from 20px */
-        max-width: 600px;  /* Increased from 500px */
+    .borrowed {
+        color: red;
     }
 
-    .search-label {
-        font-size: 28px;  /* Increased from 25px */
-        color: black;
-        font-weight: bold;
-        font-family: 'Poppins Medium';
+    .available {
+        color: green;
     }
 
-    .search-bar input[type="text"] {
-        width: 100%;
-        padding: 15px 20px 15px 50px;  /* Increased padding */
-        border: 1px solid #black;
-        border-radius: 24px;
-        font-size: 20px;  /* Increased from 18px */
-        color: black;
-        outline: none;
+    .buttons {
+        cursor: pointer;
+        width: 30px;
+        height: auto;
     }
-
-    .search-bar img {
-        position: absolute;
-        left: 18px;  /* Increased from 15px */
-        top: 50%;
-        transform: translateY(-50%);
-        width: 28px;  /* Increased from 24px */
-        height: 28px;  /* Increased from 24px */
+    .filter-icon {
+        width: 20px;
         cursor: pointer;
     }
+    .new-book-icon {
+        width: 30px;
+        cursor: pointer;
+    }
+    .book-table th.add-book-column,
+    .book-table th.filter-column,
+    .book-table td.add-book-column,
+    .book-table td.filter-column {
+        width: 50px; /* Adjust width to desired size */
+        text-align: right; /* Align content to the right */
+        padding-right: 10px; /* Add padding if necessary */
+    }
+
+    /* Ensure icons are properly sized */
+    .new-book-icon, .filter-icon {
+        width: 20px;
+        cursor: pointer;
+        margin: 0; /* Remove any extra margin */
+    }
+
+    .book-table-container {
+        max-height: 65vh;
+        overflow-y: auto;
+        margin-top: 10px;
+    }
+    .book-table-container::-webkit-scrollbar {
+        width: 10px;
+    }
+    .book-table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 5px;
+    }
+    .book-table-container::-webkit-scrollbar-thumb {
+        background-color: #818181;
+        border-radius: 5px;
+    }
+    .book-table-container::-webkit-scrollbar-thumb:hover {
+        background-color: #818181;
+    }
+    .search-label {
+        font-family: 'TTForsRegular';
+    }
+
 </style>
 
 
 <body>
-    @* need to change the nav bar *@
     <div class="navbar-menu">
-        <a href="Welcome">HOME</a>
-        <a href="Return">RETURN</a>
-        <a href="#" onclick="showRfidPopup()">BORROW</a>
-        <a href="Search">SEARCH</a>
-        <a href="Profile" class="highlight">PROFILE</a>
+        <a href="AdminPanel">HOME</a>
+        <a href="AdminBookManagement">BOOK MANAGEMENT</a>
+        <a href="AdminUserManagement">USER MANAGEMENT</a>
+        <a href="AdminBookStat" class="highlight">BOOK STATISTICS</a>
     </div>
 
-    <div class="return-container">
-        <table class="book-table">
-            <thead>
-                <tr>
-                    <strong>
-                    <th>Books</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Total Number</th>
-                    </strong>
-                    <th></th>
-                    <th></th>
-                </tr>
-                <tr> 
-                    <td style="text-decoration: underline; font-weight: bold; border-bottom: 0px solid #ddd;">Most borrowed books</td>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <td><img src="/images/fourthwing.jpg" alt="Book Cover" class="book-cover"></td>
-                    <td>Fourth Wing</td>
-                    <td>Rebecca Yarros</td>
-                    <strong><td>37</td></strong>
-                </tr>
-                <tr>
-                    <td><img src="/images/hauntingadeline.jpg" alt="Book Cover" class="book-cover"></td>
-                    <td>Haunting Adeline</td>
-                    <td>H. D. Carlton</td>
-                    <strong><td>32</td></strong>
-                </tr>
-                <tr> 
-                    <td style="text-decoration: underline; font-weight: bold; border-bottom: 0px solid #ddd;">Least borrowed books</td>
-                </tr>
-                <tr>
-                    <td><img src="/images/acotar.jpg" alt="Book Cover" class="book-cover"></td>
-                    <td>A Court of Thorns and Roses</td>
-                    <td>Sarah J. Maas</td>
-                    <td>8</td>
-                </tr>            
-            </tbody>
-        </table>
+    <div class="sbook-page">
+        <div class="sbook-container">
+            <div class="book-table-container">
+                <table class="book-table">
+                    <thead>
+                        <tr>
+                            <th>Book Cover</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Times Borrowed</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookTableBody">
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var book in Model.OrderByDescending(b => b.TimesBorrowed))
+                            {
+                                <tr>
+                                    <td><img src="@(book.BookCoverUrl ?? "/path/to/default-image.jpg")" alt="Book Cover" class="book-cover"></td>
+                                    <td>@book.Title</td>
+                                    <td>@book.Author</td>
+                                    <td>@book.TimesBorrowed</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6">No books available.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </body>
