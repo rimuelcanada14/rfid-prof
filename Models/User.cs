@@ -31,4 +31,8 @@ public class User
 
     [Required]
     public string ContactNumber { get; set; } = "NA";
+
+    // Initialize collections to avoid null reference issues
+    public virtual ICollection<BorrowedBooks> BorrowedBooks { get; set; } = new List<BorrowedBooks>();
+    public virtual ICollection<ReturnedBook> ReturnedBooks { get; set; } = new List<ReturnedBook>();
 }

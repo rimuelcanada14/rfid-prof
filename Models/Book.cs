@@ -21,5 +21,6 @@ public class Book
     public string? BookRFID { get; set; }
     public string? Availability { get; set; }
     public string? BookCoverUrl { get; set; }
+    
 }
     

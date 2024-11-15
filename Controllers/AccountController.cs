@@ -59,6 +59,9 @@ public class AccountController : Controller
             // Set the DateIssued to the current UTC date and time
             user.DateIssued = DateTime.UtcNow;
 
+            user.BorrowedBooks = null;
+            user.ReturnedBooks = null;
+
             _context.Users.Add(user);
             _context.SaveChanges();
 
@@ -178,7 +181,7 @@ public class AccountController : Controller
         return View();
     }
 
-    [AdminOnly]
+        [AdminOnly]
     [HttpGet]
     public IActionResult AdminPanel()
     {
@@ -377,6 +380,66 @@ public class AccountController : Controller
         var user = _context.Users.ToList(); // Fetch all users from the database
         return View(user); // Pass the list of users to the view
     }
+
+    [AdminOnly]
+    public IActionResult AdminUserDeletion(int id)
+    {
+        var user = _context.Users
+            .Include(u => u.ReturnedBooks)
+                .ThenInclude(bb => bb.Book)  // Include the related Book for BorrowedBooks
+            .FirstOrDefault(u => u.UserId == id);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        // Pass the user and their borrowed books to the view
+        return View(user);
+    }
+    [AdminOnly]
+    [HttpPost]
+    public IActionResult SaveUserRole(int userId, string role)
+    {
+        if (userId == 0 || string.IsNullOrEmpty(role))
+        {
+            return BadRequest("Invalid userId or role.");
+        }
+
+        // Find the user in the database using the integer userId
+        var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
+
+        if (user == null)
+        {
+            return NotFound("User not found.");
+        }
+
+        // Update the role
+        user.role = role;
+
+        // Save the changes to the database
+        _context.SaveChanges();
+
+        // Redirect back to the user details page or another page as needed
+        return RedirectToAction("AdminUserManagement", "Account", new { id = user.UserId });
+    }
+
+
+    public IActionResult DeleteUser(int id)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.UserId == id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        _context.Users.Remove(user);
+        _context.SaveChanges();
+        
+        return RedirectToAction("AdminUserManagement"); // Redirect back to the user management page
+    }
+
+
     [HttpGet]
     [AdminOnly] // Ensure only admins can access this view
     public IActionResult AdminBookStat()
@@ -395,6 +458,7 @@ public class AccountController : Controller
         ViewBag.UserName = userName; // Set the user's name in ViewBag for display in the view
         return View(books); // Pass books as the model to the view
     }
+    
     
     public IActionResult Return()
     {
@@ -611,6 +675,7 @@ public class AccountController : Controller
         var course = HttpContext.Session.GetString("Course");
         var Email = HttpContext.Session.GetString("Email");
         var contactNumber = HttpContext.Session.GetString("ContactNumber");
+        var profilepictureurl = HttpContext.Session.GetString("profilepictureurl");
 
         if (string.IsNullOrEmpty(userName))
         {
@@ -622,12 +687,13 @@ public class AccountController : Controller
         ViewBag.Course = course;
         ViewBag.Email = Email;
         ViewBag.ContactNumber = contactNumber;
+        ViewBag.profilepictureurl = profilepictureurl;
 
         return View();
     }
 
     [HttpPost]
-    public IActionResult EditProfile([FromBody] User updatedUser)
+    public async Task<IActionResult> EditProfile([FromBody] User updatedUser, IFormFile profilePicture)
     {
         var userName = HttpContext.Session.GetString("UserName");
 
@@ -662,6 +728,23 @@ public class AccountController : Controller
         user.Email = updatedUser.Email;
         user.ContactNumber = updatedUser.ContactNumber;
 
+    
+        if (profilePicture != null && profilePicture.Length > 0)
+        {
+            var fileName = $"{Guid.NewGuid().ToString()}{Path.GetExtension(profilePicture.FileName)}";
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "profile", fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await profilePicture.CopyToAsync(stream);
+            }
+
+            // Set the profile picture URL to save in the database and session
+            // user.profilepictureurl = $"/images/profile/{fileName}";
+            // HttpContext.Session.SetString("profilepictureurl", user.profilepictureurl);
+        }
+
+
         try
         {
             _context.SaveChanges();
@@ -671,6 +754,7 @@ public class AccountController : Controller
             HttpContext.Session.SetString("Course", user.Course);
             HttpContext.Session.SetString("Email", user.Email);
             HttpContext.Session.SetString("ContactNumber", user.ContactNumber);
+            // HttpContext.Session.SetString("profilepictureurl", profilePicture); // Ensure this is set
 
             return Ok();
         }

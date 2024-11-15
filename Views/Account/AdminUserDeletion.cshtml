@@ -1,0 +1,331 @@
+@model User
+@{
+    ViewBag.Title = "Book Management";
+}
+@{
+    var userName = Context.Session.GetString("UserName");
+}
+@if (!string.IsNullOrEmpty(userName))
+{
+    <h2 style="display: none;">Welcome, @userName</h2>
+}
+else
+{
+    <h2 style="display: none;">Please log in to continue.</h2>
+    <script>
+        window.location.href = '@Url.Action("Input", "Account")';
+    </script>
+}
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-image: url('/images/PLM-HOME.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        min-height: 100vh;
+        display: block;
+        justify-content: center;
+        align-items: center;
+    }
+
+   .navbar-menu {
+        display: flex;
+        gap: 50px;
+        align-items: center;
+        position: absolute;
+        top: 1.5em;
+        z-index: 998;
+        left: 51em;
+        text-align: center;
+        line-height: 22px;
+        width: 3em
+    }
+
+    .navbar-menu a {
+        text-decoration: none;
+        color: #2e2c2b;
+        font-family: 'MontserratSemiBold';
+        font-size: 20px;
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
+
+    .navbar-menu .highlight {
+        color: #DAA520;
+        font-size: 24px;
+        font-family: 'MontserratSemiBold';
+    }
+
+    .navbar-menu a:hover {
+        color: #DAA520;
+    }
+    .mbook-page {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    /* Return Container Styling */
+    .mbook-container {
+        width: 100%;
+        background-color: #ffffff;
+        border-radius: 35px;
+        padding: 50px;
+        margin-top: 30px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        height: 75vh;
+        border: 1px solid #a9a7a7;
+        overflow: auto;
+
+    }
+    .mbook-container::-webkit-scrollbar {
+        width: 10px;
+    }
+    .mbook-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 5px;
+    }
+    .mbook-container::-webkit-scrollbar-thumb {
+        background-color: #818181;
+        border-radius: 5px;
+    }
+    .mbook-container::-webkit-scrollbar-thumb:hover {
+        background-color: #818181;
+    }
+
+
+    /* Book Table Styling */
+    .book-table {
+        margin-top: 1em;
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 16px;
+    }
+
+    .book-table th, .book-table td {
+        padding: 12px;
+        text-align: center;
+        font-family: 'PoppinsMedium', Arial, sans-serif;
+        border-bottom: 1px solid #ddd;
+        vertical-align: middle;
+        width: 20em;
+    }
+
+    .book-table th {
+         font-weight: bold;
+        font-family: 'PoppinsMedium', Arial, sans-serif;
+        background-color: #f1f1f1;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
+    .book-cover {
+        width: 60px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .mbook-button {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #4a73e5;
+        color: white;
+        border: none;
+        border-radius: 24px;
+        font-family: 'PoppinsMedium', Arial, sans-serif;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .borrowed {
+        color: red;
+    }
+
+    .available {
+        color: green;
+    }
+    .user-details {
+        display: flex;
+        flex-direction: row;
+        font-family: 'PoppinsMedium';
+        gap: 7em;
+        margin-left: 2em;
+    }
+    .user-info {
+        display: flex;
+        flex-direction: column;
+    }
+    .user-deets {
+        display: grid;
+        grid-template-columns: auto 1fr; /* Aligns labels and values */
+        gap: 5px 5em; /* Adds spacing between rows and columns */
+        font-size: 24px;
+    }
+
+    .user-deets p {
+        display: contents; /* Allows the grid to work within each <p> */
+    }
+
+    .user-deets strong {
+        text-align: left; /* Aligns labels to the right */
+        margin-right: 5px; /* Optional spacing between label and value */
+    }
+
+    .user-deets span {
+        text-align: left; /* Ensures values are aligned to the left */
+    }
+    .action-buttons{
+        display: flex;
+        flex-direction: column;
+        font-size: 24px;
+        align-items: center;
+        justify-content: end
+    }
+    .delete-button {
+        width: auto;
+        height: 2em;
+        position: fixed;
+        right: 6em;
+        top: 8em;
+    }
+    .form-edit {
+        text-align: center;
+    }
+    .check-icon{
+        width:auto;
+        height: 2em;
+        position: fixed;
+        right: 6em;
+        top: 8em;
+    }
+    .save-button{
+        border: none;
+        background-color: transparent;
+        width: auto;
+        height: 2em;
+        position: fixed;
+        right: 9.2em;
+        top: 8em;
+    }
+    #role-dropdown{
+        width: 6em;
+        padding-left: .4em;
+        border-radius: 15px;
+    }
+</style>
+
+
+<body>
+    <div class="navbar-menu">
+        <a href="@Url.Action("AdminPanel", "Account")">HOME</a>
+        <a href="@Url.Action("AdminBookManagement", "Account")" class="highlight">BOOK MANAGEMENT</a>
+        <a href="@Url.Action("AdminUserManagement", "Account")">USER MANAGEMENT</a>
+        <a href="@Url.Action("AdminBookStat", "Account")">BOOK STATISTICS</a>
+    </div>
+
+    <div class="mbook-page">
+        <div class="mbook-container">
+            <div class="user-details">
+                <div class="profile-pic">
+                    <img src="~/images/pfp.png" alt="Profile Picture" width="auto" height="200" style="border-radius: 20px; border:1px solid black">
+                </div>
+                <div class="user-info">
+                    <h2 style="font-size: 40px;"><strong> @Model.Name </strong> </h2> 
+                    <div class="user-deets">
+                        <p><strong>Student Number</strong> <span>: @Model.StudentNumber</span></p>
+                        <p><strong>Course</strong> <span>: @Model.Course</span></p>
+                        <p><strong>RFID</strong> <span>: @Model.rfid</span></p>
+                        <p><strong>Role</strong> <span>: @Model.role</span></p>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <form id="role-form" method="post" action="@Url.Action("SaveUserRole", "Account")" class="form-edit">
+                        <input type="hidden" name="userId" value="@Model.UserId" />    
+                        <div>
+                            <label for="role-dropdown"><strong>Role</strong>: </label>
+                                <select id="role-dropdown" name="role">
+                                    <option value="student" selected="@(Model.role == "student")">Student</option>
+                                    <option value="admin" selected="@(Model.role == "admin")">Admin</option>
+                                </select>
+                            </div>
+                        <button type="submit" class="save-button"><img src="/images/check-icon.png" alt="Edit" class="save-button"></button>
+                    </form>
+                    <a href="@Url.Action("DeleteUser", "Account", new { id = Model.UserId })"><img src="/images/delete.png" alt="Edit" class="delete-button"></a>
+                </div>
+            </div>
+                <table class="book-table">
+                    <thead>
+                        <tr>
+                            <th>Book Cover</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Availability</th>
+                            <th>Date Borrowed</th>
+                            <th>Date Returned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.ReturnedBooks != null && Model.ReturnedBooks.Any())
+                        {
+                            @foreach (var returned in Model.ReturnedBooks)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="@(returned.Book.BookCoverUrl ?? "/images/default-cover.jpg")" alt="Book Cover" class="book-cover">
+                                    </td>
+                                    <td>@returned.Book.Title</td>
+                                    <td>@returned.Book.Author</td>
+                                    <td>@returned.Book.Availability</td>
+                                    <td>@returned.DateBorrowed.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        @if (returned.DateReturned != DateTime.MinValue)
+                                        {
+                                            @returned.DateReturned.ToString("yyyy-MM-dd")
+                                        }
+                                        else
+                                        {
+                                            <span>NOT RETURNED</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6">
+                                    <p>No borrowed books found.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function searchBooks() {
+            var input = document.getElementById("searchBar").value.toLowerCase();
+            var rows = document.getElementById("bookTableBody").getElementsByTagName("tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                var title = rows[i].getElementsByTagName("td")[1].textContent.toLowerCase();
+                var author = rows[i].getElementsByTagName("td")[2].textContent.toLowerCase();
+
+                if (title.includes(input) || author.includes(input)) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>

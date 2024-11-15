@@ -7,4 +7,5 @@ public class UserDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Book> Books { get; set; }
     public DbSet<BorrowedBooks> BorrowedBooks { get; set; }
+    public DbSet<ReturnedBook> ReturnedBooks { get; set; }
 }
