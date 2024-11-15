@@ -517,8 +517,7 @@ public class AccountController : Controller
     {
         if (string.IsNullOrEmpty(rfid))
         {
-            ViewBag.ErrorMessage = "RFID not provided";
-            return View("Welcome");
+            return RedirectToAction("Return", "Account");
         }
 
         var book = _context.Books.FirstOrDefault(b => b.BookRFID == rfid);
@@ -528,8 +527,7 @@ public class AccountController : Controller
         }
         else
         {
-            ViewBag.ErrorMessage = "No book found. Please try again";
-            return View("Welcome");
+            return RedirectToAction("Return", "Account");
         }
     }
 
@@ -547,15 +545,13 @@ public class AccountController : Controller
         var user = _context.Users.FirstOrDefault(u => u.Name == userName);
         if (user == null)
         {
-            TempData["ErrorMessage"] = "User not found. Please try logging in again.";
             return RedirectToAction("Input", "Account");
         }
 
         var book = _context.Books.FirstOrDefault(b => b.BookId == bookId);
         if (book == null || book.Availability == "Borrowed")
         {
-            TempData["ErrorMessage"] = "This book is already borrowed.";
-            return RedirectToAction("ScannedBorrow", new { rfid = book?.BookRFID });
+            return RedirectToAction("Return", "Account");
         }
 
         // Add an entry in BorrowedBooks
@@ -569,7 +565,7 @@ public class AccountController : Controller
 
         // Update TimesBorrowed and Availability of the book
         book.TimesBorrowed += 1;
-        book.Availability = "Borrowed"; // Mark the book as borrowed
+        book.Availability = "Borrowed";
 
         // Explicitly mark the book as modified to ensure Entity Framework tracks it
         _context.Books.Update(book);
@@ -580,9 +576,9 @@ public class AccountController : Controller
         // Save changes to the database
         _context.SaveChanges();
 
-        TempData["SuccessMessage"] = "Book successfully registered as borrowed."; // Set success message
-        return RedirectToAction("ScannedBorrow", new { rfid = book.BookRFID });
+        return RedirectToAction("Return", "Account");
     }
+
 
     public IActionResult Profile()
     {

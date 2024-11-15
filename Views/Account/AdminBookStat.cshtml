@@ -215,7 +215,7 @@ else
                             foreach (var book in Model.OrderByDescending(b => b.TimesBorrowed))
                             {
                                 <tr>
-                                    <td><img src="@(book.BookCoverUrl ?? "/path/to/default-image.jpg")" alt="Book Cover" class="book-cover"></td>
+                                    <td><img src="@(book.BookCoverUrl ?? "/images/default-cover.jpg")" alt="Book Cover" class="book-cover"></td>
                                     <td>@book.Title</td>
                                     <td>@book.Author</td>
                                     <td>@book.TimesBorrowed</td>

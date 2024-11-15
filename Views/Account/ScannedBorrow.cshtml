@@ -269,6 +269,13 @@ else
     .popup-overlay.hide {
         opacity: 0;
     }
+    .borrowed {
+        color: red;
+    }
+
+    .available {
+        color: green;
+    }
 </style>
 <div class="navbar-menu">
 	<a href="Welcome">HOME</a>
@@ -294,14 +301,19 @@ else
                 @if (Model != null)
                 {
                     <div class="book-cover">
-                        <img src="@(Model.BookCoverUrl ?? "/path/to/default-image.jpg")" alt="Book Cover" style="width:15em;">
+                        <img src="@(Model.BookCoverUrl ?? "/images/default-cover.jpg")" alt="Book Cover" style="width:15em;">
                     </div>
 
                     <div class="book-details">
                         <p><span class="label">Book Title:</span> @(Model.Title ?? "No Title")</p>
                         <p><span class="label">Author:</span> @(Model.Author ?? "Unknown Author")</p>
                         <p><span class="label">Publisher:</span> @(Model.Publisher ?? "No Publisher")</p>
-                        <p><span class="label">Status:</span> <span class="status">@(Model.Availability ?? "None")</span></p>
+                        <p>
+                            <span class="label">Status:</span>
+                            <span class="status @(Model.Availability == "Available" ? "available" : Model.Availability == "Borrowed" ? "borrowed" : "")">
+                                @(Model.Availability ?? "None")
+                            </span>
+                        </p>
                         <div class="buttons">
                             <form asp-action="RegisterBorrow" method="post">
                                 <input type="hidden" name="bookId" value="@Model.BookId" />

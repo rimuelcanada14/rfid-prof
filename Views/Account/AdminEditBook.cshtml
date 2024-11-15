@@ -185,7 +185,6 @@
             font-weight: bold;
             color: black;
             outline: none;
-            margin-left: -14em
         }
 
      /* Upload Button */
@@ -250,7 +249,7 @@
             font-weight: bold;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
             width: 12em;
-            margin-right: 1em;
+            margin-top: .5em;
         }
   
         .submit-button:hover {
@@ -433,6 +432,12 @@
         gap: .5em;
         z-index: 1000;
     }
+    .button-container {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        margin-top: 11em;
+    }
     </style>
 
     <body>
@@ -453,7 +458,7 @@
                 <hr class="styled-hr">
                 <div class="table-contents">
                     <div class="bookCover">
-                        <img src="@(Model.BookCoverUrl ?? "/path/to/default-image.jpg")" alt="Book Cover" style="width:250px; border-radius: 15px;">
+                        <img src="@(Model.BookCoverUrl ?? "/images/default-cover.jpg")" alt="Book Cover" style="width:250px; border-radius: 15px;">
                     </div>
                     <div class="table-right">
                         <table class="table">
@@ -488,11 +493,12 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td><button type="button" class="back-button" onclick="window.location.href='@Url.Action("AdminBookManagement", "Account")'">Back</button><button type="submit" class="submit-button">Update Book</button></td>
-                                </tr>
                             </tbody>
-                        </table
+                            <div class="button-container">
+                                <button type="submit" class="submit-button">Update Book</button>
+                                <button type="button" class="back-button" onclick="window.location.href='@Url.Action("AdminBookManagement", "Account")'">Back</button>
+                            </div>
+                        </table>
                     </div>
                 </div>
             </form>

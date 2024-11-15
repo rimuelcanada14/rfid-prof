@@ -9,7 +9,8 @@ public class Book
 
     [Required]
     public string Author { get; set; }
-
+    
+    [Required]
     public string Publisher { get; set; }
 
     [Required]

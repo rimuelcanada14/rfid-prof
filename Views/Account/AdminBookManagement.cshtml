@@ -310,7 +310,7 @@ else
                             foreach (var book in Model)
                             {
                                 <tr>
-                                    <td><img src="@(book.BookCoverUrl ?? "/path/to/default-image.jpg")" alt="Book Cover" class="book-cover"></td>
+                                    <td><img src="@(book.BookCoverUrl ?? "/images/default-cover.jpg")" alt="Book Cover" class="book-cover"></td>
                                     <td>@book.Title</td>
                                     <td>@book.Author</td>
                                     <td class="@(book.Availability == "Available" ? "available" : "borrowed")">@book.Availability</td>
@@ -321,8 +321,11 @@ else
 
 
                                         <form asp-action="DeleteBook" asp-controller="Account" asp-route-id="@book.BookId" method="post" style="display:inline;">
-                                            <button type="submit" style="background-color: transparent; border: none" onclick="return confirm('Are you sure you want to delete this book?');">
-                                                <img src="/images/delete.png" alt="Delete" class="buttons">
+                                            <button type="submit" style="background-color: transparent; border: none"
+                                                @(book.Availability == "Borrowed" ? "disabled title='Cannot delete borrowed book'" : "") 
+                                                onclick="return confirm('Are you sure you want to delete this book?');">
+                                                <img src="@(book.Availability == "Borrowed" ? "/images/delete-disable.png" : "/images/delete.png")" 
+                                                    alt="Delete" class="buttons">
                                             </button>
                                         </form>
                                     </td>
