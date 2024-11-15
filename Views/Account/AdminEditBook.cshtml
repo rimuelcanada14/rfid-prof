@@ -313,39 +313,7 @@
         padding: 10px;
         border: 1px solid #d5d7d6;
     }
-    .popup-overlay {
-        position: fixed; /* Fixed to ensure it stays centered on screen */
-        top: 50%; /* Center vertically */
-        left: 55%; /* Center horizontally */
-        transform: translate(-50%, -50%); /* Adjust position to truly center */
-        background-color: rgba(0, 0, 0, 0.4); /* Green background for success */
-        color: #13ab25;
-        padding: 15px 25px; /* Add padding for spacing */
-        border-radius: 8px;
-        font-family: "PoppinsMedium";
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 999;
-        transition: opacity 0.5s ease; /* Smooth fading transition */
-        opacity: 0; /* Start hidden */
-        width: 110%;
-        height: 100%;
-        text-align: center; /* Center text within the popup */
-        font-size: 20px;
-        font-weight: 400;
-        display: none;
-        backdrop-filter: blur(5px);
-    }
 
-    /* Class to show the popup */
-    .popup-overlay.show {
-        display: block; /* Show the popup */
-        opacity: 1; /* Make it visible */
-    }
-
-    /* Class to hide the popup */
-    .popup-overlay.hide {
-        opacity: 0; /* Fade out */
-    }
     .linkcard-button {
         font-family: 'TTForsRegular', sans-serif;
         color: #4f68d9;
@@ -379,87 +347,192 @@
         margin-left: 1em;
         align-items: start;
     }
+    .popup-overlay {
+        position: fixed;
+        top: 53%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.4);
+        color: #13ab25;
+        padding: 15px 25px;
+        border-radius: 8px;
+        font-family: "PoppinsMedium";
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        transition: opacity 0.5s ease;
+        width: 110%;
+        height: 110%;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 400;
+        display: none;
+        backdrop-filter: blur(5px);
+    }
+
+    .popup-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+
+    .popup-overlay.hide {
+        opacity: 0;
+    }
+    .return-button {
+        background-color: #4f68d9;
+        color: white;
+        padding: 5px;
+        border-radius: 15px;
+        font-family: 'PoppinsMedium';
+        width: 6em;
+    }
+    .check-image {
+        width: auto;
+        height: 3em;
+    }
+    .error-image {
+        width: 2em;
+        height: 2em;
+    }
+    .popup-success {
+        position: relative; /* Fixed to ensure it stays centered on screen */
+        top: 50%; /* Center vertically */
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust position to truly center */
+        background-color: white; /* Green background for success */
+        color: #13ab25;
+        padding: 15px 25px; /* Add padding for spacing */
+        border-radius: 8px;
+        font-family: "PoppinsMedium";
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 19em;
+        height: 6em;
+        text-align: center; /* Center text within the popup */
+        font-size: 20px;
+        font-weight: 400;
+        z-index: 1000;
+    }
+    .popup-error {
+        position: relative; /* Fixed to ensure it stays centered on screen */
+        top: 50%; /* Center vertically */
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust position to truly center */
+        background-color: white; /* Green background for success */
+        color: #b50a0a;
+        padding: 15px 25px; /* Add padding for spacing */
+        border-radius: 8px;
+        font-family: "PoppinsMedium";
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 19em;
+        height: 6em;
+        text-align: center; /* Center text within the popup */
+        font-size: 20px;
+        font-weight: 400;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .5em;
+        z-index: 1000;
+    }
     </style>
 
-<body>
-    <div class="navbar-menu">
-        <a href="AdminPanel">HOME</a>
-        <a href="AdminBookManagement" class="highlight">BOOK MANAGEMENT</a>
-        <a href="AdminUserManagement">USER MANAGEMENT</a>
-        <a href="AdminBookStat">BOOK STATISTICS</a>
+    <body>
+        <div class="navbar-menu">
+            <a href="AdminPanel">HOME</a>
+            <a href="AdminBookManagement" class="highlight">BOOK MANAGEMENT</a>
+            <a href="AdminUserManagement">USER MANAGEMENT</a>
+            <a href="AdminBookStat">BOOK STATISTICS</a>
+        </div>
+
+    <div class="edit-page">
+        <div class="edit-container">
+            <form method="post" asp-action="UpdateBook" asp-controller="Account" enctype="multipart/form-data">
+                <!-- Hidden input for BookId -->
+                <input type="hidden" asp-for="BookId" /> 
+
+                <h1 class="new-book-information" align="center">Edit Book Information</h1>
+                <hr class="styled-hr">
+                <div class="table-contents">
+                    <div class="bookCover">
+                        <img src="@(Model.BookCoverUrl ?? "/path/to/default-image.jpg")" alt="Book Cover" style="width:250px; border-radius: 15px;">
+                    </div>
+                    <div class="table-right">
+                        <table class="table">
+                            <tbody>    
+                                <tr>
+                                    <td><strong>Title:</strong></td>
+                                    <td>
+                                        <div class="input-container">
+                                            <div class="input-bar">
+                                                <input asp-for="Title" placeholder="Title" required>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Author:</strong></td>
+                                    <td>
+                                        <div class="input-container">
+                                            <div class="input-bar">
+                                                <input asp-for="Author" placeholder="Author" required>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Publisher:</strong></td>
+                                    <td>
+                                        <div class="input-container">
+                                            <div class="input-bar">
+                                                <input asp-for="Publisher" placeholder="Publisher" required>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><button type="button" class="back-button" onclick="window.location.href='@Url.Action("AdminBookManagement", "Account")'">Back</button><button type="submit" class="submit-button">Update Book</button></td>
+                                </tr>
+                            </tbody>
+                        </table
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-
-<div class="edit-page">
-    <div class="edit-container">
-        <form method="post" asp-action="UpdateBook" asp-controller="Account" enctype="multipart/form-data">
-            <!-- Hidden input for BookId -->
-            <input type="hidden" asp-for="BookId" /> 
-
-            <h1 class="new-book-information" align="center">Edit Book Information</h1>
-            <hr class="styled-hr">
-
-            <!-- Display Error or Success Messages -->
-            @if (TempData["ErrorMessage"] != null)
-            {
-                <div class="alert alert-danger">
-                    @TempData["ErrorMessage"]
-                </div>
-            }
-
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success">
-                    @TempData["SuccessMessage"]
-                </div>
-            }
-            <div class="table-contents">
-                <div class="bookCover">
-                    <img src="@(Model.BookCoverUrl ?? "/path/to/default-image.jpg")" alt="Book Cover" style="width:250px; border-radius: 15px;">
-                </div>
-                <div class="table-right">
-                    <table class="table">
-                        <tbody>    
-                            <tr>
-                                <td><strong>Title:</strong></td>
-                                <td>
-                                    <div class="input-container">
-                                        <div class="input-bar">
-                                            <input asp-for="Title" placeholder="Title" required>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Author:</strong></td>
-                                <td>
-                                    <div class="input-container">
-                                        <div class="input-bar">
-                                            <input asp-for="Author" placeholder="Author" required>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Publisher:</strong></td>
-                                <td>
-                                    <div class="input-container">
-                                        <div class="input-bar">
-                                            <input asp-for="Publisher" placeholder="Publisher" required>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><button type="button" class="back-button" onclick="window.history.back()">Back</button><button type="submit" class="submit-button">Update Book</button></td>
-                            </tr>
-                            <!-- Additional fields like RFID, Upload Book Cover, etc. can go here -->
-                        </tbody>
-                    </table
-                </div>
+        <div id="successPopup" class="popup-overlay" style="display: none;">
+            <div class="popup-success">
+                Book updated successfully!
+                <img src="~/images/Check icon.png" class="check-image" alt="Check">
             </div>
-        </form>
+        </div>
 
-    </div>
-</div>
+        <div id="errorPopup" class="popup-overlay" style="display: none;">
+            <div class="popup-error">
+                <span>@TempData["ErrorMessage"]</span>
+                <img src="~/images/error-icon.png" class="error-image" alt="Error">
+            </div>
+        </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const showPopup = "@TempData["ShowPopup"]";
+            
+            if (showPopup === "Success") {
+                displayPopup("successPopup", "/Account/AdminBookManagement");
+            } else if (showPopup === "Error") {
+                displayPopup("errorPopup");
+            }
+        });
+
+        function displayPopup(popupId, redirectUrl = null) {
+            const popup = document.getElementById(popupId);
+            popup.style.display = "block";
+
+            setTimeout(() => {
+                popup.style.display = "none";
+                if (redirectUrl) {
+                    window.location.href = redirectUrl;
+                }
+            }, 2000);
+        }
+    </script>
 </body>

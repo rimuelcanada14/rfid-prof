@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore;
+
 
 public class AdminOnlyAttribute : ActionFilterAttribute
 {
@@ -217,12 +219,15 @@ public class AccountController : Controller
 
         return RedirectToAction("AdminBookManagement");
     }
+
     [AdminOnly]
     [HttpGet]
     public IActionResult AdminNewBook()
     {
         return View();
     }
+
+    [AdminOnly]
     [HttpPost]
     public async Task<IActionResult> AddNewBook(IFormFile bookCover, string title, string author, string rfid, string publisher)
     {
@@ -230,7 +235,19 @@ public class AccountController : Controller
         if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(author) || string.IsNullOrWhiteSpace(rfid))
         {
             TempData["ErrorMessage"] = "All fields are required.";
-            return RedirectToAction("AdminBookManagement");
+            TempData["ShowPopup"] = "Error";  // Show Error popup if any field is missing
+            return RedirectToAction("AdminNewBook"); // Stay on the same page
+        }
+
+        // Check if a book with the same title, author, publisher, or RFID already exists
+        var existingBook = await _context.Books
+            .FirstOrDefaultAsync(b => b.Title == title && b.Author == author && b.Publisher == publisher || b.BookRFID == rfid);
+
+        if (existingBook != null)
+        {
+            TempData["ErrorMessage"] = "Book already exists.";
+            TempData["ShowPopup"] = "Error";  // Show error popup if book exists
+            return RedirectToAction("AdminNewBook"); // Stay on the same page
         }
 
         // Define the path to save the uploaded file
@@ -264,71 +281,85 @@ public class AccountController : Controller
         _context.Books.Add(newBook);
         await _context.SaveChangesAsync();
 
-        // Set success message and redirect back to the book management page
+        // Set success message and popup display
         TempData["SuccessMessage"] = "New book added successfully!";
-        return RedirectToAction("AdminBookManagement");
-    }
-public IActionResult AdminEditBook(int id)
-{
-    var book = _context.Books.Find(id);
-    if (book == null)
-    {
-        TempData["ErrorMessage"] = "Book not found.";
-        return RedirectToAction("AdminBookManagement");
+        TempData["ShowPopup"] = "Success";  // Show Success popup
+        return RedirectToAction("AdminNewBook"); // Stay on the same page to show the popup
     }
 
-    // Map the Book entity to BookEditViewModel
-    var model = new BookEditViewModel
-    {
-        BookId = book.BookId,
-        Title = book.Title,
-        Author = book.Author,
-        Publisher = book.Publisher,
-        BookCoverUrl = book.BookCoverUrl
-    };
 
-    return View(model);
-}
 
-[HttpPost]
-public IActionResult UpdateBook(BookEditViewModel model)
-{
-    if (ModelState.IsValid)
+    [AdminOnly]
+    public IActionResult AdminEditBook(int id)
     {
-        var book = _context.Books.Find(model.BookId);
-        if (book != null)
+        var book = _context.Books.Find(id);
+        if (book == null)
         {
-            // Update only the required fields
-            book.Title = model.Title;
-            book.Author = model.Author;
-            book.Publisher = model.Publisher;
-            book.BookCoverUrl = model.BookCoverUrl;
-
-            _context.SaveChanges();
-            TempData["SuccessMessage"] = "Book updated successfully.";
+            TempData["ErrorMessage"] = "Book not found.";
             return RedirectToAction("AdminBookManagement");
+        }
+
+        // Map the Book entity to BookEditViewModel
+        var model = new BookEditViewModel
+        {
+            BookId = book.BookId,
+            Title = book.Title,
+            Author = book.Author,
+            Publisher = book.Publisher,
+            BookCoverUrl = book.BookCoverUrl
+        };
+
+        return View(model);
+    }
+
+    [AdminOnly]
+    [HttpPost]
+    public IActionResult UpdateBook(BookEditViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            // Check if a book with the same Title, Author, and Publisher already exists
+            var existingBook = _context.Books
+                .FirstOrDefault(b => b.Title == model.Title && 
+                                    b.Author == model.Author && 
+                                    b.Publisher == model.Publisher &&
+                                    b.BookId != model.BookId); // Exclude the current book being edited
+
+            if (existingBook != null)
+            {
+                // Book with the same details exists
+                TempData["ErrorMessage"] = "Book already exists.";
+                TempData["ShowPopup"] = "Error";
+                return RedirectToAction("AdminEditBook", new { id = model.BookId });
+            }
+
+            var book = _context.Books.Find(model.BookId);
+            if (book != null)
+            {
+                // Update fields if the book is found
+                book.Title = model.Title;
+                book.Author = model.Author;
+                book.Publisher = model.Publisher;
+
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Book updated successfully.";
+                TempData["ShowPopup"] = "Success";
+                return RedirectToAction("AdminEditBook", new { id = model.BookId });
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Book not found.";
+                TempData["ShowPopup"] = "Error";
+            }
         }
         else
         {
-            TempData["ErrorMessage"] = "Book not found.";
+            TempData["ErrorMessage"] = "An error occurred. Please check the entered values.";
+            TempData["ShowPopup"] = "Error";
         }
-    }
-    else
-    {
-        foreach (var modelState in ModelState.Values)
-        {
-            foreach (var error in modelState.Errors)
-            {
-                Console.WriteLine(error.ErrorMessage); // Log each error message to console
-            }
-        }
-        
-        TempData["ErrorMessage"] = "An error occurred. Please check the entered values.";
-    }
 
-    return View("AdminEditBook", model);
-}
-
+        return RedirectToAction("AdminEditBook", new { id = model.BookId });
+    }
 
 
 
