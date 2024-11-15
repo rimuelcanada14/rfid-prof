@@ -12,4 +12,6 @@ public class BookEditViewModel
 
     [Required]
     public string Publisher { get; set; }
+
+    public string? BookCoverUrl { get; set; }
 }

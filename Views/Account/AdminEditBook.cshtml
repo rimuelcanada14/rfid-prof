@@ -177,7 +177,7 @@
 
         .input-bar input[type="text"] {
             font-family: 'TTForsRegular';
-            width: 56em;
+            width: 48em;
             padding: 5px 5px 5px 20px;
             border: 1px solid gray;
             border-radius: 24px;
@@ -185,7 +185,7 @@
             font-weight: bold;
             color: black;
             outline: none;
-            margin-left: -20em;
+            margin-left: -14em
         }
 
      /* Upload Button */
@@ -236,7 +236,21 @@
             font-weight: bold;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
             width: 12em;
-            margin-top: 2em;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 7px 12px;
+            color: white;
+            background-color: #ff4444;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'TTForsRegular';
+            font-weight: bold;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+            width: 12em;
+            margin-right: 1em;
         }
   
         .submit-button:hover {
@@ -356,6 +370,15 @@
     .none-text {
         color: #b50a0a;
     }
+    .table-contents {
+        display: flex;
+        flex-direction: row;
+    }
+    .table-right {
+        display: flex;
+        margin-left: 1em;
+        align-items: start;
+    }
     </style>
 
 <body>
@@ -389,46 +412,50 @@
                     @TempData["SuccessMessage"]
                 </div>
             }
-
-            <table class="table">
-                <tbody>    
-                    <tr>
-                        <td><strong>Title:</strong></td>
-                        <td>
-                            <div class="input-container">
-                                <div class="input-bar">
-                                    <input asp-for="Title" placeholder="Title" required>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Author:</strong></td>
-                        <td>
-                            <div class="input-container">
-                                <div class="input-bar">
-                                    <input asp-for="Author" placeholder="Author" required>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Publisher:</strong></td>
-                        <td>
-                            <div class="input-container">
-                                <div class="input-bar">
-                                    <input asp-for="Publisher" placeholder="Publisher" required>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Additional fields like RFID, Upload Book Cover, etc. can go here -->
-                </tbody>
-            </table>
-
-            <!-- Submit Button -->
-            <div class="submit-button-container">
-                <button type="submit" class="submit-button">Update Book</button>
+            <div class="table-contents">
+                <div class="bookCover">
+                    <img src="@(Model.BookCoverUrl ?? "/path/to/default-image.jpg")" alt="Book Cover" style="width:250px; border-radius: 15px;">
+                </div>
+                <div class="table-right">
+                    <table class="table">
+                        <tbody>    
+                            <tr>
+                                <td><strong>Title:</strong></td>
+                                <td>
+                                    <div class="input-container">
+                                        <div class="input-bar">
+                                            <input asp-for="Title" placeholder="Title" required>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Author:</strong></td>
+                                <td>
+                                    <div class="input-container">
+                                        <div class="input-bar">
+                                            <input asp-for="Author" placeholder="Author" required>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Publisher:</strong></td>
+                                <td>
+                                    <div class="input-container">
+                                        <div class="input-bar">
+                                            <input asp-for="Publisher" placeholder="Publisher" required>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><button type="button" class="back-button" onclick="window.history.back()">Back</button><button type="submit" class="submit-button">Update Book</button></td>
+                            </tr>
+                            <!-- Additional fields like RFID, Upload Book Cover, etc. can go here -->
+                        </tbody>
+                    </table
+                </div>
             </div>
         </form>
 

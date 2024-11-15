@@ -283,7 +283,8 @@ public IActionResult AdminEditBook(int id)
         BookId = book.BookId,
         Title = book.Title,
         Author = book.Author,
-        Publisher = book.Publisher
+        Publisher = book.Publisher,
+        BookCoverUrl = book.BookCoverUrl
     };
 
     return View(model);
@@ -301,6 +302,7 @@ public IActionResult UpdateBook(BookEditViewModel model)
             book.Title = model.Title;
             book.Author = model.Author;
             book.Publisher = model.Publisher;
+            book.BookCoverUrl = model.BookCoverUrl;
 
             _context.SaveChanges();
             TempData["SuccessMessage"] = "Book updated successfully.";
