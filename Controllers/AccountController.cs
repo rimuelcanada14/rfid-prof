@@ -578,22 +578,24 @@ public class AccountController : Controller
     }
 
     public IActionResult ScannedBorrow(string rfid)
+{
+    if (string.IsNullOrEmpty(rfid))
     {
-        if (string.IsNullOrEmpty(rfid))
-        {
-            return RedirectToAction("Return", "Account");
-        }
-
-        var book = _context.Books.FirstOrDefault(b => b.BookRFID == rfid);
-        if (book != null)
-        {
-            return View("ScannedBorrow", book); // Pass a single Book object
-        }
-        else
-        {
-            return RedirectToAction("Return", "Account");
-        }
+        return RedirectToAction("Return", "Account");
     }
+
+    var book = _context.Books.FirstOrDefault(b => b.BookRFID == rfid);
+    if (book != null)
+    {
+        return View("ScannedBorrow", book); // Pass a single Book object
+    }
+    else
+    {
+        ViewBag.ErrorMessage = "No book found. Please try again."; // Set the error message
+        return View("Welcome"); // Redirect to the Welcome page
+    }
+}
+
 
     [HttpPost]
     public IActionResult RegisterBorrow(int bookId)

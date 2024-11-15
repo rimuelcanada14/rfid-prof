@@ -5,6 +5,9 @@ ViewBag.Title = "Home";
 @{
 var userName = Context.Session.GetString("UserName");
 }
+@{
+    var errorMessage = ViewBag.ErrorMessage as string;
+}
 @if (!string.IsNullOrEmpty(userName))
 {
 <h2 style = "display: none;">Welcome, @userName</h2>
@@ -377,5 +380,18 @@ else
                 }, 3000); // Hide after 3 seconds
             }
         };
+        window.onload = function () {
+            var errorMessage = "@errorMessage";
+            if (errorMessage) {
+                // Show the popup if there's an error message
+                var popup = document.getElementById('userNotFoundPopup');
+                popup.style.display = 'block';
+
+                // Hide the popup after 3 seconds (3000ms)
+                setTimeout(function () {
+                    popup.style.display = 'none';
+                }, 3000); // 3000ms = 3 seconds
+            }
+        }
     </script>
 </body>
