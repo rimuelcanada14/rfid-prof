@@ -199,7 +199,7 @@ ViewData["Title"] = "Login";
 						<div class="input-container">
 							<input type="password" id="password" name="password" placeholder="Password" required>
 							<span class="icon" onclick="togglePassword()">
-							<img src="~/images/Password Icon.png" alt="Password Icon" class="input-icon" id="password-toggle-icon">
+							<img src="/images/Password Icon.png" alt="Password Icon" class="input-icon" id="password-toggle-icon">
 							</span>
 						</div>
 					</div>
@@ -237,10 +237,10 @@ ViewData["Title"] = "Login";
 		
 		    if (passwordField.type === "password") {
 		        passwordField.type = "text";
-		        passwordIcon.src = "~/images/Password Icon copy.png";
+		        passwordIcon.src = "/images/Password-show-icon.png";
 		    } else {
 		        passwordField.type = "password";
-		        passwordIcon.src = "~/images/Password Icon.png";
+		        passwordIcon.src = "/images/Password-hide-icon.png";
 		    }
 		}
 		
