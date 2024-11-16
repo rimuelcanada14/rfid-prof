@@ -388,6 +388,8 @@ public class AccountController : Controller
     {
         var user = _context.Users
             .Include(u => u.ReturnedBooks)
+                .ThenInclude(bb => bb.Book)  // Include the related Book for ReturnedBooks
+            .Include(u => u.BorrowedBooks)
                 .ThenInclude(bb => bb.Book)  // Include the related Book for BorrowedBooks
             .FirstOrDefault(u => u.UserId == id);
 
@@ -396,9 +398,10 @@ public class AccountController : Controller
             return NotFound();
         }
 
-        // Pass the user and their borrowed books to the view
+        // Pass the user and their borrowed and returned books to the view
         return View(user);
     }
+
     [AdminOnly]
     [HttpPost]
     public IActionResult SaveUserRole(int userId, string role)
@@ -546,6 +549,17 @@ public class AccountController : Controller
             book.TimesReturned += 1;
             book.Availability = "Available";
 
+            // Create an entry in the ReturnedBooks table
+            var returnedBook = new ReturnedBook
+            {
+                BookId = book.BookId,
+                UserId = user.UserId,
+                DateBorrowed = borrowedBook.DateBorrowed.ToUniversalTime(), // Convert to UTC
+                DateReturned = DateTime.UtcNow // Convert to UTC
+            };
+
+            _context.ReturnedBooks.Add(returnedBook);
+
             // Remove the borrowed book record
             _context.BorrowedBooks.Remove(borrowedBook);
             _context.Books.Update(book);
@@ -560,6 +574,9 @@ public class AccountController : Controller
             return RedirectToAction("Return");
         }
     }
+
+
+
 
 
     public IActionResult Search()
@@ -627,8 +644,8 @@ public class AccountController : Controller
         {
             UserId = user.UserId,
             BookId = book.BookId,
-            DateBorrowed = DateTime.UtcNow,
-            DLBorrow = DateTime.UtcNow.AddDays(20) // Deadline 20 days from now
+            DateBorrowed = DateTime.UtcNow.AddDays(-3),
+            DLBorrow = DateTime.UtcNow.AddDays(2) // Deadline 20 days from now
         };
 
         // Update TimesBorrowed and Availability of the book

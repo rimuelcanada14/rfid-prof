@@ -119,7 +119,6 @@ else
          font-weight: bold;
         font-family: 'PoppinsMedium', Arial, sans-serif;
         background-color: #f1f1f1;
-        position: sticky;
         top: 0;
         z-index: 2;
     }
@@ -182,18 +181,13 @@ else
         text-align: left; /* Ensures values are aligned to the left */
     }
     .action-buttons{
-        display: flex;
-        flex-direction: column;
+        margin-top: 6em;
         font-size: 24px;
-        align-items: center;
-        justify-content: end
+
     }
     .delete-button {
         width: auto;
         height: 2em;
-        position: fixed;
-        right: 6em;
-        top: 8em;
     }
     .form-edit {
         text-align: center;
@@ -201,18 +195,12 @@ else
     .check-icon{
         width:auto;
         height: 2em;
-        position: fixed;
-        right: 6em;
-        top: 8em;
     }
     .save-button{
         border: none;
         background-color: transparent;
         width: auto;
         height: 2em;
-        position: fixed;
-        right: 9.2em;
-        top: 8em;
     }
     #role-dropdown{
         width: 6em;
@@ -234,6 +222,35 @@ else
         height: 100%;
         object-fit: cover;
         border-radius: 10px;
+    }
+    /* Red for overdue */
+    .overdue {
+        color: red;
+    }
+
+    /* Green for more than 3 days remaining */
+    .on-time {
+        color: green;
+    }
+
+    /* Orange for less than 3 days remaining */
+    .approaching {
+        color: orange;
+    }
+    .role-drop {
+        display: flex;
+    }
+    .button-container {
+        z-index: 1000;
+        display: flex;
+        margin-left: 11em;
+    }
+    .table-title {
+        text-align: center;
+        font-family: 'PoppinsMedium';
+        font-size: 30px;
+        font-weight: 600;
+        margin-top: 1em;
     }
 </style>
 
@@ -261,69 +278,144 @@ else
                         <p><strong>Role</strong> <span>: @Model.role</span></p>
                     </div>
                 </div>
-                <div class="action-buttons">
-                    <form id="role-form" method="post" action="@Url.Action("SaveUserRole", "Account")" class="form-edit">
-                        <input type="hidden" name="userId" value="@Model.UserId" />    
-                        <div>
-                            <label for="role-dropdown"><strong>Role</strong>: </label>
-                                <select id="role-dropdown" name="role">
-                                    <option value="Student" selected="@(Model.role == "Student")">Student</option>
-                                    <option value="Admin" selected="@(Model.role == "Admin")">Admin</option>
-                                </select>
-                            </div>
-                        <button type="submit" class="save-button"><img src="/images/check-icon.png" alt="Edit" class="save-button"></button>
-                    </form>
-                    <a href="@Url.Action("DeleteUser", "Account", new { id = Model.UserId })"><img src="/images/delete.png" alt="Edit" class="delete-button"></a>
-                </div>
+
+                <form id="role-form" method="post" action="@Url.Action("SaveUserRole", "Account")" class="form-edit">
+                    <input type="hidden" name="userId" value="@Model.UserId" />
+                    <div class="button-container">
+                        <button type="submit" class="save-button">
+                            <img src="/images/check-icon.png" alt="Save" class="save-button">
+                        </button>
+                        <a href="@Url.Action("DeleteUser", "Account", new { id = Model.UserId })">
+                            <img src="/images/delete.png" alt="Delete" class="delete-button">
+                        </a>
+                    </div>    
+
+                    <div class="action-buttons">
+                        <label for="role-dropdown"><strong>Role</strong>: </label>
+                        <select id="role-dropdown" name="role">
+                            <option value="Student" selected="@(Model.role == "Student")">Student</option>
+                            <option value="Admin" selected="@(Model.role == "Admin")">Admin</option>
+                        </select>
+                    </div>
+                </form>
             </div>
-                <table class="book-table">
-                    <thead>
-                        <tr>
-                            <th>Book Cover</th>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Availability</th>
-                            <th>Date Borrowed</th>
-                            <th>Date Returned</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.ReturnedBooks != null && Model.ReturnedBooks.Any())
+
+            <h1 class="table-title">Borrowed Books</h1>
+            <table class="book-table">
+                <thead>
+                    <tr>
+                        <th>Book Cover</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Availability</th>
+                        <th>Date Borrowed</th>
+                        <th>Deadline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.BorrowedBooks != null && Model.BorrowedBooks.Any())
+                    {
+                        @foreach (var borrowed in Model.BorrowedBooks)
                         {
-                            @foreach (var returned in Model.ReturnedBooks)
+                            var dueDate = borrowed.DLBorrow;
+                            var today = DateTime.Now;
+                            var daysRemaining = (dueDate - today).Days;
+                            var dueClass = "";
+
+                            // Determine the class based on the due date
+                            if (dueDate < today)
                             {
-                                <tr>
-                                    <td>
-                                        <img src="@(returned.Book.BookCoverUrl ?? "/images/default-cover.jpg")" alt="Book Cover" class="book-cover">
-                                    </td>
-                                    <td>@returned.Book.Title</td>
-                                    <td>@returned.Book.Author</td>
-                                    <td>@returned.Book.Availability</td>
-                                    <td>@returned.DateBorrowed.ToString("yyyy-MM-dd")</td>
-                                    <td>
-                                        @if (returned.DateReturned != DateTime.MinValue)
-                                        {
-                                            @returned.DateReturned.ToString("yyyy-MM-dd")
-                                        }
-                                        else
-                                        {
-                                            <span>NOT RETURNED</span>
-                                        }
-                                    </td>
-                                </tr>
+                                dueClass = "overdue"; // Red for overdue
                             }
-                        }
-                        else
-                        {
+                            else if (daysRemaining > 3)
+                            {
+                                dueClass = "on-time"; // Green for more than 3 days left
+                            }
+                            else if (daysRemaining <= 3)
+                            {
+                                dueClass = "approaching"; // Orange for less than 3 days left
+                            }
+
                             <tr>
-                                <td colspan="6">
-                                    <p>No borrowed books found.</p>
+                                <td>
+                                    <img src="@(borrowed.Book.BookCoverUrl ?? "/images/default-cover.jpg")" alt="Book Cover" class="book-cover">
+                                </td>
+                                <td>@borrowed.Book.Title</td>
+                                <td>@borrowed.Book.Author</td>
+                                <td>@borrowed.Book.Availability</td>
+                                <td>@borrowed.DateBorrowed.ToString("yyyy-MM-dd")</td>
+                                <td class="@dueClass">
+                                    @if (borrowed.DLBorrow != DateTime.MinValue)
+                                    {
+                                        @borrowed.DLBorrow.ToString("yyyy-MM-dd")
+                                    }
+                                    else
+                                    {
+                                        <span>NOT RETURNED</span>
+                                    }
                                 </td>
                             </tr>
                         }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6">
+                                <p>No borrowed books found.</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <h1 class="table-title">Returned Books</h1>
+            <table class="book-table">
+                <thead>
+                    <tr>
+                        <th>Book Cover</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Availability</th>
+                        <th>Date Borrowed</th>
+                        <th>Date Returned</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ReturnedBooks != null && Model.ReturnedBooks.Any())
+                    {
+                        @foreach (var returned in Model.ReturnedBooks)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="@(returned.Book.BookCoverUrl ?? "/images/default-cover.jpg")" alt="Book Cover" class="book-cover">
+                                </td>
+                                <td>@returned.Book.Title</td>
+                                <td>@returned.Book.Author</td>
+                                <td>@returned.Book.Availability</td>
+                                <td>@returned.DateBorrowed.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @if (returned.DateReturned != DateTime.MinValue)
+                                    {
+                                        @returned.DateReturned.ToString("yyyy-MM-dd")
+                                    }
+                                    else
+                                    {
+                                        <span>NOT RETURNED</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6">
+                                <p>No returned books found.</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 

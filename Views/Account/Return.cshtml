@@ -329,6 +329,21 @@ else
         align-items: center;
         gap: .5em;
     }
+    /* Red for overdue */
+    .overdue {
+        color: red;
+    }
+
+    /* Green for more than 3 days remaining */
+    .on-time {
+        color: green;
+    }
+
+    /* Orange for less than 3 days remaining */
+    .approaching {
+        color: orange;
+    }
+
 </style>
 
 
@@ -381,48 +396,68 @@ else
                 
 
                 <tbody id="bookTableBody">
-                    @if (Model != null && Model.Any())
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var book in Model)
                     {
-                        foreach (var book in Model)
-                        {
-                            <tr>
-                                <td>
-                                    <img src="@(book.BookCoverUrl ?? "/images/default-cover.jpg")" alt="Book Cover" style="width:50px;">
-                                </td>
-                                <td>@(book.Title ?? "No Title")</td>
-                                <td>@(book.Author ?? "Unknown Author")</td>
-                                <td>@(book.DateBorrowed.ToString("MM/dd/yyyy") ?? "No Date")</td>
-                                <td>@(book.DLBorrow.ToString("MM/dd/yyyy") ?? "No Due Date")</td>
-                                <td>
-                                    <form asp-action="ReturnBook" method="post">
-                                        <input type="hidden" name="bookId" value="@book.BookId" />
-                                        <button type="button" onclick="showRfidReturned(@book.BookId)" class='return-button'>Return</button> 
+                        var dueDate = book.DLBorrow;
+                        var today = DateTime.Now;
+                        var daysRemaining = (dueDate - today).Days;
+                        var dueClass = "";
 
-                                        <div id="returnRfidPopup_@book.BookId" class="popup-overlay" style="display: none;">
-                                            <div class="popup-link">
-                                                <h2>Scan Book RFID</h2>
-                                                <p>Please scan the book you wish to return.</p>
-                                                <div class="rfid-inp">
-                                                    <input id="rfidReturnInputField_@book.BookId" type="number" autocomplete="off" placeholder="Scan RFID" name="rfid" required />
-                                                    <button type="button" id="confirmReturnRfidButton_@book.BookId">Confirm RFID</button>
-                                                    <button type="button" class= "closeReturnRfidPopupButton" id="closeReturnRfidPopupButton_@book.BookId">Close</button>
-                                                    <img src="~/images/rfid-icon.png" class="rfid-image" alt="rfid">
-                                                </div>
+                        if (dueDate < today) 
+                        {
+                            dueClass = "overdue"; // Red for overdue
+                        }
+                        else if (daysRemaining > 3) 
+                        {
+                            dueClass = "on-time"; // Green for more than 3 days left
+                        }
+                        else if (daysRemaining <= 3) 
+                        {
+                            dueClass = "approaching"; // Orange for less than 3 days left
+                        }
+
+                        <tr>
+                            <td>
+                                <img src="@(book.BookCoverUrl ?? "/images/default-cover.jpg")" alt="Book Cover" style="width:50px;">
+                            </td>
+                            <td>@(book.Title ?? "No Title")</td>
+                            <td>@(book.Author ?? "Unknown Author")</td>
+                            <td>@(book.DateBorrowed.ToString("MM/dd/yyyy") ?? "No Date")</td>
+                            <td class="@dueClass">
+                                @(book.DLBorrow.ToString("MM/dd/yyyy") ?? "No Due Date")
+                            </td>
+                            <td>
+                                <form asp-action="ReturnBook" method="post">
+                                    <input type="hidden" name="bookId" value="@book.BookId" />
+                                    <button type="button" onclick="showRfidReturned(@book.BookId)" class='return-button'>Return</button> 
+
+                                    <div id="returnRfidPopup_@book.BookId" class="popup-overlay" style="display: none;">
+                                        <div class="popup-link">
+                                            <h2>Scan Book RFID</h2>
+                                            <p>Please scan the book you wish to return.</p>
+                                            <div class="rfid-inp">
+                                                <input id="rfidReturnInputField_@book.BookId" type="number" autocomplete="off" placeholder="Scan RFID" name="rfid" required />
+                                                <button type="button" id="confirmReturnRfidButton_@book.BookId">Confirm RFID</button>
+                                                <button type="button" class="closeReturnRfidPopupButton" id="closeReturnRfidPopupButton_@book.BookId">Close</button>
+                                                <img src="~/images/rfid-icon.png" class="rfid-image" alt="rfid">
                                             </div>
                                         </div>
-                                    </form>
-                                </td>
-
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="6">No books available.</td>
+                                    </div>
+                                </form>
+                            </td>
                         </tr>
                     }
-                </tbody>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6">No books available.</td>
+                    </tr>
+                }
+            </tbody>
+
 
             </table>
         </div>
