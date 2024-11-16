@@ -428,10 +428,10 @@
 
 <body>
     <div class="navbar-menu">
-        <a href="AdminPanel">HOME</a>
-        <a href="AdminBookManagement" class="highlight">BOOK MANAGEMENT</a>
-        <a href="AdminUserManagement">USER MANAGEMENT</a>
-        <a href="AdminBookStat">BOOK STATISTICS</a>
+        <a href="@Url.Action("AdminPanel", "Account")">HOME</a>
+        <a href="@Url.Action("AdminBookManagement", "Account")" class="highlight">BOOK MANAGEMENT</a>
+        <a href="@Url.Action("AdminUserManagement", "Account")">USER MANAGEMENT</a>
+        <a href="@Url.Action("AdminBookStat", "Account")">BOOK STATISTICS</a>
     </div>
 
     <div class="addnew-page">

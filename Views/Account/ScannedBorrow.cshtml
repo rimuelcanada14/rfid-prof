@@ -287,12 +287,12 @@ else
 
 <body>
     <!-- Success Popup -->
-    <div id="registrationSuccessPopup" class="popup-overlay" style="display: none;">
+    @* <div id="registrationSuccessPopup" class="popup-overlay" style="display: none;">
         <div class="popup-success">
             Book borrowed successfully!
             <img src="~/images/Check icon.png" class="check-image" alt="Check">
         </div>  
-    </div>
+    </div> *@
 
     <div class="borrowed-page">
         <div class="borrow-container">
@@ -335,7 +335,7 @@ else
     </div>
 
     <!-- Add Script to Show Success Popup -->
-    <script>
+    @* <script>
         // Show the success popup if the TempData contains a success message
         @if (TempData["SuccessMessage"] != null)
         {
@@ -359,5 +359,5 @@ else
             window.location.href = '@Url.Action("Welcome", "Account")';
         }, 2000);
     }
-</script>
+</script> *@
 </body>

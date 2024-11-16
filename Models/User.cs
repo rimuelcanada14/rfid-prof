@@ -25,12 +25,13 @@ public class User
     public string rfid { get; set; } // RFID property
 
     [Required]
-    public string role { get; set; } = "student"; // Role property with default value
+    public string role { get; set; } = "Student"; // Role property with default value
 
     public DateTime? DateIssued { get; set; }
 
     [Required]
     public string ContactNumber { get; set; } = "NA";
+    public string? ProfilePicUrl { get; set; }
 
     // Initialize collections to avoid null reference issues
     public virtual ICollection<BorrowedBooks> BorrowedBooks { get; set; } = new List<BorrowedBooks>();

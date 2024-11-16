@@ -12,7 +12,7 @@ public class AdminOnlyAttribute : ActionFilterAttribute
     {
         var role = context.HttpContext.Session.GetString("Role");
 
-        if (!string.Equals(role, "admin", StringComparison.OrdinalIgnoreCase)) // Case-insensitive check
+        if (!string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase)) // Case-insensitive check
         {
             context.Result = new RedirectToActionResult("Welcome", "Account", null);
         }
@@ -127,11 +127,11 @@ public class AccountController : Controller
 
     private IActionResult RedirectBasedOnRole(string role)
     {
-        if (role == "student")
+        if (role == "Student")
         {
             return RedirectToAction("Welcome");
         }
-        else if (role == "admin")
+        else if (role == "Admin")
         {
             return RedirectToAction("AdminPanel");
         }
@@ -164,6 +164,8 @@ public class AccountController : Controller
         HttpContext.Session.SetString("Email", user.Email);
         HttpContext.Session.SetInt32("UserId", user.UserId);
         HttpContext.Session.SetString("ContactNumber", user.ContactNumber);
+        HttpContext.Session.SetString("ProfilePicUrl", user.ProfilePicUrl ?? "~/images/pfp.png");
+
 
         // Handle nullable DateIssued by checking if it has a value
         if (user.DateIssued.HasValue)
@@ -675,27 +677,32 @@ public class AccountController : Controller
         var userName = HttpContext.Session.GetString("UserName");
         var studentId = HttpContext.Session.GetString("StudentId");
         var course = HttpContext.Session.GetString("Course");
-        var Email = HttpContext.Session.GetString("Email");
+        var email = HttpContext.Session.GetString("Email");
         var contactNumber = HttpContext.Session.GetString("ContactNumber");
-        var profilepictureurl = HttpContext.Session.GetString("profilepictureurl");
 
         if (string.IsNullOrEmpty(userName))
         {
             return RedirectToAction("Index", "Home"); // Redirect if user is not logged in
         }
 
-        ViewBag.UserName = userName;
-        ViewBag.StudentId = studentId;
-        ViewBag.Course = course;
-        ViewBag.Email = Email;
-        ViewBag.ContactNumber = contactNumber;
-        ViewBag.profilepictureurl = profilepictureurl;
+        var user = _context.Users.FirstOrDefault(u => u.Name == userName);
+        if (user != null)
+        {
+            ViewBag.UserName = userName;
+            ViewBag.StudentId = studentId;
+            ViewBag.Course = course;
+            ViewBag.Email = email;
+            ViewBag.ContactNumber = contactNumber;
+            ViewBag.ProfilePicUrl = user.ProfilePicUrl ?? "/images/pfp.png"; // Pass the user's current profile pic URL, or default to "/images/pfp.png"
+        }
 
         return View();
     }
 
+
+
     [HttpPost]
-    public async Task<IActionResult> EditProfile([FromBody] User updatedUser, IFormFile profilePicture)
+    public async Task<IActionResult> EditProfile(IFormFile profilePicture, string StudentNumber, string Course, string Email, string ContactNumber)
     {
         var userName = HttpContext.Session.GetString("UserName");
 
@@ -714,9 +721,9 @@ public class AccountController : Controller
         // Check for duplicates (excluding the current user)
         var isDuplicate = _context.Users
             .Any(u => u.UserId != user.UserId && (
-                u.StudentNumber == updatedUser.StudentNumber ||
-                u.Email == updatedUser.Email ||
-                u.ContactNumber == updatedUser.ContactNumber
+                u.StudentNumber == StudentNumber ||
+                u.Email == Email ||
+                u.ContactNumber == ContactNumber
             ));
 
         if (isDuplicate)
@@ -725,47 +732,55 @@ public class AccountController : Controller
         }
 
         // Update user properties
-        user.StudentNumber = updatedUser.StudentNumber;
-        user.Course = updatedUser.Course;
-        user.Email = updatedUser.Email;
-        user.ContactNumber = updatedUser.ContactNumber;
+        user.StudentNumber = StudentNumber;
+        user.Course = Course;
+        user.Email = Email;
+        user.ContactNumber = ContactNumber;
 
-    
+        // Handle profile picture upload
         if (profilePicture != null && profilePicture.Length > 0)
         {
-            var fileName = $"{Guid.NewGuid().ToString()}{Path.GetExtension(profilePicture.FileName)}";
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "profile", fileName);
+            // Create the profile directory if it doesn't exist
+            var profileDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "profile");
+            if (!Directory.Exists(profileDirectory))
+            {
+                Directory.CreateDirectory(profileDirectory);
+            }
 
+            // Generate a unique file name
+            var fileName = $"{Guid.NewGuid().ToString()}{Path.GetExtension(profilePicture.FileName)}";
+            var filePath = Path.Combine(profileDirectory, fileName);
+
+            // Save the file
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await profilePicture.CopyToAsync(stream);
             }
 
-            // Set the profile picture URL to save in the database and session
-            // user.profilepictureurl = $"/images/profile/{fileName}";
-            // HttpContext.Session.SetString("profilepictureurl", user.profilepictureurl);
+            // Update the profile picture URL
+            user.ProfilePicUrl = $"/images/profile/{fileName}";
+            HttpContext.Session.SetString("ProfilePicUrl", user.ProfilePicUrl);
         }
-
 
         try
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             // Update session data
             HttpContext.Session.SetString("StudentId", user.StudentNumber);
             HttpContext.Session.SetString("Course", user.Course);
             HttpContext.Session.SetString("Email", user.Email);
             HttpContext.Session.SetString("ContactNumber", user.ContactNumber);
-            // HttpContext.Session.SetString("profilepictureurl", profilePicture); // Ensure this is set
 
-            return Ok();
+            return Ok(new { profilePicUrl = user.ProfilePicUrl });
         }
         catch (Exception ex)
         {
-            // Log the exception if you have logging configured
-            return StatusCode(500, "An error occurred while updating the profile.");
+            // Log the exception
+            return StatusCode(500, new { message = "An error occurred while updating the profile." });
         }
     }
+
 
     [HttpGet]
     public IActionResult LibraryCard()

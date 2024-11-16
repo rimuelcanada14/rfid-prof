@@ -9,6 +9,8 @@
     var course = Context.Session.GetString("Course");
     var email = Context.Session.GetString("Email");
     var contactNum = Context.Session.GetString("ContactNumber");
+    var profilePicUrl = Context.Session.GetString("ProfilePicUrl"); 
+    var finalProfilePicUrl = string.IsNullOrEmpty(profilePicUrl) ? "~/images/pfp.png" : profilePicUrl; 
 }
 
 @if (!string.IsNullOrEmpty(userName))
@@ -95,17 +97,22 @@ else
         margin-top: -2em;
     }
     .profile-pic {
-        width: 230px;
-        height: 230px;
+        width: 15em;
+        height: 15em;
+        border-radius: 10px;
         background-color: #e0e0e0;
         display: flex;
         align-items: center;
-        border: 2px solid black;
         justify-content: center;
-        border-radius: 10px;
-        margin-top: 45px;
+        border: 2px solid black;
         margin-right: 50px;
-        margin-left:31px;
+        margin-top: 2.9em;
+    }
+    .profile-pic img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
     }
 
     .info {
@@ -171,14 +178,14 @@ else
                 </a>
 
                 <div class="profile-pic">
-                    <img src="~/images/pfp.png" alt="Profile Picture" width="auto" height="200" style="border-radius: 10px;">
+                    <img src="@Url.Content(finalProfilePicUrl)" alt="Profile Picture" width="auto" height="200" style="border-radius: 10px;">
                 </div>
                 <div class="info">
                     <h2>@userName</h2>
                     <p><strong>Student ID:</strong> @studentId</p>
                     <p><strong>Course:</strong> @course</p>
                     <p><strong>PLM Email:</strong> @email</p>
-                   <p><strong>Contact Number:</strong> @(string.IsNullOrEmpty(contactNum) || contactNum == "NA" ? "--NOT SET--" : contactNum)</p>
+                    <p><strong>Contact Number:</strong> @(string.IsNullOrEmpty(contactNum) || contactNum == "NA" ? "--NOT SET--" : contactNum)</p>
                 </div>
             </div>
             

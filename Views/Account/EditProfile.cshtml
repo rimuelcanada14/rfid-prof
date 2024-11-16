@@ -9,6 +9,7 @@
     var course = Context.Session.GetString("Course");
     var email = Context.Session.GetString("Email");
     var contactNum = Context.Session.GetString("ContactNumber");
+    var profilePicUrl = ViewBag.ProfilePicUrl;
 }
 
 @if (!string.IsNullOrEmpty(userName))
@@ -158,17 +159,23 @@ else
         margin-bottom: 1em;
     }
     .profile-pic {
-        width: 230px;
-        height: 230px;
+        width: 15em;
+        height: 15em;
+        border-radius: 10px;
         background-color: #e0e0e0;
         display: flex;
         align-items: center;
-        border: 2px solid black;
         justify-content: center;
+        border: 2px solid black;
+        margin-right: 43px;
+        margin-top: 1.9em;
+        margin-left: 1.6em;
+    }
+    .profile-pic img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         border-radius: 10px;
-        margin-top: 45px;
-        margin-right: 50px;
-        margin-left:31px;
     }
     .info {
         font-family: 'PoppinsMedium';
@@ -218,7 +225,8 @@ else
         position: relative;
         font-size: 24px;
         top: 2.5em;
-        width: 12em;
+        width: 6em;
+        margin-left: .5em;
     }
 
     .save-info-button {
@@ -235,13 +243,12 @@ else
         position: relative;
         font-size: 24px;
         top: 2.5em;
-        width: 12em
+        width: 6em
     }
     .save-info{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 2em
+        position: fixed;
+        right: 15.7em;
+        margin-top: -1.5em;
     }
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button {
@@ -251,6 +258,37 @@ else
 
     input[type="number"] {
         -moz-appearance: textfield; /* Firefox */
+    }
+    .upload-btn{
+        position: fixed;
+    }
+
+    /* Style the custom label to act as the file upload button */
+    .custom-file-upload {
+        display: flex;
+        padding: 5px;
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        position: fixed;
+        justify-content: center;
+        left: 2.15em;
+        margin-top: 1em;
+    }
+
+    /* Hover effect for the button */
+    .custom-file-upload:hover {
+        background-color: #45a049;
+    }
+
+    /* Optional: Style the text input that shows the file name after the user selects a file */
+    .upload-btn:valid {
+        display: flex;
+        position: fixed;
+        left: 7.5em;
+        margin-top: 1em;
+        width: 20em;
     }
 </style>
 
@@ -275,14 +313,15 @@ else
     <div class="profile-page">
         <!-- Student Information Card -->
         <div class="card-container">
-           <form id="editProfileForm" method="post" action="@Url.Action("EditProfile", "Account")">
+            <form id="editProfileForm" method="post" action="@Url.Action("EditProfile", "Account")" enctype="multipart/form-data">
                 <div class="card-contenter">
-                    <div class = "card-title">
+                    <div class="card-title">
                         <h1 class="edit-info-text">Edit Information</h1>
                     </div>
                     <div class="card-content">
                         <div class="profile-pic">
-                            <img src="~/images/pfp.png" alt="Profile Picture" width="auto" height="200" style="border-radius: 10px;">
+                            <!-- Display the current profile picture if available, else use a default image -->
+                            <img src="@(!string.IsNullOrEmpty(ViewBag.ProfilePicUrl) ? ViewBag.ProfilePicUrl : "~/images/pfp.png")" alt="Profile Picture" width="auto" height="200" style="border-radius: 10px;">
                         </div>
                         <div class="info">
                             <h2>@userName</h2>
@@ -304,15 +343,21 @@ else
                                 <label>Contact Number:</label>
                                 <input type="number" name="ContactNumber" class="editable-field" id="inputField" value="@contactNum" required>
                             </p>
+
+                            <!-- Profile Picture Upload Section -->
+                            <p>
+                                <input type="file" name="profilePicture" id="profilePic" accept="image/*" class="upload-btn" />
+                                <label for="profilePic" class="custom-file-upload">Choose a file</label>
+                            </p>
                         </div>
                     </div>
                 </div>
                 <div class="save-info">
-                        <button type="button" class="back-button" onclick="window.history.back()">Back</button>
-                        <button type="submit" class="save-info-button">Save Information</button>
-                    </div>
+                    <button type="submit" class="save-info-button">Save</button>
+                    <button type="button" class="back-button" onclick="window.history.back()">Back</button>
+                </div>
             </form>
-         
+
         </div>
     </div>
 
@@ -330,19 +375,28 @@ else
             e.preventDefault();
             
             const formData = new FormData(this);
-            const data = {};
-            formData.forEach((value, key) => data[key] = value);
             
             fetch('@Url.Action("EditProfile", "Account")', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
+                // Remove the Content-Type header to let the browser set it with the boundary parameter
+                body: formData // Send FormData directly instead of converting to JSON
             })
             .then(response => {
                 if (response.ok) {
-                    window.location.href = '@Url.Action("Profile", "Account")';
+                    if (response.headers.get("content-type")?.includes("application/json")) {
+                        return response.json().then(data => {
+                            // Update profile picture if a new URL was returned
+                            if (data.profilePicUrl) {
+                                const profilePicElement = document.querySelector('.profile-pic img');
+                                if (profilePicElement) {
+                                    profilePicElement.src = data.profilePicUrl;
+                                }
+                            }
+                            window.location.href = '@Url.Action("Profile", "Account")';
+                        });
+                    } else {
+                        window.location.href = '@Url.Action("Profile", "Account")';
+                    }
                 } else {
                     return response.json().then(data => {
                         showPopup(data.message || 'Failed to update profile. Please try again.');

@@ -219,14 +219,30 @@ else
         padding-left: .4em;
         border-radius: 15px;
     }
+    .profile-pic {
+        width: 13em;
+        height: 13em;
+        border-radius: 10px;
+        background-color: #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid black;
+    }
+    .profile-pic img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+    }
 </style>
 
 
 <body>
     <div class="navbar-menu">
         <a href="@Url.Action("AdminPanel", "Account")">HOME</a>
-        <a href="@Url.Action("AdminBookManagement", "Account")" class="highlight">BOOK MANAGEMENT</a>
-        <a href="@Url.Action("AdminUserManagement", "Account")">USER MANAGEMENT</a>
+        <a href="@Url.Action("AdminBookManagement", "Account")">BOOK MANAGEMENT</a>
+        <a href="@Url.Action("AdminUserManagement", "Account")" class="highlight">USER MANAGEMENT</a>
         <a href="@Url.Action("AdminBookStat", "Account")">BOOK STATISTICS</a>
     </div>
 
@@ -234,7 +250,7 @@ else
         <div class="mbook-container">
             <div class="user-details">
                 <div class="profile-pic">
-                    <img src="~/images/pfp.png" alt="Profile Picture" width="auto" height="200" style="border-radius: 20px; border:1px solid black">
+                    <img src="@(Model.ProfilePicUrl ?? "/images/pfp.png")" alt="Book Cover" class="book-cover">
                 </div>
                 <div class="user-info">
                     <h2 style="font-size: 40px;"><strong> @Model.Name </strong> </h2> 
@@ -251,8 +267,8 @@ else
                         <div>
                             <label for="role-dropdown"><strong>Role</strong>: </label>
                                 <select id="role-dropdown" name="role">
-                                    <option value="student" selected="@(Model.role == "student")">Student</option>
-                                    <option value="admin" selected="@(Model.role == "admin")">Admin</option>
+                                    <option value="Student" selected="@(Model.role == "Student")">Student</option>
+                                    <option value="Admin" selected="@(Model.role == "Admin")">Admin</option>
                                 </select>
                             </div>
                         <button type="submit" class="save-button"><img src="/images/check-icon.png" alt="Edit" class="save-button"></button>

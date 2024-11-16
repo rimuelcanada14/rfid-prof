@@ -10,6 +10,8 @@
     var libId = Context.Session.GetInt32("UserId");
     var dateIssued = Context.Session.GetString("DateIssued");
     var contactNum = Context.Session.GetString("ContactNumber");
+    var profilePicUrl = Context.Session.GetString("ProfilePicUrl");
+    var finalProfilePicUrl = string.IsNullOrEmpty(profilePicUrl) ? "~/images/pfp.png" : profilePicUrl;
 }
 
 @if (!string.IsNullOrEmpty(userName))
@@ -256,9 +258,10 @@ else
         width: 6em;
     }
     .button-container {
-        margin-left: 18em;
+        position: fixed;
         gap: 1em;
         display: flex;
+        right: 13em;
     }
 </style>
 
@@ -289,7 +292,7 @@ else
 
         <div class="card-content">
             <div class="profile-pic">
-                <img src="~/images/pfp.png" alt="Profile Picture">
+                <img src="@Url.Content(finalProfilePicUrl)" alt="Profile Picture">
             </div>
             <div class="details">
                 <h2>@userName</h2>
@@ -297,7 +300,7 @@ else
                 <p><strong>Student ID</strong> <span>: @studentId</span></p>
                 <p><strong>Course</strong> <span>: @course</span></p>
                 <p><strong>Email</strong> <span>: @email</span></p>
-                <p><strong>Contact Number:</strong> @(string.IsNullOrEmpty(contactNum) || contactNum == "NA" ? "--NOT SET--" : contactNum)</p>
+                <p><strong>Contact Number</strong>: @(string.IsNullOrEmpty(contactNum) || contactNum == "NA" ? "--NOT SET--" : contactNum)</p>
 
                 <div class="date-info">
                     <p><strong>Date Issued:</strong> <span>@dateIssued</span></p>
