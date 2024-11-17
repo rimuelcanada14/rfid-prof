@@ -125,7 +125,7 @@ else
 
     .notification-banner {
         display: none;
-        position: fixed;
+        position: relative;
         bottom: 30px;
         right: 40px;
         background-color: #feb602;
@@ -138,16 +138,19 @@ else
         font-family: 'Arial', sans-serif;
         box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
         border-radius: 8px;
+        margin-left: 1em;
+        width: 48em;
     }
 
     .notification-banner .icon {
-        width: 25px;
-        height: 35px;
-        margin-right: 20px;
+        width: auto;
+        height: 49px;
+        position: absolute;
     }
 
     .notification-banner .text-content {
-        flex: 1;
+        margin-left: 3em;
+        margin-right: -1em;
     }
 
     .notification-banner .notif {
@@ -159,6 +162,7 @@ else
         flex: 1;
         color: #fbf6f8;
         font-weight: bold;
+        width: 37em;
     }
 
     .notification-banner .close-btn {
@@ -171,6 +175,9 @@ else
         padding: 5px 10px;
         border-radius: 5px;
         border: none;
+        position: absolute;
+        bottom: 1.3em;
+        right: 1em;
     }
 
     .logout-cont {
@@ -286,6 +293,18 @@ else
         width: 18em;
         font-size: 20px;
    }
+   .notification-stack {
+        display: flex;
+        flex-direction: column;  /* Stack notifications vertically */
+        align-items: flex-start; /* Align items to the left */
+        position: fixed;
+        bottom: 30px;
+        right: 40px;
+        z-index: 9999; /* Ensure notifications are above other content */
+        gap: 1em;
+        bottom: -1em;
+        right: -1.5em;
+    }
 </style>
 
 <body>
@@ -306,15 +325,29 @@ else
 				</div>
 			</div>
 		</div>
-		<div id="loginNotification" class="notification-banner">
-			<img src="/Icons/Exclamation Icon.png" alt="Notification Icon" class="icon">
-			<div class="text-content">
-				<div class="notif">RETURN OVERDUE:</div>
-				<div class="message">Book “Front and Center” is overdue to return for 3 days, return the book now.</div>
-			</div>
-			<span class="close-btn" onclick="document.getElementById('loginNotification').style.display='none'">✖</span>
-		</div>
-	</div>
+		@if (ViewBag.OverdueBooks != null && ViewBag.OverdueBooks.Count > 0)
+        {
+            <div class="notification-stack">
+                @foreach (var book in ViewBag.OverdueBooks)
+                {
+                    <div id="loginNotification" class="notification-banner">
+                        <div class="notification-item">
+                            <div class="image-book">
+                                <img src="@book.BookCoverUrl" alt="Book Cover" class="icon">
+                            </div>
+                            <div class="text-content">
+                                <div class="notif">RETURN OVERDUE:</div>
+                                <div class="message">
+                                    Book “@book.Title” is overdue by @book.DaysOverdue days. Return the book now.
+                                </div>
+                            </div>
+                            <span class="close-btn" onclick="this.closest('.notification-banner').style.display='none'">✖</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
 
     <div id="userNotFoundPopup" class="popup-message" style="display: none;">
         <span id="errorMessage">@ViewBag.ErrorMessage</span>

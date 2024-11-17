@@ -150,7 +150,7 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home");
         }
 
-        // Use FirstOrDefault to avoid the exception when there are multiple users with the same name
+        // Get the user details
         var user = _context.Users.FirstOrDefault(u => u.Name == userName);
         if (user == null)
         {
@@ -158,7 +158,7 @@ public class AccountController : Controller
             return RedirectToAction("Input", "Account");
         }
 
-        // Set additional user information in session for quick access
+        // Set session variables
         HttpContext.Session.SetString("StudentId", user.StudentNumber);
         HttpContext.Session.SetString("Course", user.Course);
         HttpContext.Session.SetString("Email", user.Email);
@@ -166,24 +166,35 @@ public class AccountController : Controller
         HttpContext.Session.SetString("ContactNumber", user.ContactNumber);
         HttpContext.Session.SetString("ProfilePicUrl", user.ProfilePicUrl ?? "~/images/pfp.png");
 
-
-        // Handle nullable DateIssued by checking if it has a value
         if (user.DateIssued.HasValue)
         {
             HttpContext.Session.SetString("DateIssued", user.DateIssued.Value.ToString("yyyy-MM-dd"));
         }
         else
         {
-            // Optionally set a default value or handle the case where DateIssued is null
-            HttpContext.Session.SetString("DateIssued", string.Empty); // Or another appropriate default
+            HttpContext.Session.SetString("DateIssued", string.Empty);
         }
 
-        // Pass user's name to the view
+        // Check for overdue books using navigation properties
+        var overdueBooks = _context.BorrowedBooks
+            .Include(b => b.Book)
+            .Where(b => b.UserId == user.UserId && b.DLBorrow < DateTime.UtcNow)
+            .Select(b => new 
+            {
+                Title = b.Book != null ? b.Book.Title : "Unknown",
+                BookCoverUrl = b.Book != null ? b.Book.BookCoverUrl : "/images/default-cover.png", // Default image if null
+                DaysOverdue = (DateTime.UtcNow - b.DLBorrow).Days
+            })
+            .ToList();
+        // Pass overdue books to the view
+        ViewBag.OverdueBooks = overdueBooks;
+
         ViewBag.UserName = userName;
         return View();
     }
 
-        [AdminOnly]
+
+    [AdminOnly]
     [HttpGet]
     public IActionResult AdminPanel()
     {
@@ -645,7 +656,7 @@ public class AccountController : Controller
             UserId = user.UserId,
             BookId = book.BookId,
             DateBorrowed = DateTime.UtcNow.AddDays(-3),
-            DLBorrow = DateTime.UtcNow.AddDays(2) // Deadline 20 days from now
+            DLBorrow = DateTime.UtcNow.AddDays(-2) // Deadline 20 days from now
         };
 
         // Update TimesBorrowed and Availability of the book
