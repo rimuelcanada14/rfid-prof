@@ -655,8 +655,8 @@ public class AccountController : Controller
         {
             UserId = user.UserId,
             BookId = book.BookId,
-            DateBorrowed = DateTime.UtcNow.AddDays(-3),
-            DLBorrow = DateTime.UtcNow.AddDays(-2) // Deadline 20 days from now
+            DateBorrowed = DateTime.UtcNow,
+            DLBorrow = DateTime.UtcNow.AddDays(14) // Deadline 20 days from now
         };
 
         // Update TimesBorrowed and Availability of the book

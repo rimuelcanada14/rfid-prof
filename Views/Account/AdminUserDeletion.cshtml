@@ -164,7 +164,7 @@ else
     .user-deets {
         display: grid;
         grid-template-columns: auto 1fr; /* Aligns labels and values */
-        gap: 5px 5em; /* Adds spacing between rows and columns */
+        gap: 5px 2em; /* Adds spacing between rows and columns */
         font-size: 24px;
     }
 
@@ -252,6 +252,12 @@ else
         font-weight: 600;
         margin-top: 1em;
     }
+    .delete-button.disabled {
+        pointer-events: none;
+        opacity: 0.5; /* Makes the button appear visually disabled */
+        cursor: not-allowed;
+    }
+
 </style>
 
 
@@ -285,9 +291,15 @@ else
                         <button type="submit" class="save-button">
                             <img src="/images/check-icon.png" alt="Save" class="save-button">
                         </button>
-                        <a href="@Url.Action("DeleteUser", "Account", new { id = Model.UserId })">
-                            <img src="/images/delete.png" alt="Delete" class="delete-button">
+                        <a href="javascript:void(0);"
+                        onclick="confirmDelete('@Url.Action("DeleteUser", "Account", new { id = Model.UserId })')"
+                        class="delete-button @((Model.BorrowedBooks != null && Model.BorrowedBooks.Any()) ? "disabled" : "")"
+                        @(Model.BorrowedBooks != null && Model.BorrowedBooks.Any() ? "tabindex='-1'" : "")>
+                        <img class="delete-button"
+                                src="/images/@((Model.BorrowedBooks != null && Model.BorrowedBooks.Any()) ? "delete-disable.png" : "delete.png")" 
+                                alt="Delete">
                         </a>
+
                     </div>    
 
                     <div class="action-buttons">
@@ -433,6 +445,11 @@ else
                 } else {
                     rows[i].style.display = "none";
                 }
+            }
+        }
+        function confirmDelete(deleteUrl) {
+            if (confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+                window.location.href = deleteUrl;
             }
         }
     </script>

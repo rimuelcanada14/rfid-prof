@@ -347,7 +347,7 @@
                             <h2>RFID Card Linking</h2>
                             <p>Please scan your RFID Card in the scanner.</p>
                             <div class = "rfid-inp">
-                                <input asp-for="rfid" id="rfidInputPopupField" type="number" autocomplete="off" placeholder="Scan RFID" />
+                                <input asp-for="rfid" id="rfidInputPopupField" type="password" autocomplete="off" placeholder="Scan RFID" />
                                 <button type="button" id="confirmRfidButton">Confirm RFID</button>
                                 <button type="button" id="closeRfidPopupButton">Close</button>
                                 <img src="~/images/rfid-icon.png" class="rfid-image" alt="rfid">
@@ -381,7 +381,7 @@
                     <div class="input-container">
                         <input type="password" id="password" placeholder="Password" asp-for="Password" required />
                         <span class="icon" onclick="togglePassword()">
-                            <img src="/images/Password Icon.png" alt="Password Icon" class="input-icon" id="password-toggle-icon">
+                            <img src="/images/Password-hide-Icon.png" alt="Password Icon" class="input-icon" id="password-toggle-icon">
                         </span>
                     </div>
 
