@@ -337,7 +337,8 @@ else
                             </p>
                             <p>
                                 <label>PLM Email:</label>
-                                <input type="email" name="Email" class="editable-field" id="inputField" value="@email" required>
+                                <input type="email" name="Email" class="editable-field" id="inputField" value="@email" required pattern=".*plm\\.edu\\.ph$" 
+                                title="Email must end with plm.edu.ph" />
                             </p>
                             <p>
                                 <label>Contact Number:</label>

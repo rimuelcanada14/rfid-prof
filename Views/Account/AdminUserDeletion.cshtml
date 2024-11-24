@@ -293,22 +293,28 @@ else
                         </button>
                         <a href="javascript:void(0);"
                         onclick="confirmDelete('@Url.Action("DeleteUser", "Account", new { id = Model.UserId })')"
-                        class="delete-button @((Model.BorrowedBooks != null && Model.BorrowedBooks.Any()) ? "disabled" : "")"
-                        @(Model.BorrowedBooks != null && Model.BorrowedBooks.Any() ? "tabindex='-1'" : "")>
-                        <img class="delete-button"
-                                src="/images/@((Model.BorrowedBooks != null && Model.BorrowedBooks.Any()) ? "delete-disable.png" : "delete.png")" 
+                        class="delete-button @((Model.role == "Admin" || (Model.BorrowedBooks != null && Model.BorrowedBooks.Any())) ? "disabled" : "")"
+                        @(Model.role == "Admin" || (Model.BorrowedBooks != null && Model.BorrowedBooks.Any()) ? "tabindex='-1' title='Cannot delete'" : "")>
+                            <img class="delete-button"
+                                src="/images/@((Model.role == "Admin" || (Model.BorrowedBooks != null && Model.BorrowedBooks.Any())) ? "delete-disable.png" : "delete.png")" 
                                 alt="Delete">
                         </a>
-
                     </div>    
 
-                    <div class="action-buttons">
-                        <label for="role-dropdown"><strong>Role</strong>: </label>
-                        <select id="role-dropdown" name="role">
-                            <option value="Student" selected="@(Model.role == "Student")">Student</option>
-                            <option value="Admin" selected="@(Model.role == "Admin")">Admin</option>
-                        </select>
-                    </div>
+                    @if (Model.rfid != "0652000515")
+                    {
+                        <div class="action-buttons">
+                            <label for="role-dropdown"><strong>Role</strong>: </label>
+                            <select id="role-dropdown" name="role">
+                                <option value="Student" selected="@(Model.role == "Student")">Student</option>
+                                <option value="Admin" selected="@(Model.role == "Admin")">Admin</option>
+                            </select>
+                        </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" name="role" value="Admin" />
+                    }
                 </form>
             </div>
 

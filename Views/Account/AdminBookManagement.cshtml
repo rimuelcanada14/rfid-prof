@@ -315,10 +315,18 @@ else
                                     <td>@book.Author</td>
                                     <td class="@(book.Availability == "Available" ? "available" : "borrowed")">@book.Availability</td>
                                     <td>
-                                        <a href="@Url.Action("AdminEditBook", "Account", new { id = book.BookId })">
-                                            <img src="/images/edit.png" alt="Edit" class="buttons">
-                                        </a>
-
+                                        @if (book.Availability == "Borrowed")
+                                        {
+                                            <a href="javascript:void(0);" class="disabled-link" title="Cannot edit borrowed book">
+                                                <img src="/images/edit-disable.png" alt="Edit Disabled" class="buttons">
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("AdminEditBook", "Account", new { id = book.BookId })">
+                                                <img src="/images/edit.png" alt="Edit" class="buttons">
+                                            </a>
+                                        }
 
                                         <form asp-action="DeleteBook" asp-controller="Account" asp-route-id="@book.BookId" method="post" style="display:inline;">
                                             <button type="submit" style="background-color: transparent; border: none"
@@ -329,6 +337,7 @@ else
                                             </button>
                                         </form>
                                     </td>
+
                                 </tr>
                             }
                         }
