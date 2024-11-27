@@ -257,7 +257,19 @@ else
         opacity: 0.5; /* Makes the button appear visually disabled */
         cursor: not-allowed;
     }
+    .back-button {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+    }
 
+    .back-icon {
+        width: 2.5em;
+        height: auto;
+        margin-top: -2em;
+        margin-left: -1.8em;
+    }
 </style>
 
 
@@ -271,6 +283,10 @@ else
 
     <div class="mbook-page">
         <div class="mbook-container">
+            <button type="button" class="back-button" onclick="window.history.back()">
+                <img src="/images/back-icon.png" alt="Back" class="back-icon" />
+            </button>
+
             <div class="user-details">
                 <div class="profile-pic">
                     <img src="@(Model.ProfilePicUrl ?? "/images/pfp.png")" alt="Book Cover" class="book-cover">
