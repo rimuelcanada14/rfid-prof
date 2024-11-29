@@ -305,17 +305,29 @@ else
         bottom: -1em;
         right: -1.5em;
     }
+
+
 </style>
 
 <body>
 	<div class="container">
 		<div class="button-container">
 			<a class="button" onclick="navigatetoReturn()">RETURN</a>
-			<a href="#" class="button" onclick="showRfidPopup()">BORROW</a>
+			    @if (ViewBag.OverdueBooks != null && ViewBag.OverdueBooks.Count > 0)
+    {
+        <a class="button disabled" style="pointer-events: none; background-color: grey; color: white;">
+            BORROW
+        </a>
+    }
+    else
+    {
+        <a href="#" class="button" onclick="showRfidPopup()">BORROW</a>
+    }
 			<a class="button" onclick="navigatetoSearch()">SEARCH</a>
 			<a class="button" onclick="navigatetoProfile()">PROFILE</a>
 			<a id="logoutButton" class="button">LOGOUT</a>
 		</div>
+
 		<div id="logoutModal">
 			<div class="modal-content">
 				<p>Log out of your account?</p>
@@ -325,6 +337,8 @@ else
 				</div>
 			</div>
 		</div>
+
+
 		@if (ViewBag.OverdueBooks != null && ViewBag.OverdueBooks.Count > 0)
         {
             <div class="notification-stack">
@@ -410,7 +424,7 @@ else
                 popup.style.display = "block";
                 setTimeout(function() {
                     popup.style.display = "none";
-                }, 3000); // Hide after 3 seconds
+                }, 3000); // Hide after 3 seco@if (ViewBag.OverdueBooks != null && ViewBag.OverdueBooks.Count > 0)nds
             }
         };
         window.onload = function () {

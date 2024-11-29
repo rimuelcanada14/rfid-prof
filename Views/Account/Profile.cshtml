@@ -164,7 +164,14 @@ else
     <div class="navbar-menu">
         <a href="Welcome">HOME</a>
         <a href="Return">RETURN</a>
+            @if (Context.Session.GetInt32("HasOverdueBooks") == 1)
+    {
+        <a href="#" onclick="alert('You cannot borrow books until all overdue books are returned.')" style="pointer-events: none; color: gray;">BORROW</a>
+    }
+    else
+    {
         <a href="#" onclick="showRfidPopup()">BORROW</a>
+    }
         <a href="Search">SEARCH</a>
         <a href="Profile" class="highlight">PROFILE</a>
     </div>

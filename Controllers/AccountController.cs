@@ -186,6 +186,11 @@ public class AccountController : Controller
                 DaysOverdue = (DateTime.UtcNow - b.DLBorrow).Days
             })
             .ToList();
+
+        bool hasOverdueBooks = overdueBooks.Any();
+        HttpContext.Session.SetInt32("HasOverdueBooks", hasOverdueBooks ? 1 : 0);
+
+        
         // Pass overdue books to the view
         ViewBag.OverdueBooks = overdueBooks;
 
@@ -655,8 +660,8 @@ public class AccountController : Controller
         {
             UserId = user.UserId,
             BookId = book.BookId,
-            DateBorrowed = DateTime.UtcNow.AddDays(-4),
-            DLBorrow = DateTime.UtcNow.AddDays(-2) // Deadline 20 days from now
+            DateBorrowed = DateTime.UtcNow.AddDays(-20),
+            DLBorrow = DateTime.UtcNow.AddDays(-20) // Deadline 20 days from now
         };
 
         // Update TimesBorrowed and Availability of the book
