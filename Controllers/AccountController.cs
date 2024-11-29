@@ -519,6 +519,25 @@ public class AccountController : Controller
                 }
             )
             .ToList();
+        var overdueBooks = _context.BorrowedBooks
+            .Include(b => b.Book)
+            .Where(b => b.UserId == user.UserId && b.DLBorrow < DateTime.UtcNow)
+            .Select(b => new 
+            {
+                Title = b.Book != null ? b.Book.Title : "Unknown",
+                BookCoverUrl = b.Book != null ? b.Book.BookCoverUrl : "/images/default-cover.png", // Default image if null
+                DaysOverdue = (DateTime.UtcNow - b.DLBorrow).Days
+            })
+            .ToList();
+
+        bool hasOverdueBooks = overdueBooks.Any();
+        HttpContext.Session.SetInt32("HasOverdueBooks", hasOverdueBooks ? 1 : 0);
+
+        
+        // Pass overdue books to the view
+        ViewBag.OverdueBooks = overdueBooks;
+
+        ViewBag.UserName = userName;
 
         return View(borrowedBooks); // Pass the borrowed books with additional data to the view
     }
@@ -601,12 +620,46 @@ public class AccountController : Controller
 
         if (string.IsNullOrEmpty(userName))
         {
+            // Redirect to Input page if the user is not logged in
+            return RedirectToAction("Input", "Account");
+        }
+
+        // Retrieve the user ID based on the username
+        var user = _context.Users.FirstOrDefault(u => u.Name == userName);
+        if (user == null)
+        {
+            // Handle case where the user is not found
+            return RedirectToAction("Input", "Account");
+        }
+
+        var userId = user.UserId;
+
+        if (string.IsNullOrEmpty(userName))
+        {
             // Redirect to Input page if user is not logged in
             return RedirectToAction("Input", "Account");
         }
 
         // Retrieve books from the database
         var books = _context.Books.ToList(); // Gets all books from the "Books" table
+
+        var overdueBooks = _context.BorrowedBooks
+            .Include(b => b.Book)
+            .Where(b => b.UserId == user.UserId && b.DLBorrow < DateTime.UtcNow)
+            .Select(b => new 
+            {
+                Title = b.Book != null ? b.Book.Title : "Unknown",
+                BookCoverUrl = b.Book != null ? b.Book.BookCoverUrl : "/images/default-cover.png", // Default image if null
+                DaysOverdue = (DateTime.UtcNow - b.DLBorrow).Days
+            })
+            .ToList();
+
+        bool hasOverdueBooks = overdueBooks.Any();
+        HttpContext.Session.SetInt32("HasOverdueBooks", hasOverdueBooks ? 1 : 0);
+
+        
+        // Pass overdue books to the view
+        ViewBag.OverdueBooks = overdueBooks;
 
         ViewBag.UserName = userName;
         return View(books); // Pass books as the model to the view
@@ -660,8 +713,8 @@ public class AccountController : Controller
         {
             UserId = user.UserId,
             BookId = book.BookId,
-            DateBorrowed = DateTime.UtcNow.AddDays(-20),
-            DLBorrow = DateTime.UtcNow.AddDays(-20) // Deadline 20 days from now
+            DateBorrowed = DateTime.UtcNow,
+            DLBorrow = DateTime.UtcNow.AddDays(20) // Deadline 20 days from now
         };
 
         // Update TimesBorrowed and Availability of the book
@@ -698,6 +751,26 @@ public class AccountController : Controller
             TempData["ErrorMessage"] = "User not found. Please try logging in again.";
             return RedirectToAction("Input", "Account");
         }
+
+        var overdueBooks = _context.BorrowedBooks
+            .Include(b => b.Book)
+            .Where(b => b.UserId == user.UserId && b.DLBorrow < DateTime.UtcNow)
+            .Select(b => new 
+            {
+                Title = b.Book != null ? b.Book.Title : "Unknown",
+                BookCoverUrl = b.Book != null ? b.Book.BookCoverUrl : "/images/default-cover.png", // Default image if null
+                DaysOverdue = (DateTime.UtcNow - b.DLBorrow).Days
+            })
+            .ToList();
+
+        bool hasOverdueBooks = overdueBooks.Any();
+        HttpContext.Session.SetInt32("HasOverdueBooks", hasOverdueBooks ? 1 : 0);
+
+        
+        // Pass overdue books to the view
+        ViewBag.OverdueBooks = overdueBooks;
+
+        ViewBag.UserName = userName;
 
         // Set user data in ViewBag or ViewModel for display on the profile page
         ViewBag.User = user;
