@@ -16,7 +16,7 @@ else
         window.location.href = '@Url.Action("Input", "Account")';
     </script>
 }
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
     body {
         margin: 0;
@@ -114,16 +114,16 @@ else
     }
 
     .sbook-button {
-        display: inline-block;
-        padding: 8px 16px;
-        background-color: #4a73e5;
-        color: white;
-        border: none;
-        border-radius: 24px;
-        font-family: 'PoppinsMedium', Arial, sans-serif;
-        font-weight: bold;
-        cursor: pointer;
-        text-align: center;
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #4a73e5;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    font-family: 'PoppinsMedium', Arial, sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
     }
 
     .borrowed {
@@ -197,6 +197,9 @@ else
         <a href="AdminBookStat" class="highlight">BOOK STATISTICS</a>
     </div>
 
+<div class="button-container">
+  <button type="button" class="sbook-button" onclick="captureAndDownloadContainer()" style="display: block; margin: 0 auto;">Download Book List</button>
+</div>  
     <div class="sbook-page">
         <div class="sbook-container">
             <div class="book-table-container">
@@ -209,6 +212,7 @@ else
                             <th>Times Borrowed</th>
                         </tr>
                     </thead>
+                      
                     <tbody id="bookTableBody">
                         @if (Model != null && Model.Any())
                         {
@@ -233,4 +237,49 @@ else
             </div>
         </div>
     </div>
+    <script>
+function captureAndDownloadContainer() {
+  // Select the scrollable container
+  const scrollContainer = document.querySelector('.book-table-container');
+  
+  // Get the original scroll position
+  const originalScrollTop = scrollContainer.scrollTop;
+  
+  // Capture the full height of the content
+  html2canvas(scrollContainer, {
+    scrollX: 0,
+    scrollY: -window.scrollY,
+    windowHeight: scrollContainer.scrollHeight,
+    height: scrollContainer.scrollHeight,
+    useCORS: true,
+    onclone: function (clonedDoc) {
+      // Find the cloned scroll container
+      const clonedScrollContainer = clonedDoc.querySelector('.book-table-container');
+      
+      if (clonedScrollContainer) {
+        // Remove max-height and overflow constraints
+        clonedScrollContainer.style.maxHeight = 'none';
+        clonedScrollContainer.style.overflow = 'visible';
+      }
+      
+      // Hide any elements you don't want in the screenshot
+      const navbarMenu = clonedDoc.querySelector('.navbar-menu');
+      if (navbarMenu) {
+        navbarMenu.style.display = 'none';
+      }
+    }
+  }).then(canvas => {
+    // Restore original scroll position
+    scrollContainer.scrollTop = originalScrollTop;
+    
+    // Create download link
+    const link = document.createElement('a');
+    link.download = 'book_list.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+}
+
+    
+</script>
 </body>

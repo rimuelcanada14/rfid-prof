@@ -942,4 +942,26 @@ public class AccountController : Controller
 
         return View(model); // Return to the form with validation errors
     }
+
+    [AdminOnly]
+    [HttpPost]
+    public async Task<IActionResult> DownloadBookList()
+    {
+    // Get the current user's name
+    var userName = HttpContext.Session.GetString("UserName");
+
+    if (string.IsNullOrEmpty(userName))
+    {
+        return RedirectToAction("Input", "Account");
+    }
+
+    // Retrieve books from the database, ordered by times borrowed
+    var books = _context.Books
+        .OrderByDescending(b => b.TimesBorrowed)
+        .ToList();
+
+    // You can customize this further if needed
+    ViewBag.UserName = userName;
+    return View("BookListDownload", books);
+}
 }
