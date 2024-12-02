@@ -4,6 +4,10 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
+using System.Net.Mail;
+using System.IO;
+using UserAuthApp.Migrations;
 
 
 public class AdminOnlyAttribute : ActionFilterAttribute
@@ -159,6 +163,7 @@ public class AccountController : Controller
         }
 
         // Set session variables
+        HttpContext.Session.SetString("Name", user.Name);
         HttpContext.Session.SetString("StudentId", user.StudentNumber);
         HttpContext.Session.SetString("Course", user.Course);
         HttpContext.Session.SetString("Email", user.Email);
@@ -419,31 +424,119 @@ public class AccountController : Controller
     }
 
     [AdminOnly]
-    [HttpPost]
-    public IActionResult SaveUserRole(int userId, string role)
+[AdminOnly]
+[HttpPost]
+public IActionResult SaveUserRole(int userId, string role, string StudentNumber, string Name, string Course, string Email, string ContactNumber)
+{
+    if (userId == 0 || string.IsNullOrEmpty(role))
     {
-        if (userId == 0 || string.IsNullOrEmpty(role))
-        {
-            return BadRequest("Invalid userId or role.");
-        }
-
-        // Find the user in the database using the integer userId
-        var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
-
-        if (user == null)
-        {
-            return NotFound("User not found.");
-        }
-
-        // Update the role
-        user.role = role;
-
-        // Save the changes to the database
-        _context.SaveChanges();
-
-        // Redirect back to the user details page or another page as needed
-        return RedirectToAction("AdminUserManagement", "Account", new { id = user.UserId });
+        return BadRequest("Invalid userId or role.");
     }
+
+    // Find the user in the database using the integer userId
+    var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
+
+    if (user == null)
+    {
+        return NotFound("User not found.");
+    }
+
+    // Track if there were any changes
+    bool hasChanges = false;
+    string changesBody = $"Dear {user.Name},\n\nYour account details have been updated by an administrator.\n\n" +
+                         "=======UPDATED INFORMATION=======\n\n";
+
+    // Check and update fields, if necessary
+    if (Name != user.Name)
+    {
+        user.Name = Name;
+        changesBody += $"Name: {Name}\n";
+        hasChanges = true;
+    }
+    if (StudentNumber != user.StudentNumber)
+    {
+        user.StudentNumber = StudentNumber;
+        changesBody += $"Student Number: {StudentNumber}\n";
+        hasChanges = true;
+    }
+
+    if (Course != user.Course)
+    {
+        user.Course = Course;
+        changesBody += $"Course: {Course}\n";
+        hasChanges = true;
+    }
+
+    if (Email != user.Email)
+    {
+        user.Email = Email;
+        changesBody += $"Email: {Email}\n";
+        hasChanges = true;
+    }
+
+    if (ContactNumber != user.ContactNumber)
+    {
+        user.ContactNumber = ContactNumber;
+        changesBody += $"Contact Number: {ContactNumber}\n";
+        hasChanges = true;
+    }
+
+    if (role != user.role)
+    {
+        user.role = role;
+        changesBody += $"Role: {role}\n";
+        hasChanges = true;
+    }
+
+    // Save the changes to the database
+    _context.SaveChanges();
+
+    // Only send email if there were changes
+    if (hasChanges)
+    {
+        // Add final message and sign-off
+        changesBody += "\nIf you did not make these changes, please contact the system administrator immediately.\n\n" +
+                       "Best regards,\nPLM Library System";
+
+        // Send the email notification
+        try
+        {
+            using (var client = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("plmlibrary241@gmail.com", "qduv gkqu sitl maee"), // Replace with your credentials
+                EnableSsl = true
+            })
+            {
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress("plmlibrary241@gmail.com"),
+                    Subject = "Account Details Updated",
+                    Body = changesBody,
+                    IsBodyHtml = false
+                };
+                mailMessage.To.Add(user.Email); // Send email to the updated email address
+
+                client.Send(mailMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log the exception if email fails to send
+            Console.WriteLine($"Email sending failed: {ex.Message}");
+        }
+    }
+
+    // Store success message in TempData
+    TempData["SuccessMessage"] = "The user has been notified with the changes.";
+
+    // Redirect to AdminUserManagement
+    return RedirectToAction("AdminUserDeletion", "Account", new { id = user.UserId });
+}
+
+
+
+
 
 
     public IActionResult DeleteUser(int id)
@@ -781,6 +874,7 @@ public class AccountController : Controller
     public IActionResult EditProfile()
     {
         var userName = HttpContext.Session.GetString("UserName");
+        var name = HttpContext.Session.GetString("Name");
         var studentId = HttpContext.Session.GetString("StudentId");
         var course = HttpContext.Session.GetString("Course");
         var email = HttpContext.Session.GetString("Email");
@@ -795,6 +889,7 @@ public class AccountController : Controller
         if (user != null)
         {
             ViewBag.UserName = userName;
+            ViewBag.Name = name;
             ViewBag.StudentId = studentId;
             ViewBag.Course = course;
             ViewBag.Email = email;
@@ -807,8 +902,7 @@ public class AccountController : Controller
 
 
 
-    [HttpPost]
-    public async Task<IActionResult> EditProfile(IFormFile profilePicture, string StudentNumber, string Course, string Email, string ContactNumber)
+    public async Task<IActionResult> EditProfile(IFormFile profilePicture, string Name, string StudentNumber, string Course, string Email, string ContactNumber, string rfid)
     {
         var userName = HttpContext.Session.GetString("UserName");
 
@@ -829,7 +923,8 @@ public class AccountController : Controller
             .Any(u => u.UserId != user.UserId && (
                 u.StudentNumber == StudentNumber ||
                 u.Email == Email ||
-                u.ContactNumber == ContactNumber
+                u.ContactNumber == ContactNumber ||
+                u.rfid == rfid
             ));
 
         if (isDuplicate)
@@ -837,53 +932,109 @@ public class AccountController : Controller
             return BadRequest(new { message = "Invalid credentials. User already exists." });
         }
 
-        // Update user properties
-        user.StudentNumber = StudentNumber;
-        user.Course = Course;
-        user.Email = Email;
-        user.ContactNumber = ContactNumber;
-
-        // Handle profile picture upload
-        if (profilePicture != null && profilePicture.Length > 0)
-        {
-            // Create the profile directory if it doesn't exist
-            var profileDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "profile");
-            if (!Directory.Exists(profileDirectory))
-            {
-                Directory.CreateDirectory(profileDirectory);
-            }
-
-            // Generate a unique file name
-            var fileName = $"{Guid.NewGuid().ToString()}{Path.GetExtension(profilePicture.FileName)}";
-            var filePath = Path.Combine(profileDirectory, fileName);
-
-            // Save the file
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await profilePicture.CopyToAsync(stream);
-            }
-
-            // Update the profile picture URL
-            user.ProfilePicUrl = $"/images/profile/{fileName}";
-            HttpContext.Session.SetString("ProfilePicUrl", user.ProfilePicUrl);
-        }
-
         try
         {
-            await _context.SaveChangesAsync();
+            // Track if any information (excluding profile picture) has changed
+            bool hasChanges = false;
+            string changesBody = $"Request for Editing Information\n\nUser Details:\nName: {userName}\nRFID: {user.rfid}\n\n ====INFORMATION TO BE CHANGED=======\n";
 
-            // Update session data
-            HttpContext.Session.SetString("StudentId", user.StudentNumber);
-            HttpContext.Session.SetString("Course", user.Course);
-            HttpContext.Session.SetString("Email", user.Email);
-            HttpContext.Session.SetString("ContactNumber", user.ContactNumber);
+            // Handle profile picture upload separately and immediately
+            if (profilePicture != null && profilePicture.Length > 0)
+            {
+                // Create the profile directory if it doesn't exist
+                var profileDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "profile");
+                if (!Directory.Exists(profileDirectory))
+                {
+                    Directory.CreateDirectory(profileDirectory);
+                }
 
-            return Ok(new { profilePicUrl = user.ProfilePicUrl });
+                // Generate a unique file name
+                var fileName = $"{Guid.NewGuid().ToString()}{Path.GetExtension(profilePicture.FileName)}";
+                var filePath = Path.Combine(profileDirectory, fileName);
+
+                // Save the file
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await profilePicture.CopyToAsync(stream);
+                }
+
+                // Update the profile picture URL
+                user.ProfilePicUrl = $"/images/profile/{fileName}";
+                HttpContext.Session.SetString("ProfilePicUrl", user.ProfilePicUrl);
+                _context.SaveChanges();
+
+            }
+
+            // Check and track changes for each field
+            if (Name != user.Name)
+            {
+                changesBody += $"\nCurrent Name: {user.Name}\n";
+                changesBody += $"Requested Name: {Name}\n";
+                hasChanges = true;
+            }
+
+            if (StudentNumber != user.StudentNumber)
+            {
+                changesBody += $"\nCurrent Student Number: {user.StudentNumber}\n";
+                changesBody += $"Requested Student Number: {StudentNumber}\n";
+                hasChanges = true;
+            }
+
+            if (Course != user.Course)
+            {
+                changesBody += $"\nCurrent Course: {user.Course}\n";
+                changesBody += $"Requested Course: {Course}\n";
+                hasChanges = true;
+            }
+
+            if (Email != user.Email)
+            {
+                changesBody += $"\nCurrent Email: {user.Email}\n";
+                changesBody += $"Requested Email: {Email}\n";
+                hasChanges = true;
+            }
+
+            if (ContactNumber != user.ContactNumber)
+            {
+                changesBody += $"\nCurrent Contact Number: {user.ContactNumber}\n";
+                changesBody += $"Requested Contact Number: {ContactNumber}\n";
+                hasChanges = true;
+            }
+
+            // Only send email if there are changes to information (not profile picture)
+            if (hasChanges)
+            {
+                // Configure SMTP Client for Gmail
+                using (var client = new SmtpClient("smtp.gmail.com")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential("plmlibrary241@gmail.com", "qduv gkqu sitl maee"),
+                    EnableSsl = true
+                })
+                {
+                    var mailMessage = new MailMessage
+                    {
+                        From = new MailAddress("plmlibrary241@gmail.com"),
+                        Subject = "Request for Editing Information",
+                        Body = changesBody,
+                        IsBodyHtml = false
+                    };
+                    mailMessage.To.Add("rscanada2021@plm.edu.ph");
+
+                    await client.SendMailAsync(mailMessage);
+                }
+            }
+
+            // Return success response
+            return Ok(new { 
+                message = hasChanges ? "Request sent" : "Profile picture updated", 
+                profilePicUrl = user.ProfilePicUrl 
+            });
         }
         catch (Exception ex)
         {
             // Log the exception
-            return StatusCode(500, new { message = "An error occurred while updating the profile." });
+            return StatusCode(500, new { message = "An error occurred while processing the request: " + ex.Message });
         }
     }
 

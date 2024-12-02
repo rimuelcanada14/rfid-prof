@@ -5,6 +5,7 @@
 @await Html.PartialAsync("_RfidPopup")
 @{
     var userName = Context.Session.GetString("UserName");
+    var name = Context.Session.GetString("Name");
     var studentId = Context.Session.GetString("StudentId");
     var course = Context.Session.GetString("Course");
     var email = Context.Session.GetString("Email");
@@ -42,7 +43,7 @@ else
         display: none;
         position: fixed;
         width: 100%;
-        height: 100%;
+        height: 110%;
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 9999;
         justify-content: center;
@@ -183,10 +184,9 @@ else
         width: calc(100% - 330px);
     }
     .info h2 {
-        margin-top: 40px;
+        opacity: 0;
         font-size: 30px;
-        font-weight: bold;
-        font-family: 'PoppinsMedium';
+        margin-top: -.6em;
     }
 
     .info p {
@@ -225,7 +225,7 @@ else
         position: relative;
         font-size: 24px;
         top: 2.5em;
-        width: 6em;
+        width: 7em;
         margin-left: .5em;
     }
 
@@ -243,7 +243,7 @@ else
         position: relative;
         font-size: 24px;
         top: 2.5em;
-        width: 6em
+        width: 7em
     }
     .save-info{
         position: fixed;
@@ -310,13 +310,21 @@ else
         </div>
     </div>
 
+    <div id="successPopup" class="popup-overlay">
+        <div class="popup-content">
+            <h2 style="color: #4CAF50;">Request Sent</h2>
+            <p id="successMessage">Your request has been successfully sent.</p>
+            <button class="popup-button" onclick="closeSuccessPopup()">OK</button>
+        </div>
+    </div>
+
     <div class="profile-page">
         <!-- Student Information Card -->
         <div class="card-container">
             <form id="editProfileForm" method="post" action="@Url.Action("EditProfile", "Account")" enctype="multipart/form-data">
                 <div class="card-contenter">
                     <div class="card-title">
-                        <h1 class="edit-info-text">Edit Information</h1>
+                        <h1 class="edit-info-text">Request for Edit Information</h1>
                     </div>
                     <div class="card-content">
                         <div class="profile-pic">
@@ -326,6 +334,11 @@ else
                         <div class="info">
                             <h2>@userName</h2>
                             <input type="hidden" name="Name" value="@userName" />
+
+                            <p>
+                                <label>Name:</label>
+                                <input type="text" name="Name" class="editable-field" id="inputField" value="@name" required>
+                            </p>
                             
                             <p>
                                 <label>Student ID:</label>
@@ -353,7 +366,7 @@ else
                     </div>
                 </div>
                 <div class="save-info">
-                    <button type="submit" class="save-info-button">Save</button>
+                    <button type="submit" class="save-info-button">Request</button>
                     <button type="button" class="back-button" onclick="window.history.back()">Back</button>
                 </div>
             </form>
@@ -363,57 +376,73 @@ else
 
     <script>
         function showPopup(message) {
-            document.getElementById('errorMessage').textContent = message;
-            document.getElementById('errorPopup').style.display = 'flex';
-        }
+        document.getElementById('errorMessage').textContent = message;
+        document.getElementById('errorPopup').style.display = 'flex';
+    }
 
-        function closePopup() {
-            document.getElementById('errorPopup').style.display = 'none';
-        }
+    function showSuccessPopup(message) {
+        document.getElementById('successMessage').textContent = message;
+        document.getElementById('successPopup').style.display = 'flex';
+    }
 
-        document.getElementById('editProfileForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            
-            fetch('@Url.Action("EditProfile", "Account")', {
-                method: 'POST',
-                // Remove the Content-Type header to let the browser set it with the boundary parameter
-                body: formData // Send FormData directly instead of converting to JSON
-            })
-            .then(response => {
-                if (response.ok) {
-                    if (response.headers.get("content-type")?.includes("application/json")) {
-                        return response.json().then(data => {
-                            // Update profile picture if a new URL was returned
-                            if (data.profilePicUrl) {
-                                const profilePicElement = document.querySelector('.profile-pic img');
-                                if (profilePicElement) {
-                                    profilePicElement.src = data.profilePicUrl;
-                                }
-                            }
-                            window.location.href = '@Url.Action("Profile", "Account")';
-                        });
-                    } else {
-                        window.location.href = '@Url.Action("Profile", "Account")';
-                    }
-                } else {
+    function closePopup() {
+        document.getElementById('errorPopup').style.display = 'none';
+    }
+
+    function closeSuccessPopup() {
+        document.getElementById('successPopup').style.display = 'none';
+        window.location.href = '@Url.Action("Profile", "Account")'; // Redirect to profile page
+    }
+
+    document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch('@Url.Action("EditProfile", "Account")', {
+            method: 'POST',
+            body: formData // Send FormData directly instead of converting to JSON
+        })
+        .then(response => {
+            if (response.ok) {
+                if (response.headers.get("content-type")?.includes("application/json")) {
                     return response.json().then(data => {
-                        showPopup(data.message || 'Failed to update profile. Please try again.');
+                        // Update profile picture if a new URL was returned
+                        if (data.profilePicUrl) {
+                            const profilePicElement = document.querySelector('.profile-pic img');
+                            if (profilePicElement) {
+                                profilePicElement.src = data.profilePicUrl;
+                            }
+                        }
+                        // Show success popup
+                        showSuccessPopup('Your request has been successfully sent.');
                     });
+                } else {
+                    window.location.href = '@Url.Action("Profile", "Account")';
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showPopup('An error occurred while updating the profile.');
-            });
-        });
-
-        // Close popup when clicking outside
-        document.getElementById('errorPopup').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePopup();
+            } else {
+                return response.json().then(data => {
+                    showPopup(data.message || 'Failed to update profile. Please try again.');
+                });
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showPopup('An error occurred while updating the profile.');
         });
+    });
+
+    // Close popup when clicking outside
+    document.getElementById('errorPopup').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePopup();
+        }
+    });
+
+    document.getElementById('successPopup').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeSuccessPopup();
+        }
+    });
     </script>
 </body>
