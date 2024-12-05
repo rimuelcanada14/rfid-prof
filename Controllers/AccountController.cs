@@ -528,7 +528,7 @@ public IActionResult SaveUserRole(int userId, string role, string StudentNumber,
     }
 
     // Store success message in TempData
-    TempData["SuccessMessage"] = "The user has been notified with the changes.";
+    TempData["SuccMessage"] = "The user has been notified with the changes.";
 
     // Redirect to AdminUserManagement
     return RedirectToAction("AdminUserDeletion", "Account", new { id = user.UserId });
@@ -936,7 +936,7 @@ public IActionResult SaveUserRole(int userId, string role, string StudentNumber,
         {
             // Track if any information (excluding profile picture) has changed
             bool hasChanges = false;
-            string changesBody = $"Request for Editing Information\n\nUser Details:\nName: {userName}\nRFID: {user.rfid}\n\n ====INFORMATION TO BE CHANGED=======\n";
+            string changesBody = $"Request for Editing Information\n\nUser Details:\nName: {userName}\nRFID: {user.rfid}\n\n =======INFORMATION TO BE CHANGED=======\n\n";
 
             // Handle profile picture upload separately and immediately
             if (profilePicture != null && profilePicture.Length > 0)
@@ -1004,26 +1004,47 @@ public IActionResult SaveUserRole(int userId, string role, string StudentNumber,
             // Only send email if there are changes to information (not profile picture)
             if (hasChanges)
             {
-                // Configure SMTP Client for Gmail
-                using (var client = new SmtpClient("smtp.gmail.com")
-                {
-                    Port = 587,
-                    Credentials = new NetworkCredential("plmlibrary241@gmail.com", "qduv gkqu sitl maee"),
-                    EnableSsl = true
-                })
-                {
-                    var mailMessage = new MailMessage
-                    {
-                        From = new MailAddress("plmlibrary241@gmail.com"),
-                        Subject = "Request for Editing Information",
-                        Body = changesBody,
-                        IsBodyHtml = false
-                    };
-                    mailMessage.To.Add("rscanada2021@plm.edu.ph");
+                // Retrieve admin emails from the database
+                var adminEmails = await _context.Users
+                    .Where(user => user.role == "Admin")
+                    .Select(user => user.Email)
+                    .ToListAsync();
 
-                    await client.SendMailAsync(mailMessage);
+                if (adminEmails.Any())
+                {
+                    // Configure SMTP Client for Gmail
+                    using (var client = new SmtpClient("smtp.gmail.com")
+                    {
+                        Port = 587,
+                        Credentials = new NetworkCredential("plmlibrary241@gmail.com", "qduv gkqu sitl maee"),
+                        EnableSsl = true
+                    })
+                    {
+                        var mailMessage = new MailMessage
+                        {
+                            From = new MailAddress("plmlibrary241@gmail.com"),
+                            Subject = "Request for Editing Information",
+                            Body = changesBody,
+                            IsBodyHtml = false
+                        };
+
+                        // Add all admin emails to the recipient list
+                        foreach (var email in adminEmails)
+                        {
+                            mailMessage.To.Add(email);
+                        }
+
+                        // Send the email
+                        await client.SendMailAsync(mailMessage);
+                    }
+                }
+                else
+                {
+                    // Handle case where no admins are found (optional)
+                    Console.WriteLine("No admin emails found.");
                 }
             }
+
 
             // Return success response
             return Ok(new { 

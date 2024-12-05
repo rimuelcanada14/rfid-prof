@@ -114,16 +114,17 @@ else
     }
 
     .sbook-button {
-    display: inline-block;
-    padding: 8px 16px;
-    background-color: #4a73e5;
-    color: white;
-    border: none;
-    border-radius: 24px;
-    font-family: 'PoppinsMedium', Arial, sans-serif;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #4a73e5;
+        color: white;
+        border: none;
+        border-radius: 24px;
+        font-family: 'PoppinsMedium', Arial, sans-serif;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+        margin-bottom: -1em;
     }
 
     .borrowed {
@@ -164,9 +165,10 @@ else
     }
 
     .book-table-container {
-        max-height: 65vh;
+        max-height: 70vh;
         overflow-y: auto;
         margin-top: 10px;
+        overflow-x: hidden;
     }
     .book-table-container::-webkit-scrollbar {
         width: 10px;
@@ -185,6 +187,59 @@ else
     .search-label {
         font-family: 'TTForsRegular';
     }
+    .button-container {
+        display: flex;
+        justify-content: center;
+    }
+    .header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        gap: 12em;
+        transform: scale(1.089);
+    }
+
+    .university-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .university-info img {
+        width: 75px;
+        height: 75px;
+    }
+
+    .university-text {
+        color: #505053;
+        font-family: 'FrauncesSemiBold', Arial, sans-serif;
+    }
+
+    .university-text h2 {
+        font-size: 20px;
+        margin: 0;
+        color: #d7a613;
+        font-family: 'FrauncesSemiBold', Arial, sans-serif;
+    }
+
+    .university-text p {
+        font-size: 16px;
+        margin: 0;
+        color: #505053;
+        font-family: 'PoppinsMedium', Arial, sans-serif;
+    }
+
+    .card-title {
+        font-size: 28px;
+        font-weight: bold;
+        font-family: 'PoppinsMedium', Arial, sans-serif;
+        color: #000;
+    }
+    .card-title h2 {
+        font-weight: 800;
+    }
 
 </style>
 
@@ -198,11 +253,23 @@ else
     </div>
 
 <div class="button-container">
-  <button type="button" class="sbook-button" onclick="captureAndDownloadContainer()" style="display: block; margin: 0 auto;">Download Book List</button>
+  <button type="button" class="sbook-button" onclick="captureAndDownloadContainer()">Download Book List</button>
 </div>  
     <div class="sbook-page">
         <div class="sbook-container">
             <div class="book-table-container">
+                <div class="header">
+                <div class="university-info">
+                    <img src="/images/PLM-LOGO.png" alt="University Logo">
+                    <div class="university-text">
+                        <h2>PAMANTASAN NG LUNGSOD NG MAYNILA</h2>
+                        <p>UNIVERSITY OF THE CITY OF MANILA</p>
+                    </div>
+                </div>
+                <div class = "card-title">
+                    <h2>Book Usage and Data</h2>
+                </div>
+            </div>
                 <table class="book-table">
                     <thead>
                         <tr>

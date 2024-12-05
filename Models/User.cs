@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 public class User
 {
@@ -13,8 +14,9 @@ public class User
     [Required]
     public string Course { get; set; }
 
-    [Required]
-    [EmailAddress]
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Invalid email address")]
+    [RegularExpression(@"^[^@\s]+@plm\.edu\.ph$", ErrorMessage = "Only PLM email addresses are allowed")]
     public string Email { get; set; }
 
     [Required]

@@ -386,7 +386,9 @@ else
                                 </td>
                                 <td>@borrowed.Book.Title</td>
                                 <td>@borrowed.Book.Author</td>
-                                <td>@borrowed.Book.Availability</td>
+                                <td class="@(borrowed.Book.Availability == "Available" ? "on-time" : borrowed.Book.Availability == "Borrowed" ? "overdue" : "")">
+                                    @(borrowed.Book.Availability ?? "None")
+                                </td>
                                 <td>@borrowed.DateBorrowed.ToString("yyyy-MM-dd")</td>
                                 <td class="@dueClass">
                                     @if (borrowed.DLBorrow != DateTime.MinValue)
@@ -435,7 +437,9 @@ else
                                 </td>
                                 <td>@returned.Book.Title</td>
                                 <td>@returned.Book.Author</td>
-                                <td>@returned.Book.Availability</td>
+                                <td class="@(returned.Book.Availability == "Available" ? "on-time" : returned.Book.Availability == "Borrowed" ? "overdue" : "")">
+                                    @(returned.Book.Availability ?? "None")
+                                </td>
                                 <td>@returned.DateBorrowed.ToString("yyyy-MM-dd")</td>
                                 <td>
                                     @if (returned.DateReturned != DateTime.MinValue)
@@ -463,12 +467,12 @@ else
         </div>
     </div>
     @{
-    var successMessage = TempData["SuccessMessage"] as string;
-    if (!string.IsNullOrEmpty(successMessage))
+    var succMessage = TempData["SuccMessage"] as string;
+    if (!string.IsNullOrEmpty(succMessage))
     {
         <script type="text/javascript">
             // Show the alert immediately when the page loads
-            alert('@successMessage');
+            alert('@succMessage');
             // Redirect to the AdminUserManagement page after the alert is closed
             window.location.href = '@Url.Action("AdminUserManagement", "Account", new { id = ViewData["UserId"] })';
         </script>
@@ -497,7 +501,7 @@ else
                 window.location.href = deleteUrl;
             }
         }
-        function showSuccessMessage() {
+        function showSuccMessage() {
             alert('The user has been notified with the changes');
             window.location.href = '@Url.Action("AdminUserManagement", "Account")'; // Redirect to AdminUserManagement
         }

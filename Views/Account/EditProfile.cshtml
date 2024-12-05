@@ -211,6 +211,15 @@ else
         font-family: 'PoppinsMedium';
         width: 18em;
     }
+    #inputFields {
+        padding: 5px;
+        font-size: 18px;
+        border: 1px solid #ccc;
+        margin-left: 30px;
+        border-radius: 5px;
+        font-family: 'PoppinsMedium';
+        width: 18em;
+    }
     .back-button {
         padding: 5px 28px;
         background-color: #ff4444;
@@ -224,7 +233,7 @@ else
         text-decoration: none;
         position: relative;
         font-size: 24px;
-        top: 2.5em;
+        top: .5em;
         width: 7em;
         margin-left: .5em;
     }
@@ -242,13 +251,12 @@ else
         text-decoration: none;
         position: relative;
         font-size: 24px;
-        top: 2.5em;
+        top: .5em;
         width: 7em
     }
     .save-info{
         position: fixed;
         right: 15.7em;
-        margin-top: -1.5em;
     }
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button {
@@ -333,7 +341,6 @@ else
                         </div>
                         <div class="info">
                             <h2>@userName</h2>
-                            <input type="hidden" name="Name" value="@userName" />
 
                             <p>
                                 <label>Name:</label>
@@ -350,11 +357,21 @@ else
                             </p>
                             <p>
                                 <label>PLM Email:</label>
-                                <input type="email" name="Email" class="editable-field" id="inputField" value="@email" required  />
+                                <input type="email" name="Email" class="editable-field" id="inputField" value="@email" pattern="[^@@\s]+@@plm\.edu\.ph"
+                                title="Only PLM email addresses are allowed"
+                                autocomplete="off" required  />
                             </p>
-                            <p>
+                           <p>
                                 <label>Contact Number:</label>
-                                <input type="number" name="ContactNumber" class="editable-field" id="inputField" value="@contactNum" required>
+                                <input type="number" 
+                                    name="ContactNumber" 
+                                    class="editable-field" 
+                                    id="inputFields" 
+                                    value="@contactNum"
+                                    pattern="09[0-9]{9}"
+                                    title="Contact number must start with 09 and have 11 digits"
+                                    oninput="validateContactNumber()"
+                                >
                             </p>
 
                             <!-- Profile Picture Upload Section -->
@@ -444,5 +461,32 @@ else
             closeSuccessPopup();
         }
     });
+    document.getElementById('inputFields').addEventListener('input', function(e) {
+        var contactNumber = e.target.value;
+        var contactRegex = /^09[0-9]{9}$/;
+        
+        if (!contactRegex.test(contactNumber)) {
+            e.target.setCustomValidity('Contact number must start with 09 and have 11 digits');
+        } else {
+            e.target.setCustomValidity('');
+        }
+    });
+    function validateContactNumber() {
+        var inputField = document.getElementById('inputFields');
+        var originalValue = '@contactNum'; // The value from the server-side model
+
+        // If the input field is empty, don't change the value
+        if (inputField.value === '') {
+            inputField.setCustomValidity('NA'); // Remove custom validation error
+        } else {
+            // Validate pattern if the field is not empty
+            var pattern = /^09[0-9]{9}$/;
+            if (!pattern.test(inputField.value)) {
+                inputField.setCustomValidity('Contact number must start with 09 and have 11 digits');
+            } else {
+                inputField.setCustomValidity('NA'); // Remove custom validation error
+            }
+        }
+    }
     </script>
 </body>
